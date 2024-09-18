@@ -1,0 +1,8 @@
+@use "./variables" as *;
+
+@font-face {
+    font-family: $base-font;
+    src: url("../../assets/fonts/Myfont-Regular.otf") format("opentype"),
+    url("../../assets/fonts/Myfont-Regular.ttf") format("truetype");
+    font-weight: 400;
+}
