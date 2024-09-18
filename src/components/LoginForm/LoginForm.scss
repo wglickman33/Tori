@@ -1,37 +1,132 @@
 @use "../../styles/partials/variables" as *;
 
 .login {
-    background: $darkBlue;
-    background: linear-gradient(90deg, rgba(0,0,171,1) 25%, rgba(169,169,255,1) 85%);
-    height: 100vh;
+  background: $darkBlue;
+  background: linear-gradient(90deg, rgba(0, 0, 171, 1) 25%, rgba(169, 169, 255, 1) 85%);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: $lightCream;
 
-    &__header-container {}
+  &__content {
+    border: 3px solid $lightCream;
+    border-radius: 1.25rem;
+    padding: 2rem;
+    height: 28.125rem;
+    width: 22.8125rem;
+  }
 
-    &__header {}
+  &__header-container {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
 
-    &__form-container {}
+  &__header {
+    font-size: 4rem;
+  }
 
-    &__form {}
+  &__form-label {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
 
-    &__form-label {}
+  &__form-input {
+    margin-top: 0.25rem;
+    height: 26px;
+    padding-left: 0.5rem;
+    font-size: 1rem;
+    background: transparent;
+    outline: none;
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid $lightCream;
 
-    &__form-input {}
+    &::placeholder {
+      color: $lightCream;
+    }
 
-    &__forgot-container {}
+    &:focus {
+      color: $lightCream;
+    }
+  }
 
-    &__save-login {}
+  &__forgot-container {
+    display: flex;
+    font-size: 1rem;
+    justify-content: space-between;
+    margin: 2rem 1rem;
+  }
 
-    &__save-login-checkbox {}
+  &__forgot-link {
+    text-decoration: none;
+    color: $lightCream;
 
-    &__forgot-link {}
+    &:hover {
+      color: $darkBlue;
+    }
+  }
 
-    &__button-container {}
+  &__button-container {
+    width: 100%;
+    margin-bottom: 1.5rem;
+  }
 
-    &__button {}
+  &__button {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    padding: 0.5rem 0;
+    color: $darkBlue;
+    border: 1px solid $lightCream;
 
-    &__icon {}
+    &:hover {
+      color: $lightCream;
+      background-color: $darkBlue;
+      border: 1px solid $darkBlue;
+      cursor: pointer;
+    }
+  }
 
-    &__create-account {}
+  &__mail-icon {
+    width: 26px;
+    height: 26px;
+    position: absolute;
+    right: 6px;
+    bottom: 3px;
+    filter: invert(47%) sepia(100%) saturate(7468%) hue-rotate(238deg) brightness(87%) contrast(111%);
+  }
 
-    &__create-account-link {}
+  &__login-icon {
+    filter: invert(47%) sepia(100%) saturate(7468%) hue-rotate(238deg) brightness(87%) contrast(111%);
+  }
+
+  &__lock-icon {
+    width: 26px;
+    height: 26px;
+    position: absolute;
+    right: 4px;
+    bottom: 4px;
+    filter: invert(47%) sepia(100%) saturate(7468%) hue-rotate(238deg) brightness(87%) contrast(111%);
+    cursor: pointer;
+  }
+
+  &__create-account {
+    text-align: center;
+    font-size: 1rem;
+  }
+
+  &__create-account-link {
+    text-decoration: none;
+    color: $lightCream;
+
+    &:hover {
+      color: $darkBlue;
+    }
+  }
 }
