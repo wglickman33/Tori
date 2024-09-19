@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import loginIcon from "../../assets/icons/login.svg";
+import Button from "../../components/Button/Button";
 import emailIcon from "../../assets/icons/mail.svg";
 import lockIcon from "../../assets/icons/lock.svg";
 import unlockIcon from "../../assets/icons/unlock.svg";
@@ -82,18 +82,12 @@ const CreateAccountForm = () => {
               />
             </label>
             <div className="create-account__button-container">
-              <button
-                type="submit"
-                className="create-account__button create-account__button--signup"
-              >
+              <Button className="button--signup" type="submit">
                 SIGN UP
-              </button>
-              <button
-                type="submit"
-                className="create-account__button create-account__button--signin"
-              >
+              </Button>
+              <Button className="button--signin" type="submit">
                 SIGN IN
-              </button>
+              </Button>
             </div>
           </form>
         </div>

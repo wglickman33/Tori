@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import Button from "../../components/Button/Button";
 import loginIcon from "../../assets/icons/login.svg";
 import emailIcon from "../../assets/icons/mail.svg";
 import lockIcon from "../../assets/icons/lock.svg";
@@ -65,17 +66,14 @@ const LoginForm = () => {
               <Link className="login__forgot-link">Forgot Password?</Link>
             </div>
             <div className="login__button-container">
-              <button
-                type="submit"
-                className="login__button login__button--login"
-              >
+              <Button className="button--login" type="submit">
                 <img
                   className="login__login-icon"
                   src={loginIcon}
                   alt="login icon"
                 />
                 LOGIN
-              </button>
+              </Button>
             </div>
             <p className="login__create-account">
               Don't have an account?{" "}

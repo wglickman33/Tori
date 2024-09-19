@@ -1,0 +1,54 @@
+@use "../../styles/partials/variables" as *;
+
+.button {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    padding: 0.5rem 0;
+    border-radius: 1.5rem;
+
+    &:hover {
+        cursor: pointer;
+    }
+
+    &__text {
+        display: flex;
+    }
+
+    &--login {
+        color: $darkBlue;
+        border: 1px solid $lightCream;
+
+        &:hover {
+            color: $lightCream;
+            background-color: $darkBlue;
+            border: 1px solid $darkBlue;
+        }
+    }
+
+    &--signup {
+        color: $darkBlue;
+        border: 1px solid $lightCream;
+        background-color: $lightCream;
+
+        &:hover {
+            color: $lightCream;
+            background-color: $darkBlue;
+            border: 1px solid $darkBlue;
+        }
+    }
+
+    &--signin {
+        color: $lightCream;
+        border: 1px solid $darkBlue;
+        background-color: $darkBlue;
+
+        &:hover {
+            color: $darkBlue;
+            background-color: $lightCream;
+            border: 1px solid $lightCream;
+        }
+    }
+}
