@@ -1,14 +1,28 @@
 import "./App.scss";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LoginForm from "./Components/LoginForm/LoginForm";
-import CreateAccountForm from "./components/CreateAccountForm/CreateAccountForm";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import HomePage from "./pages/HomePage/HomePage";
+import DashboardPage from "./pages/DashboardPage/DashboardPage";
+import LoginPage from "./pages/LoginPage/LoginPage";
+import CreateAccountPage from "./pages/CreateAccountPage/CreateAccountPage";
+import SearchPage from "./pages/SearchPage/SearchPage";
+import HelpPage from "./pages/HelpPage/HelpPage";
+import SettingsPage from "./pages/SettingsPage/SettingsPage";
+import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
 
 function App() {
   return (
     <BrowserRouter>
-      <CreateAccountForm />
       <Routes>
-        <Route />
+        <Route path="/" element={<Navigate to="/items" replace />} />
+        <Route path="/items" element={<HomePage />} />
+        <Route path="/items/:id" element={<HomePage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/create-account" element={<CreateAccountPage />} />
+        <Route path="/search" element={<SearchPage />} />
+        <Route path="/help" element={<HelpPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );
