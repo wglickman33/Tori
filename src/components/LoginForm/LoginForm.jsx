@@ -65,7 +65,10 @@ const LoginForm = () => {
               <Link className="login__forgot-link">Forgot Password?</Link>
             </div>
             <div className="login__button-container">
-              <button type="submit" className="login__button">
+              <button
+                type="submit"
+                className="login__button login__button--login"
+              >
                 <img
                   className="login__login-icon"
                   src={loginIcon}

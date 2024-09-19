@@ -1,11 +1,12 @@
 import "./App.scss";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginForm from "./Components/LoginForm/LoginForm";
+import CreateAccountForm from "./components/CreateAccountForm/CreateAccountForm";
 
 function App() {
   return (
     <BrowserRouter>
-      <LoginForm />
+      <CreateAccountForm />
       <Routes>
         <Route />
       </Routes>
