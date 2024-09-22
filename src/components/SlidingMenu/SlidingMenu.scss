@@ -1,0 +1,88 @@
+@use "../../styles/partials/variables" as *;
+
+.sliding-menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 25%;
+  height: 100%;
+  background-color: $darkBlue;
+  color: $lightCream;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 2rem;
+  z-index: 10;
+  transform: translateX(100%);
+  transition: transform 0.6s ease;
+
+  &.open {
+    transform: translateX(0);
+  }
+
+  &__close {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    cursor: pointer;
+    border-radius: 1rem;
+
+    &:hover {
+      background-color: $lightCream;
+    }
+
+    .sliding-menu__close-icon {
+      filter: brightness(0) saturate(100%) invert(99%) sepia(0%) saturate(1345%) hue-rotate(305deg) brightness(112%) contrast(98%);
+      width: 40px;
+      height: 40px;
+
+      &:hover {
+        filter: brightness(0) saturate(100%) invert(14%) sepia(73%) saturate(4587%) hue-rotate(241deg) brightness(74%) contrast(148%);
+      }
+    }
+  }
+
+  &__list {
+    list-style: none;
+    padding-top: 2rem;
+    margin-top: 1.5rem;
+  }
+
+  &__list-item {
+    font-size: 3.25rem;
+    margin: 2.25rem 0;
+    text-align: center;
+  }
+
+  &__list-link {
+    color: $lightCream;
+    text-decoration: none;
+
+    &:hover {
+      color: $lightCream;
+      opacity: 0.6;
+    }
+
+    &--active {
+      color: $lightCream;
+      opacity: 0.6;
+    }
+  }
+
+  &__list-icon {
+    margin-right: 0.625rem;
+    width: 40px;
+    height: 40px;
+  }
+
+  &__button {
+    &:hover {
+      background-color: $powderBlue;
+    }
+  }
+}
+
+.logout-icon {
+  filter: brightness(0) saturate(100%) invert(14%) sepia(73%) saturate(4587%) hue-rotate(241deg) brightness(74%) contrast(148%);
+}

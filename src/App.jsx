@@ -5,6 +5,7 @@ import DashboardPage from "./pages/DashboardPage/DashboardPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import CreateAccountPage from "./pages/CreateAccountPage/CreateAccountPage";
 import SearchPage from "./pages/SearchPage/SearchPage";
+import TagsPage from "./pages/TagsPage/TagsPage";
 import HelpPage from "./pages/HelpPage/HelpPage";
 import SettingsPage from "./pages/SettingsPage/SettingsPage";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
@@ -20,6 +21,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/create-account" element={<CreateAccountPage />} />
         <Route path="/search" element={<SearchPage />} />
+        <Route path="/tags" element={<TagsPage />} />
         <Route path="/help" element={<HelpPage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="*" element={<NotFoundPage />} />

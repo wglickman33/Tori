@@ -34,8 +34,8 @@
     margin-bottom: 1.5rem;
   }
 
-  &__login-icon {
-    filter: invert(47%) sepia(100%) saturate(7468%) hue-rotate(238deg) brightness(87%) contrast(111%);
+  &__login-icon, &__lock-icon, &__mail-icon {
+    filter: brightness(0) saturate(100%) invert(14%) sepia(73%) saturate(4587%) hue-rotate(241deg) brightness(74%) contrast(148%);
   }
 
   &__create-account {
