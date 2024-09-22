@@ -1,0 +1,139 @@
+@use "../../styles/partials/variables" as *;
+
+.dashboard {
+    color: $darkBlue;
+    background-color: $powderBlue;
+    height: 100vh;
+    border: 3px solid $darkBlue;
+
+    &__content {
+        display: flex;
+        justify-content: space-between;
+        padding: 1rem;
+        border-bottom: 3px solid $darkBlue;
+    }
+
+    &__header-container {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    &__header {
+        font-size: 4rem;
+        padding-left: 2rem;
+        margin-left: 2rem;
+    }
+
+    &__logo-container {
+        max-height: 40px;
+        max-width: 40px;
+        position: relative;
+    }
+
+    &__logo {
+        position: absolute;
+        width: 140px;
+        height: 140px;
+        left: -40px;
+        top: -50px;
+    }
+
+    &__menu {
+        padding-right: 1.25rem;
+        padding-top: 0.25rem;
+    }
+
+    &__menu-icon {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+.inventory {
+    padding-bottom: 2rem;
+    margin-bottom: auto;
+    height: 75%;
+
+    &__container {
+        margin: 0 auto;
+        width: 80%;
+    }
+
+    &__title {
+        font-size: 3rem;
+        padding-top: 2rem;
+        margin-top: 2rem;
+    }
+
+    &__card-container {
+        display: flex;
+        gap: 2.5rem;
+        padding-top: 1.5rem;
+    }
+
+    &__card {
+        border: 3px solid $darkBlue;
+        width: 25%;
+        height: 35vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    &__icon-container {
+        border: 3px solid $darkBlue;
+        border-radius: 50%;
+        padding: 0.75rem;
+        background-color: $paleBlue;
+
+        &--alternate {
+            background-color: $lightCream;
+        }
+
+        &--hoverable {
+            &:hover {
+                cursor: pointer;
+                background-color: $darkBlue;
+            }
+        }
+    }
+
+    &__icon {
+        width: 50px;
+        height: 50px;
+
+        &--hoverable {
+            &:hover {
+                filter: brightness(0) saturate(100%) invert(99%) sepia(0%) saturate(1345%) hue-rotate(305deg) brightness(112%) contrast(98%);
+            }
+        }
+    }
+
+    &__card-text {
+        text-align: center;
+        font-size: 2rem;
+    }
+}
+
+.help {
+    &__button-container {
+        margin: 1rem 2rem;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    &__button {
+        border-radius: 2rem;
+    }
+}
+
+.card1, .card3 {
+    background-color: $lightCream;
+}
+
+.card2, .card4 {
+    background-color: $paleBlue;
+}

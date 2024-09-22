@@ -17,6 +17,11 @@
         display: flex;
     }
 
+    &__link {
+        text-decoration: none;
+        color: $darkBlue;
+    }
+
     &--add-item {
         border: 3px solid $darkBlue;
         color: $darkBlue;
@@ -46,6 +51,7 @@
     &--help {
         padding: 1rem 4rem;
         border: 3px solid $darkBlue;
+        color: $darkBlue;
 
         &:hover {
             background-color: $darkBlue;

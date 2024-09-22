@@ -3,7 +3,7 @@ import Button from "../../components/Button/Button";
 import "./SlidingMenu.scss";
 
 const SlidingMenu = ({ isMenuOpen, toggleMenu }) => {
-  const location = useLocation(); // Hook to get the current route
+  const location = useLocation();
 
   const isActive = (path) => {
     return location.pathname === path ? "sliding-menu__list-link--active" : "";

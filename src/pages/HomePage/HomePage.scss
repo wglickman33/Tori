@@ -40,6 +40,14 @@
     position: relative;
   }
 
+  &__logo {
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    left: -50px;
+    top: -50px;
+  }
+
   &__header {
     font-size: 4rem;
     padding-left: 2rem;
@@ -239,14 +247,6 @@
     height: 35px;
     margin-right: 0.5rem;
   }
-}
-
-.logo {
-  position: absolute;
-  width: 140px;
-  height: 140px;
-  left: -50px;
-  top: -50px;
 }
 
 .icon {

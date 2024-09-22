@@ -67,7 +67,7 @@ const HomePage = () => {
           <h2 className="itempage__count-text">Items: 0</h2>
         </div>
         <div className="itempage__left-bottom">
-          <Button className="button--help itempage__button">
+          <Button to="/help" className="button--help itempage__button">
             <img
               className="itempage__help-icon icon"
               src="../../../src/assets/icons/help.svg"
