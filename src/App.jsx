@@ -8,6 +8,7 @@ import SearchPage from "./pages/SearchPage/SearchPage";
 import TagsPage from "./pages/TagsPage/TagsPage";
 import HelpPage from "./pages/HelpPage/HelpPage";
 import SettingsPage from "./pages/SettingsPage/SettingsPage";
+import FAQPage from "./pages/FAQPage/FAQPage";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
         <Route path="/tags" element={<TagsPage />} />
         <Route path="/help" element={<HelpPage />} />
         <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/faqs" element={<FAQPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
