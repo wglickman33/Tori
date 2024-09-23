@@ -1,0 +1,281 @@
+@use "../../styles/partials/variables" as *;
+
+.search {
+  display: flex;
+  height: 100vh;
+  background-color: $powderBlue;
+  color: $darkBlue;
+
+  &__left {
+    width: 25%;
+    background-color: $paleBlue;
+    border: 3px solid $darkBlue;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  &__left-top {
+    padding: 1.5rem 0 1.5rem 2rem;
+    border-bottom: 3px solid $darkBlue;
+
+    .search__header {
+      font-size: 4rem;
+      margin: 0;
+    }
+  }
+
+  &__filters {
+    padding: 2rem;
+    flex-grow: 1;
+  }
+
+  &__filter-group-container {
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid $darkBlue;
+    padding-bottom: 1rem;
+  }
+
+  &__filter-group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  &__filter-title-container {
+    display: flex;
+    align-items: center;
+
+    .search__filter-title {
+      font-size: 1.5rem;
+      margin-left: 0.5rem;
+    }
+  }
+
+  &__filter-icon-container {
+    display: flex;
+    align-items: center;
+  }
+
+  &__filter-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  &__filter-checkbox-container {
+    display: flex;
+    align-items: center;
+    margin-left: 1.5rem;
+  }
+
+  &__filter-checkbox {
+    margin-right: 0.5rem;
+  }
+
+  &__filter-label {
+    font-size: 1.5rem;
+  }
+
+  &__filter-status {
+    margin-left: 1.5rem;
+  }
+
+  &__filter-status-text {
+    font-size: 1.5rem;
+    color: $darkBlue;
+  }
+
+  &__filter-range {
+    display: flex;
+    gap: 1rem;
+    margin-left: 1.5rem;
+
+    .search__filter-input {
+      width: 60px;
+      padding: 0.5rem;
+      font-size: 1.25rem;
+      border: 2px solid $darkBlue;
+      background-color: $lightCream;
+      color: $darkBlue;
+
+      &::placeholder {
+        color: $darkBlue;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: $darkBlue;
+        background-color: $paleBlue;
+      }
+    }
+  }
+
+  &__left-bottom {
+    padding: 1.5rem;
+    border-top: 3px solid $darkBlue;
+    display: flex;
+    justify-content: center;
+
+    .search__apply-button {
+      padding: 1rem 3rem;
+      font-size: 1.75rem;
+      border: 3px solid $darkBlue;
+      background-color: $powderBlue;
+      color: $darkBlue;
+      border-radius: 2.5rem;
+      transition: background-color 0.3s, color 0.3s;
+
+      &:hover {
+        background-color: $darkBlue;
+        color: $lightCream;
+      }
+    }
+  }
+
+  &__right {
+    width: 75%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    border-right: 3px solid $darkBlue;
+    border-bottom: 3px solid $darkBlue;
+  }
+
+  &__right-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 3px solid $darkBlue;
+    border-top: 3px solid $darkBlue;
+  }
+
+  &__header-container {
+    display: flex;
+    align-items: center;
+  }
+
+  &__logo-container {
+    position: relative;
+    width: 50px;
+    height: 50px;
+  }
+
+  &__logo {
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    left: -45px;
+    top: -25px;
+  }
+
+  &__header {
+    font-size: 4rem;
+    margin-left: 1rem;
+  }
+
+  &__button-container {
+    margin-right: 1rem;
+  }
+
+  .search__menu-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  &__content {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    height: 70vh;
+
+    .search__description {
+      font-size: 2.25rem;
+      margin: 2rem 0;
+    }
+
+    .search__icon-group {
+      display: flex;
+      margin-top: 2rem;
+      gap: 2.5rem;
+      flex-direction: column;
+      width: 60%;
+    }
+
+    .search__icon-group-top {
+        display: flex;
+        gap: 2.5rem;
+        justify-content: space-between;
+    }
+
+    .search__icon-group-bottom {
+        display: flex;
+        justify-content: center;
+    }
+
+    .search__icon-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+
+      .search__icon-container {
+        border: 3px solid $darkBlue;
+        border-radius: 50%;
+        padding: 0.75rem;
+        background-color: $paleBlue;
+      }
+
+      .search__icon {
+        width: 50px;
+        height: 50px;
+      }
+
+      .search__icon-item-text {
+        font-size: 1.75rem;
+      }
+
+      .search__description {
+        font-size: 1.75rem;
+        margin: 0;
+      }
+    }
+  }
+
+  &__right-bottom {
+    padding: 1.5rem;
+    display: flex;
+    justify-content: center;
+
+    .search__help-button {
+      padding: 0.75rem 3rem;
+      font-size: 1.75rem;
+      border: 3px solid $darkBlue;
+      background-color: $lightCream;
+      color: $darkBlue;
+      transition: background-color 0.3s, color 0.3s;
+
+      &:hover {
+        background-color: $darkBlue;
+        color: $lightCream;
+
+        .search__help-icon {
+            filter: $icon-color-hover;
+        }
+      }
+    }
+
+    .search__help-icon {
+      width: 30px;
+      height: 30px;
+      margin-right: 0.25rem;
+    }
+  }
+}
+
+.icon {
+  filter: $icon-color-default;
+}
