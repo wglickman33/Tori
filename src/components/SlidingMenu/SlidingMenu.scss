@@ -45,13 +45,13 @@
 
   &__list {
     list-style: none;
-    padding-top: 2rem;
-    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    margin-top: 1.25rem;
   }
 
   &__list-item {
-    font-size: 3.25rem;
-    margin: 2.25rem 0;
+    font-size: 2.75rem;
+    margin: 2rem 0;
     text-align: center;
   }
 
@@ -77,6 +77,11 @@
   }
 
   &__button {
+    position: absolute;
+    bottom: 35px;
+    right: 19%;
+    max-width: 225px;
+
     &:hover {
       background-color: $powderBlue;
     }
