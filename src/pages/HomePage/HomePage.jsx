@@ -1,13 +1,25 @@
 import { useState } from "react";
 import Button from "../../components/Button/Button";
-import "./HomePage.scss";
 import SlidingMenu from "../../components/SlidingMenu/SlidingMenu";
+import AddItemModal from "../../components/AddItemModal/AddItemModal";
+import AddFolderModal from "../../components/AddFolderModal/AddFolderModal";
+import "./HomePage.scss";
 
 const HomePage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
+  const [isAddFolderModalOpen, setIsAddFolderModalOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const toggleAddItemModal = () => {
+    setIsAddItemModalOpen(!isAddItemModalOpen);
+  };
+
+  const toggleAddFolderModal = () => {
+    setIsAddFolderModalOpen(!isAddFolderModalOpen);
   };
 
   return (
@@ -25,10 +37,16 @@ const HomePage = () => {
             <h1 className="itempage__header">All Items</h1>
           </div>
           <div className="itempage__button-container">
-            <Button className="button--add-item itempage__button">
+            <Button
+              className="button--add-item itempage__button"
+              onClick={toggleAddItemModal}
+            >
               Add Item
             </Button>
-            <Button className="button--add-folder itempage__button">
+            <Button
+              className="button--add-folder itempage__button"
+              onClick={toggleAddFolderModal}
+            >
               Add Folder
             </Button>
           </div>
@@ -123,6 +141,11 @@ const HomePage = () => {
         </div>
       </section>
       <SlidingMenu isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} />
+      <AddItemModal isOpen={isAddItemModalOpen} onClose={toggleAddItemModal} />
+      <AddFolderModal
+        isOpen={isAddFolderModalOpen}
+        onClose={toggleAddFolderModal}
+      />
     </main>
   );
 };

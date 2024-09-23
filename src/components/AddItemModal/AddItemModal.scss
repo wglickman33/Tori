@@ -1,0 +1,117 @@
+@use "../../styles/partials/variables" as *;
+
+.additem-modal {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+
+  &__content {
+    background-color: $darkBlue;
+    color: $lightCream;
+    width: 60%;
+    padding: 2.5rem;
+    border-radius: 1rem;
+    position: relative;
+  }
+
+  &__close {
+    display: flex;
+    justify-content: flex-end;
+    position: absolute;
+    right: 15px;
+    top: 5px;
+    background: none;
+    border: none;
+    width: 40px;
+    border-radius: 1.25rem;
+
+    &:hover {
+        cursor: pointer;
+        background-color: $lightCream;
+    }
+  }
+
+  &__close-icon {
+    width: 40px;
+    height: 40px;
+
+    &:hover {
+        filter: brightness(0) saturate(100%) invert(14%) sepia(73%) saturate(4587%) hue-rotate(241deg) brightness(74%) contrast(148%);
+    }
+  }
+
+  &__title {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    gap: 3rem;
+  }
+
+  &__group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__label {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  &__input,
+  &__select {
+    padding: 0 1rem;
+    border-radius: 1.25rem;
+    border: 1px solid $lightCream;
+    font-size: 1.5rem;
+    color: $darkBlue;
+    background-color: $lightCream;
+    height: 44px;
+
+    &::placeholder {
+      color: $darkBlue;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $lightCream;
+    }
+  }
+
+  &__submit {
+    max-width: 12.5rem;
+    padding: 0.75rem 2rem;
+    background-color: $lightCream;
+    color: $darkBlue;
+    border: 2px solid $darkBlue;
+    border-radius: 1.5rem;
+    font-size: 1.5rem;
+    margin: 2rem auto 0 auto;
+
+    &:hover {
+      background-color: $darkBlue;
+      cursor: pointer;
+      color: $lightCream;
+    }
+  }
+
+  &__option {
+    color: $darkBlue;
+  }
+}
