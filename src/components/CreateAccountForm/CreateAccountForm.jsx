@@ -25,7 +25,7 @@ const CreateAccountForm = () => {
               Full Name
               <input
                 className="create-account__form-input"
-                type={isPasswordVisible ? "text" : "password"}
+                type="text"
                 id="fullName"
                 name="fullName"
                 placeholder="Your Name"
@@ -56,7 +56,9 @@ const CreateAccountForm = () => {
                 placeholder="Password"
               />
               <img
-                className="create-account__lock-icon"
+                className={`create-account__lock-icon ${
+                  isPasswordVisible ? "unlock" : ""
+                }`}
                 src={isPasswordVisible ? unlockIcon : lockIcon}
                 alt={isPasswordVisible ? "unlock icon" : "lock icon"}
                 onClick={togglePasswordVisibility}
@@ -75,7 +77,9 @@ const CreateAccountForm = () => {
                 placeholder="Confirm password"
               />
               <img
-                className="create-account__lock-icon"
+                className={`create-account__lock-icon ${
+                  isPasswordVisible ? "unlock" : ""
+                }`}
                 src={isPasswordVisible ? unlockIcon : lockIcon}
                 alt={isPasswordVisible ? "unlock icon" : "lock icon"}
                 onClick={togglePasswordVisibility}
@@ -85,7 +89,7 @@ const CreateAccountForm = () => {
               <Button className="button--signup" type="submit">
                 SIGN UP
               </Button>
-              <Button className="button--signin" type="submit">
+              <Button to="/login" className="button--signin" type="button">
                 SIGN IN
               </Button>
             </div>

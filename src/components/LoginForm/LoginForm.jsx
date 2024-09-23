@@ -47,7 +47,9 @@ const LoginForm = () => {
                 placeholder="Password"
               />
               <img
-                className="login__lock-icon"
+                className={`login__lock-icon ${
+                  isPasswordVisible ? "unlock" : ""
+                }`}
                 src={isPasswordVisible ? unlockIcon : lockIcon}
                 alt={isPasswordVisible ? "unlock icon" : "lock icon"}
                 onClick={togglePasswordVisibility}
@@ -68,7 +70,7 @@ const LoginForm = () => {
             <div className="login__button-container">
               <Button className="button--login" type="submit">
                 <img
-                  className="login__login-icon"
+                  className="login__login-icon hover-invert"
                   src={loginIcon}
                   alt="login icon"
                 />
@@ -77,7 +79,9 @@ const LoginForm = () => {
             </div>
             <p className="login__create-account">
               Don't have an account?{" "}
-              <Link className="login__create-account-link">Create Account</Link>
+              <Link to="/create-account" className="login__create-account-link">
+                Create Account
+              </Link>
             </p>
           </form>
         </div>

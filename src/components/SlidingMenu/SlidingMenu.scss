@@ -33,12 +33,12 @@
     }
 
     .sliding-menu__close-icon {
-      filter: brightness(0) saturate(100%) invert(99%) sepia(0%) saturate(1345%) hue-rotate(305deg) brightness(112%) contrast(98%);
+      filter: $icon-color-hover;
       width: 40px;
       height: 40px;
 
       &:hover {
-        filter: brightness(0) saturate(100%) invert(14%) sepia(73%) saturate(4587%) hue-rotate(241deg) brightness(74%) contrast(148%);
+        filter: $icon-color-default;
       }
     }
   }
@@ -89,5 +89,5 @@
 }
 
 .logout-icon {
-  filter: brightness(0) saturate(100%) invert(14%) sepia(73%) saturate(4587%) hue-rotate(241deg) brightness(74%) contrast(148%);
+  filter: $icon-color-default;
 }

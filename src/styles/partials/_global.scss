@@ -66,7 +66,6 @@ html {
         position: absolute;
         right: 6px;
         bottom: 3px;
-        filter: invert(47%) sepia(100%) saturate(7468%) hue-rotate(238deg) brightness(87%) contrast(111%);
     }
 
     &__lock-icon {
@@ -75,7 +74,11 @@ html {
         position: absolute;
         right: 4px;
         bottom: 4px;
-        filter: invert(47%) sepia(100%) saturate(7468%) hue-rotate(238deg) brightness(87%) contrast(111%);
         cursor: pointer;
+        filter: $icon-color-default;
+
+        &.unlock {
+            filter: $icon-color-hover;
+        }
     }
 }

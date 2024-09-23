@@ -60,7 +60,7 @@ const DashboardPage = () => {
               <Link to="/" className="inventory__card-link">
                 <div className="inventory__icon-container inventory__icon-container--alternate inventory__icon-container--hoverable">
                   <img
-                    className="inventory__icon inventory__icon--hoverable icon"
+                    className="inventory__icon icon"
                     src="../../../src/assets/icons/items.svg"
                     alt="Items Icon"
                   />
@@ -104,7 +104,7 @@ const DashboardPage = () => {
         <div className="help__button-container">
           <Button to="/help" className="button--help help__button">
             <img
-              className="dashboard__help-icon icon"
+              className="dashboard__help-icon icon hover-invert"
               src="../../../src/assets/icons/help.svg"
               alt="Help Icon"
             />

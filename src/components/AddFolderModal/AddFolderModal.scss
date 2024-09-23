@@ -41,7 +41,7 @@
     height: 40px;
 
     &:hover {
-        filter: brightness(0) saturate(100%) invert(14%) sepia(73%) saturate(4587%) hue-rotate(241deg) brightness(74%) contrast(148%);
+        filter: $icon-color-default;
     }
   }
 

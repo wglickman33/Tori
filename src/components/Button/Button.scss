@@ -18,6 +18,9 @@
     }
 
     &__link {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
         text-decoration: none;
         color: $darkBlue;
     }
@@ -52,10 +55,15 @@
         padding: 1rem 4rem;
         border: 3px solid $darkBlue;
         color: $darkBlue;
+        max-width: 200px;
 
         &:hover {
             background-color: $darkBlue;
             color: $lightCream;
+
+            .hover-invert {
+                filter: $icon-color-hover;
+            }
         }
     }
 
@@ -97,6 +105,10 @@
             color: $lightCream;
             background-color: $darkBlue;
             border: 1px solid $darkBlue;
+
+            .hover-invert {
+                filter: $icon-color-hover;
+            }
         }
     }
 

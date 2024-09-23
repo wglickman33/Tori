@@ -87,7 +87,7 @@ const HomePage = () => {
         <div className="itempage__left-bottom">
           <Button to="/help" className="button--help itempage__button">
             <img
-              className="itempage__help-icon icon"
+              className="itempage__help-icon icon hover-invert"
               src="../../../src/assets/icons/help.svg"
               alt="Help Icon"
             />
