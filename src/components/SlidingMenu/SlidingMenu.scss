@@ -58,6 +58,8 @@
   &__list-link {
     color: $lightCream;
     text-decoration: none;
+    display: flex;
+    align-items: normal;
 
     &:hover {
       color: $lightCream;
@@ -83,11 +85,19 @@
     max-width: 225px;
 
     &:hover {
-      background-color: $powderBlue;
+      color: $lightCream;
+      background-color: $darkBlue;
+
+      .logout-icon {
+        filter: $icon-color-hover;
+      }
     }
   }
 }
 
 .logout-icon {
+  width: 35px;
+  height: 35px;
+  margin-top: 0.25rem;
   filter: $icon-color-default;
 }

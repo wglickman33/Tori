@@ -52,10 +52,11 @@
     }
 
     &--help {
-        padding: 1rem 4rem;
+        padding: 0.75rem 4rem;
         border: 3px solid $darkBlue;
         color: $darkBlue;
         max-width: 200px;
+        font-size: 2rem;
 
         &:hover {
             background-color: $darkBlue;
@@ -134,5 +135,17 @@
             background-color: $lightCream;
             border: 1px solid $lightCream;
         }
+    }
+
+    &--addtag {
+        padding: 0.75rem 2rem;
+        border-radius: 2.5rem;
+        font-size: 1.75rem;
+    }
+
+    &--faqs {
+        padding: 1rem 2rem;
+        border-radius: 2.5rem;
+        font-size: 1.75rem;
     }
 }

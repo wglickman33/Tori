@@ -50,7 +50,7 @@ const TagsPage = () => {
           <h3 className="tags__body-text">Click below to get started!</h3>
         </div>
         <div className="tags__button-container">
-          <Button className="tags__button button--additem">+ Add Item</Button>
+          <Button className="tags__button button--addtag">+ Add Tag</Button>
         </div>
       </div>
       <div className="help">
