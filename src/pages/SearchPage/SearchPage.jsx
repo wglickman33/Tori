@@ -4,6 +4,10 @@ import SlidingMenu from "../../components/SlidingMenu/SlidingMenu";
 import "./SearchPage.scss";
 
 const SearchPage = () => {
+  const [isFoldersOpen, setIsFoldersOpen] = useState(true);
+  const [isNameOpen, setIsNameOpen] = useState(true);
+  const [isPriceOpen, setIsPriceOpen] = useState(true);
+  const [isTagsOpen, setIsTagsOpen] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -18,12 +22,19 @@ const SearchPage = () => {
         </div>
         <div className="search__filters">
           <div className="search__filter-group-container">
-            <div className="search__filter-group-header">
+            <div
+              className="search__filter-group-header"
+              onClick={() => setIsFoldersOpen(!isFoldersOpen)}
+            >
               <div className="search__filter-title-container">
                 <img
-                  className="search__filter-icon icon"
-                  src="../../../src/assets/icons/arrow-drop-down.svg"
-                  alt="Drop Down Icon"
+                  className="search__filter-icon icon drop-icon"
+                  src={
+                    isFoldersOpen
+                      ? "../../../src/assets/icons/arrow-drop-down.svg"
+                      : "../../../src/assets/icons/arrow-drop-up.svg"
+                  }
+                  alt="Toggle Icon"
                 />
                 <h3 className="search__filter-title">Folders</h3>
               </div>
@@ -35,18 +46,27 @@ const SearchPage = () => {
                 />
               </div>
             </div>
-            <div className="search__filter-checkbox-container">
-              <input type="checkbox" className="search__filter-checkbox" />
-              <label className="search__filter-label">All Items</label>
-            </div>
+            {isFoldersOpen && (
+              <div className="search__filter-checkbox-container">
+                <input type="checkbox" className="search__filter-checkbox" />
+                <label className="search__filter-label">All Items</label>
+              </div>
+            )}
           </div>
           <div className="search__filter-group-container">
-            <div className="search__filter-group-header">
+            <div
+              className="search__filter-group-header"
+              onClick={() => setIsNameOpen(!isNameOpen)}
+            >
               <div className="search__filter-title-container">
                 <img
-                  className="search__filter-icon icon"
-                  src="../../../src/assets/icons/arrow-drop-down.svg"
-                  alt="Drop Down Icon"
+                  className="search__filter-icon icon drop-icon"
+                  src={
+                    isNameOpen
+                      ? "../../../src/assets/icons/arrow-drop-down.svg"
+                      : "../../../src/assets/icons/arrow-drop-up.svg"
+                  }
+                  alt="Toggle Icon"
                 />
                 <h3 className="search__filter-title">Name</h3>
               </div>
@@ -58,41 +78,61 @@ const SearchPage = () => {
                 />
               </div>
             </div>
-            <div className="search__filter-status">
-              <h3 className="search__filter-status-text">No data available</h3>
-            </div>
+            {isNameOpen && (
+              <div className="search__filter-status">
+                <h3 className="search__filter-status-text">
+                  No data available
+                </h3>
+              </div>
+            )}
           </div>
           <div className="search__filter-group-container">
-            <div className="search__filter-group-header">
+            <div
+              className="search__filter-group-header"
+              onClick={() => setIsPriceOpen(!isPriceOpen)}
+            >
               <div className="search__filter-title-container">
                 <img
-                  className="search__filter-icon icon"
-                  src="../../../src/assets/icons/arrow-drop-down.svg"
-                  alt="Drop Down Icon"
+                  className="search__filter-icon icon drop-icon"
+                  src={
+                    isPriceOpen
+                      ? "../../../src/assets/icons/arrow-drop-down.svg"
+                      : "../../../src/assets/icons/arrow-drop-up.svg"
+                  }
+                  alt="Toggle Icon"
                 />
                 <h3 className="search__filter-title">Price</h3>
               </div>
             </div>
-            <div className="search__filter-range">
-              <input
-                type="number"
-                className="search__filter-input"
-                placeholder="Min"
-              />
-              <input
-                type="number"
-                className="search__filter-input"
-                placeholder="Max"
-              />
-            </div>
+            {isPriceOpen && (
+              <div className="search__filter-range">
+                <input
+                  type="number"
+                  className="search__filter-input"
+                  placeholder="Min"
+                />
+                <input
+                  type="number"
+                  className="search__filter-input"
+                  placeholder="Max"
+                />
+              </div>
+            )}
           </div>
           <div className="search__filter-group-container">
-            <div className="search__filter-group-header">
+            <div
+              className="search__filter-group-header"
+              onClick={() => setIsTagsOpen(!isTagsOpen)}
+            >
               <div className="search__filter-title-container">
                 <img
-                  className="search__filter-icon icon"
-                  src="../../../src/assets/icons/arrow-drop-down.svg"
-                  alt="Drop Down Icon"
+                  className="search__filter-icon icon drop-icon"
+                  src={
+                    isTagsOpen
+                      ? "../../../src/assets/icons/arrow-drop-down.svg"
+                      : "../../../src/assets/icons/arrow-drop-up.svg"
+                  }
+                  alt="Toggle Icon"
                 />
                 <h3 className="search__filter-title">Tags</h3>
               </div>
@@ -104,17 +144,23 @@ const SearchPage = () => {
                 />
               </div>
             </div>
-            <div className="search__filter-status">
-              <h3 className="search__filter-status-text">No data available</h3>
-            </div>
+            {isTagsOpen && (
+              <div className="search__filter-status">
+                <h3 className="search__filter-status-text">
+                  No data available
+                </h3>
+              </div>
+            )}
           </div>
         </div>
+
         <div className="search__left-bottom">
           <Button className="search__apply-button button--apply">
             Apply Filters
           </Button>
         </div>
       </section>
+
       <section className="search__right">
         <div className="search__right-top">
           <div className="search__header-container">
@@ -140,6 +186,7 @@ const SearchPage = () => {
             </Button>
           </div>
         </div>
+
         <div className="search__content">
           <h3 className="search__description">
             Create a list of any item in your inventory using these filters.
@@ -191,6 +238,7 @@ const SearchPage = () => {
             </div>
           </div>
         </div>
+
         <div className="search__right-bottom">
           <Button to="/help" className="button--help search__help-button">
             <img
