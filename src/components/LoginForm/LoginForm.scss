@@ -1,9 +1,31 @@
 @use "../../styles/partials/variables" as *;
+@use "../../styles/partials/breakpoints" as *;
 
 .login {
+  &__content {
+    height: 70vh;
+    width: 45vw;
+
+    @include large-desktop {
+      height: 65vh;
+      width: 35vw;
+    }
+  }
 
   &__header {
-    font-size: 4rem;
+    font-size: 4.5rem;
+
+    @include large-desktop {
+      font-size: 6rem;
+    }
+  }
+
+  &__form {
+    font-size: 2rem;
+  }
+
+  &__form-input {
+    font-size: 2rem;
   }
 
   &__form-label {
@@ -11,13 +33,21 @@
     flex-direction: column;
     margin-bottom: 1.5rem;
     position: relative;
+
+    @include large-desktop {
+      margin-bottom: 2.5rem;
+    }
 }
 
   &__forgot-container {
     display: flex;
-    font-size: 1rem;
+    font-size: 2rem;
     justify-content: space-between;
-    margin: 2rem 1rem;
+    margin: 1.5rem 1rem;
+
+    @include large-desktop {
+      margin: 2.5rem 1rem;
+    }
   }
 
   &__forgot-link {
@@ -32,6 +62,10 @@
   &__button-container {
     width: 100%;
     margin-bottom: 1.5rem;
+
+    @include large-desktop {
+      margin-bottom: 2.5rem;
+    }
   }
 
   &__login-icon, &__mail-icon {
@@ -40,7 +74,7 @@
 
   &__create-account {
     text-align: center;
-    font-size: 1rem;
+    font-size: 2rem;
   }
 
   &__create-account-link {

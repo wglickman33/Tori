@@ -22,7 +22,7 @@ const SettingsPage = () => {
               alt="Tori Logo"
             />
           </div>
-          <h1 className="settings__header">Help</h1>
+          <h1 className="settings__header">Settings</h1>
         </div>
         <div className="settings__menu">
           <Button

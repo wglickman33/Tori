@@ -1,4 +1,5 @@
 @use "../../styles/partials/variables" as *;
+@use "../../styles/partials/breakpoints" as *;
 
 .search {
   display: flex;
@@ -31,7 +32,7 @@
   }
 
   &__filter-group-container {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     border-bottom: 2px solid $darkBlue;
     padding-bottom: 1rem;
   }
@@ -40,7 +41,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
   }
 
   &__filter-title-container {
@@ -48,7 +49,7 @@
     align-items: center;
 
     .search__filter-title {
-      font-size: 1.5rem;
+      font-size: 2rem;
       margin-left: 0.5rem;
     }
   }
@@ -59,8 +60,8 @@
   }
 
   &__filter-icon {
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
   }
 
   &__filter-checkbox-container {
@@ -92,9 +93,9 @@
     margin-left: 1.5rem;
 
     .search__filter-input {
-      width: 60px;
+      width: 65px;
       padding: 0.5rem;
-      font-size: 1.25rem;
+      font-size: 1.5rem;
       border: 2px solid $darkBlue;
       background-color: $lightCream;
       color: $darkBlue;
@@ -119,7 +120,7 @@
 
     .search__apply-button {
       padding: 1rem 3rem;
-      font-size: 1.75rem;
+      font-size: 2rem;
       border: 3px solid $darkBlue;
       background-color: $powderBlue;
       color: $darkBlue;
@@ -192,8 +193,12 @@
     text-align: center;
     height: 70vh;
 
+    @include large-desktop {
+        height: 75vh;
+    }
+
     .search__description {
-      font-size: 2.25rem;
+      font-size: 2.75rem;
       margin: 2rem 0;
     }
 
@@ -235,27 +240,27 @@
       }
 
       .search__icon-item-text {
-        font-size: 1.75rem;
-      }
-
-      .search__description {
-        font-size: 1.75rem;
-        margin: 0;
+        font-size: 2.25rem;
       }
     }
   }
 
   &__right-bottom {
-    padding: 1.5rem;
+    padding: 1.25rem;
     display: flex;
     justify-content: center;
 
+    @include large-desktop {
+        padding: 2rem;
+    }
+
     .search__help-button {
-      padding: 0.75rem 3rem;
+      padding: 0.75rem 2rem;
       font-size: 1.75rem;
       border: 3px solid $darkBlue;
       background-color: $lightCream;
       color: $darkBlue;
+      border-radius: 2.5rem;
       transition: background-color 0.3s, color 0.3s;
 
       &:hover {

@@ -1,4 +1,5 @@
 @use "../../styles/partials/variables" as *;
+@use "../../styles/partials/breakpoints" as *;
 
 .dashboard {
     color: $darkBlue;
@@ -116,17 +117,14 @@
 }
 
 .help {
-    margin-top: 2.5rem;
-    padding-top: 2.5rem;
-
-    &__button-container {
-        margin: 2rem;
-        display: flex;
-        justify-content: flex-end;
-    }
 
     &__button {
         border-radius: 2rem;
+
+        @include large-desktop {
+            position: absolute;
+            bottom: 30px;
+        }
     }
 }
 

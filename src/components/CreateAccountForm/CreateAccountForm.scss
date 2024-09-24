@@ -1,24 +1,55 @@
 @use "../../styles/partials/variables" as *;
+@use "../../styles/partials/breakpoints" as *;
 
 
 .create-account {
 
+    &__content {
+        height: 70vh;
+        width: 35vw;
+    }
+
     &__header {
-        font-size: 3.25rem;
+        font-size: 4.5rem;
+
+        @include large-desktop {
+            font-size: 5.5rem;
+        }
     }
 
     &__form-label {
         display: flex;
         flex-direction: column;
-        margin-bottom: 1rem;
+        margin-bottom: 1.25rem;
         position: relative;
+        font-size: 1.5rem;
+
+        @include large-desktop {
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+    }
+
+    &__form-input {
+        font-size: 1.5rem;
+        margin-top: 0.25rem;
+
+        @include large-desktop {
+            font-size: 2rem;
+            margin-top: 0.5rem;
+        }
     }
 
     &__button-container {
         width: 100%;
-        margin-top: 2rem;
+        margin-top: 1.75rem;
         display: flex;
         gap: 1rem;
+
+        @include large-desktop {
+            margin-top: 2rem;
+            padding-top: 2rem;
+        }
     }
 
     &__mail-icon, &__lock-icon {
