@@ -29,6 +29,7 @@
     border: none;
     width: 40px;
     border-radius: 1.25rem;
+    transition: background-color 0.3s, color 0.3s, filter 0.3s;
 
     &:hover {
         cursor: pointer;
@@ -43,6 +44,7 @@
   &__close-icon {
     width: 40px;
     height: 40px;
+    transition: filter 0.3s;
   }
 
   &__body-container {
@@ -88,6 +90,7 @@
     border-radius: 2.5rem;
     font-size: 2rem;
     height: 70px;
+    transition: background-color 0.3s, color 0.3s;
 
     &:hover {
         background-color: $darkBlue;
@@ -105,6 +108,7 @@
     border-radius: 2.5rem;
     font-size: 2rem;
     height: 70px;
+    transition: background-color 0.3s, color 0.3s;
 
     &:hover {
       border: 3px solid $darkRed;

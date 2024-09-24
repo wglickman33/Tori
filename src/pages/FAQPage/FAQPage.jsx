@@ -1,14 +1,19 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import Button from "../../components/Button/Button";
 import SlidingMenu from "../../components/SlidingMenu/SlidingMenu";
+import { faqs } from "../../data/faq-constants.js";
 import "./FAQPage.scss";
 
 const FAQPage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeFAQ, setActiveFAQ] = useState(null);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const toggleFAQ = (index) => {
+    setActiveFAQ(activeFAQ === index ? null : index);
   };
 
   return (
@@ -37,22 +42,32 @@ const FAQPage = () => {
           </Button>
         </div>
       </section>
+
       <div className="faq__body-content">
-        <div className="faq__icon-container">
-          <img
-            className="faq__main-icon icon"
-            src="../../../src/assets/icons/help.svg"
-            alt="Help Icon"
-          />
-        </div>
-        <div className="faq__body">
-          <h2 className="faq__body-title">
-            This page is currently unavailable
-          </h2>
-          <h3 className="faq__body-text">Click below to return to help page</h3>
-        </div>
+        {faqs.map((faq, index) => (
+          <div key={index} className="faq__item">
+            <div
+              className="faq__question clickable"
+              onClick={() => toggleFAQ(index)}
+            >
+              <h2>{faq.question}</h2>
+              <img
+                className="faq__icon icon"
+                src={`../../../src/assets/icons/${
+                  activeFAQ === index ? "arrow-drop-up" : "arrow-drop-down"
+                }.svg`}
+                alt="Drop Icon"
+              />
+            </div>
+            {activeFAQ === index && (
+              <div className="faq__answer">
+                <p>{faq.answer}</p>
+              </div>
+            )}
+          </div>
+        ))}
         <div className="faq__button-container">
-          <Button to="/help" className="faq__button button--return">
+          <Button to="/help" className="faq__return-button">
             Return
           </Button>
         </div>

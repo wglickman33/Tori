@@ -118,6 +118,8 @@
   }
 
   &__view-button {
+    transition: background-color 0.3s;
+
     &:hover {
       background-color: $lightCream;
     }
@@ -143,6 +145,7 @@
     .itempage__button {
       padding: 1rem 4rem;
       border: 3px solid $darkBlue;
+      transition: background-color 0.3s, color 0.3s;
 
       &:hover {
         background-color: $darkBlue;
@@ -305,6 +308,7 @@
       font-size: 2rem;
       line-height: 1.3;
       color: $darkBlue;
+      transition: background-color 0.3s;
 
       &:hover {
         background-color: $lightCream;
@@ -328,6 +332,7 @@
 }
 
 .hoverable {
+  transition: filter 0.3s;
   &:hover {
     filter: $icon-color-hover;
   }

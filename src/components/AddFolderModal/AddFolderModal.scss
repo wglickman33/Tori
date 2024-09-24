@@ -29,6 +29,7 @@
     border: none;
     width: 40px;
     border-radius: 1.25rem;
+    transition: background-color 0.3s, color 0.3s, filter 0.3s;
 
     &:hover {
         cursor: pointer;
@@ -43,6 +44,7 @@
   &__close-icon {
     width: 40px;
     height: 40px;
+    transition: filter 0.3s;
   }
 
   &__title {
@@ -103,6 +105,7 @@
     border-radius: 1.5rem;
     font-size: 1.75rem;
     margin: 2rem auto 0 auto;
+    transition: background-color 0.3s, color 0.3s;
 
     &:hover {
       background-color: $darkBlue;

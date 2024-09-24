@@ -53,6 +53,7 @@
   &__forgot-link {
     text-decoration: none;
     color: $lightCream;
+    transition: color 0.3s;
 
     &:hover {
       color: $darkBlue;
@@ -80,6 +81,7 @@
   &__create-account-link {
     text-decoration: none;
     color: $lightCream;
+    transition: color 0.3s;
 
     &:hover {
       color: $darkBlue;

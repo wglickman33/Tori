@@ -89,6 +89,7 @@
         width: 100%;
         border: 3px solid $darkBlue;
         color: $darkBlue;
+        transition: background-color 0.3s, color 0.3s;
 
         &:hover {
             color: $lightCream;

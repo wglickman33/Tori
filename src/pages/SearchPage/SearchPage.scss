@@ -261,7 +261,7 @@
       background-color: $lightCream;
       color: $darkBlue;
       border-radius: 2.5rem;
-      transition: background-color 0.3s, color 0.3s;
+      transition: background-color 0.3s, color 0.3s, filter 0.3s;
 
       &:hover {
         background-color: $darkBlue;
@@ -277,6 +277,7 @@
       width: 30px;
       height: 30px;
       margin-right: 0.25rem;
+      transition: filter 0.3s;
     }
   }
 }
