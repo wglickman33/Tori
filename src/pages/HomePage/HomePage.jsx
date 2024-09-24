@@ -3,12 +3,20 @@ import Button from "../../components/Button/Button";
 import SlidingMenu from "../../components/SlidingMenu/SlidingMenu";
 import AddItemModal from "../../components/AddItemModal/AddItemModal";
 import AddFolderModal from "../../components/AddFolderModal/AddFolderModal";
+import EditItemModal from "../../components/EditItemModal/EditItemModal";
+import EditFolderModal from "../../components/EditFolderModal/EditFolderModal";
+import DeleteItemModal from "../../components/DeleteItemModal/DeleteItemModal";
+import DeleteFolderModal from "../../components/DeleteFolderModal/DeleteFolderModal";
 import "./HomePage.scss";
 
 const HomePage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
   const [isAddFolderModalOpen, setIsAddFolderModalOpen] = useState(false);
+  const [isEditItemModalOpen, setIsEditItemModalOpen] = useState(false);
+  const [isEditFolderModalOpen, setIsEditFolderModalOpen] = useState(false);
+  const [isDeleteItemModalOpen, setIsDeleteItemModalOpen] = useState(false);
+  const [isDeleteFolderModalOpen, setIsDeleteFolderModalOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -20,6 +28,22 @@ const HomePage = () => {
 
   const toggleAddFolderModal = () => {
     setIsAddFolderModalOpen(!isAddFolderModalOpen);
+  };
+
+  const toggleEditItemModal = () => {
+    setIsEditItemModalOpen(!isEditItemModalOpen);
+  };
+
+  const toggleEditFolderModal = () => {
+    setIsEditFolderModalOpen(!isEditFolderModalOpen);
+  };
+
+  const toggleDeleteItemModal = () => {
+    setIsDeleteItemModalOpen(!isDeleteItemModalOpen);
+  };
+
+  const toggleDeleteFolderModal = () => {
+    setIsDeleteFolderModalOpen(!isDeleteFolderModalOpen);
   };
 
   return (
@@ -81,8 +105,8 @@ const HomePage = () => {
           </div>
         </div>
         <div className="itempage__counts">
-          <h2 className="itempage__count-text">Folders: 0</h2>
-          <h2 className="itempage__count-text">Items: 0</h2>
+          <h2 className="itempage__count-text">Folders: 1</h2>
+          <h2 className="itempage__count-text">Items: 1</h2>
         </div>
         <div className="itempage__left-bottom">
           <Button to="/help" className="button--help itempage__button">
@@ -129,6 +153,52 @@ const HomePage = () => {
           />
           <h2 className="itempage__all-items-text">All Items</h2>
         </div>
+        <div className="itempage__all-items-list">
+          <div className="itempage__all-items-list-left">
+            <img
+              className="itempage__items-icon icon"
+              src="../../../src/assets/icons/folder.svg"
+              alt="Folder Icon"
+            />
+            <h3 className="itempage__all-items-folders">Folder 1</h3>
+            <img
+              className="itempage__items-icon icon clickable"
+              src="../../../src/assets/icons/arrow-drop-down.svg"
+              alt="Drop Down Icon"
+            />
+          </div>
+          <div className="itempage__all-items-list-right">
+            <img
+              className="itempage__items-icon icon clickable hoverable"
+              src="../../../src/assets/icons/edit.svg"
+              alt="Edit Icon"
+              onClick={toggleEditFolderModal}
+            />
+            <img
+              className="itempage__items-icon icon clickable hoverable"
+              src="../../../src/assets/icons/delete.svg"
+              alt="Trash Icon"
+              onClick={toggleDeleteFolderModal}
+            />
+          </div>
+        </div>
+        <div className="itempage__all-items-item-group">
+          <h4 className="itempage__all-items-item">Item 1</h4>
+          <div className="itempage__all-items-item-icons">
+            <img
+              className="itempage__items-icon icon clickable hoverable"
+              src="../../../src/assets/icons/edit.svg"
+              alt="Edit Icon"
+              onClick={toggleEditItemModal}
+            />
+            <img
+              className="itempage__items-icon icon clickable hoverable"
+              src="../../../src/assets/icons/delete.svg"
+              alt="Trash Icon"
+              onClick={toggleDeleteItemModal}
+            />
+          </div>
+        </div>
         <div className="itempage__right-bottom">
           <Button className="button--trash itempage__button">
             <img
@@ -145,6 +215,22 @@ const HomePage = () => {
       <AddFolderModal
         isOpen={isAddFolderModalOpen}
         onClose={toggleAddFolderModal}
+      />
+      <EditItemModal
+        isOpen={isEditItemModalOpen}
+        onClose={toggleEditItemModal}
+      />
+      <EditFolderModal
+        isOpen={isEditFolderModalOpen}
+        onClose={toggleEditFolderModal}
+      />
+      <DeleteItemModal
+        isOpen={isDeleteItemModalOpen}
+        onClose={toggleDeleteItemModal}
+      />
+      <DeleteFolderModal
+        isOpen={isDeleteFolderModalOpen}
+        onClose={toggleDeleteFolderModal}
       />
     </main>
   );

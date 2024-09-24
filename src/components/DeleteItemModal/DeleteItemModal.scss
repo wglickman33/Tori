@@ -1,0 +1,119 @@
+@use "../../styles/partials/variables" as *;
+
+.deleteitem-modal {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+
+  &__content {
+    background-color: $darkBlue;
+    color: $lightCream;
+    width: 60%;
+    padding: 2.5rem;
+    border-radius: 1rem;
+    position: relative;
+  }
+
+  &__close {
+    display: flex;
+    justify-content: flex-end;
+    position: absolute;
+    right: 15px;
+    top: 5px;
+    background: none;
+    border: none;
+    width: 40px;
+    border-radius: 1.25rem;
+
+    &:hover {
+        cursor: pointer;
+        background-color: $lightCream;
+
+        .deleteitem-modal__close-icon {
+          filter: $icon-color-default;
+        }
+    }
+  }
+
+  &__close-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  &__body-container {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  &__icon-container {
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  &__delete-icon {
+    width: 85px;
+    height: 85px;
+  }
+
+  &__body-title {
+    font-size: 2.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  &__body-text {
+    font-size: 2rem;
+  }
+
+  &__button-container {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    padding-top: 2.25rem;
+    padding-bottom: 1.5rem;
+  }
+
+  &__cancel {
+    max-width: 12.5rem;
+    padding: 0.75rem 2rem;
+    background-color: $lightCream;
+    color: $darkBlue;
+    border: 3px solid $darkBlue;
+    border-radius: 2.5rem;
+    font-size: 2rem;
+    height: 70px;
+
+    &:hover {
+        background-color: $darkBlue;
+        color: $lightCream;
+        cursor: pointer;
+    }
+  }
+
+  &__submit {
+    max-width: 12.5rem;
+    padding: 0.75rem 2rem;
+    background-color: $errorRed;
+    color: $lightCream;
+    border: 3px solid $errorRed;
+    border-radius: 2.5rem;
+    font-size: 2rem;
+    height: 70px;
+
+    &:hover {
+      border: 3px solid $darkRed;
+      background-color: $darkRed;
+      cursor: pointer;
+    }
+  }
+}
+
+.warning {
+    color: $errorRed;
+}

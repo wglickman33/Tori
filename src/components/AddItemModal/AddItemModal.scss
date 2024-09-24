@@ -33,16 +33,16 @@
     &:hover {
         cursor: pointer;
         background-color: $lightCream;
+
+        .additem-modal__close-icon {
+          filter: $icon-color-default;
+        }
     }
   }
 
   &__close-icon {
     width: 40px;
     height: 40px;
-
-    &:hover {
-        filter: $icon-color-default;
-    }
   }
 
   &__title {
@@ -70,7 +70,7 @@
   }
 
   &__label {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
     margin-bottom: 0.5rem;
   }
 
@@ -101,7 +101,7 @@
     color: $darkBlue;
     border: 2px solid $darkBlue;
     border-radius: 1.5rem;
-    font-size: 1.5rem;
+    font-size: 2rem;
     margin: 2rem auto 0 auto;
 
     &:hover {

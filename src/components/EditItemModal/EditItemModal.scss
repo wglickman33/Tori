@@ -1,6 +1,6 @@
 @use "../../styles/partials/variables" as *;
 
-.addfolder-modal {
+.edititem-modal {
   position: fixed;
   width: 100%;
   height: 100%;
@@ -34,7 +34,7 @@
         cursor: pointer;
         background-color: $lightCream;
 
-        .addfolder-modal__close-icon {
+        .edititem-modal__close-icon {
           filter: $icon-color-default;
         }
     }
@@ -101,7 +101,7 @@
     color: $darkBlue;
     border: 2px solid $darkBlue;
     border-radius: 1.5rem;
-    font-size: 1.75rem;
+    font-size: 2rem;
     margin: 2rem auto 0 auto;
 
     &:hover {
