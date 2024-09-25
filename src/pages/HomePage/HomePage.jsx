@@ -17,6 +17,15 @@ const HomePage = () => {
   const [isEditFolderModalOpen, setIsEditFolderModalOpen] = useState(false);
   const [isDeleteItemModalOpen, setIsDeleteItemModalOpen] = useState(false);
   const [isDeleteFolderModalOpen, setIsDeleteFolderModalOpen] = useState(false);
+  const [openFolders, setOpenFolders] = useState({});
+
+  // Toggle folder open/close
+  const toggleFolder = (folderId) => {
+    setOpenFolders((prev) => ({
+      ...prev,
+      [folderId]: !prev[folderId],
+    }));
+  };
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -119,6 +128,7 @@ const HomePage = () => {
           </Button>
         </div>
       </section>
+
       <section className="itempage__right">
         <div className="itempage__right-top">
           <div className="itempage__search-folders">
@@ -145,60 +155,66 @@ const HomePage = () => {
             </Button>
           </div>
         </div>
-        <div className="itempage__all-items">
-          <img
-            className="itempage__items-icon icon"
-            src="../../../src/assets/icons/items.svg"
-            alt="Items Icon"
-          />
-          <h2 className="itempage__all-items-text">All Items</h2>
-        </div>
-        <div className="itempage__all-items-list">
-          <div className="itempage__all-items-list-left">
-            <img
-              className="itempage__items-icon icon"
-              src="../../../src/assets/icons/folder.svg"
-              alt="Folder Icon"
-            />
-            <h3 className="itempage__all-items-folders">Folder 1</h3>
-            <img
-              className="itempage__items-icon icon clickable"
-              src="../../../src/assets/icons/arrow-drop-down.svg"
-              alt="Drop Down Icon"
-            />
+
+        <div className="itempage__folder-list">
+          {/* Example Folder 1 */}
+          <div className="itempage__folder">
+            <div className="itempage__folder-header">
+              <div className="itempage__all-items-list-left">
+                <img
+                  className="itempage__items-icon icon"
+                  src="../../../src/assets/icons/folder.svg"
+                  alt="Folder Icon"
+                />
+                <h3 className="itempage__all-items-folders">Folder 1</h3>
+                <img
+                  className="itempage__items-icon icon clickable"
+                  src={`../../../src/assets/icons/arrow-${
+                    openFolders["folder1"] ? "drop-up" : "drop-down"
+                  }.svg`}
+                  alt="Toggle Icon"
+                  onClick={() => toggleFolder("folder1")}
+                />
+              </div>
+              <div className="itempage__all-items-list-right">
+                <img
+                  className="itempage__items-icon icon clickable hoverable"
+                  src="../../../src/assets/icons/edit.svg"
+                  alt="Edit Icon"
+                  onClick={toggleEditFolderModal}
+                />
+                <img
+                  className="itempage__items-icon icon clickable hoverable"
+                  src="../../../src/assets/icons/delete.svg"
+                  alt="Trash Icon"
+                  onClick={toggleDeleteFolderModal}
+                />
+              </div>
+            </div>
+            {openFolders["folder1"] && (
+              <div className="itempage__items">
+                <div className="itempage__all-items-item-group">
+                  <h4 className="itempage__all-items-item">Item 1</h4>
+                  <div className="itempage__all-items-item-icons">
+                    <img
+                      className="itempage__items-icon icon clickable hoverable"
+                      src="../../../src/assets/icons/edit.svg"
+                      alt="Edit Icon"
+                      onClick={toggleEditItemModal}
+                    />
+                    <img
+                      className="itempage__items-icon icon clickable hoverable"
+                      src="../../../src/assets/icons/delete.svg"
+                      alt="Trash Icon"
+                      onClick={toggleDeleteItemModal}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
-          <div className="itempage__all-items-list-right">
-            <img
-              className="itempage__items-icon icon clickable hoverable"
-              src="../../../src/assets/icons/edit.svg"
-              alt="Edit Icon"
-              onClick={toggleEditFolderModal}
-            />
-            <img
-              className="itempage__items-icon icon clickable hoverable"
-              src="../../../src/assets/icons/delete.svg"
-              alt="Trash Icon"
-              onClick={toggleDeleteFolderModal}
-            />
-          </div>
         </div>
-        <div className="itempage__all-items-item-group">
-          <h4 className="itempage__all-items-item">Item 1</h4>
-          <div className="itempage__all-items-item-icons">
-            <img
-              className="itempage__items-icon icon clickable hoverable"
-              src="../../../src/assets/icons/edit.svg"
-              alt="Edit Icon"
-              onClick={toggleEditItemModal}
-            />
-            <img
-              className="itempage__items-icon icon clickable hoverable"
-              src="../../../src/assets/icons/delete.svg"
-              alt="Trash Icon"
-              onClick={toggleDeleteItemModal}
-            />
-          </div>
-        </div>
+
         <div className="itempage__right-bottom">
           <Button className="button--trash itempage__button">
             <img
@@ -210,6 +226,8 @@ const HomePage = () => {
           </Button>
         </div>
       </section>
+
+      {/* Modals */}
       <SlidingMenu isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} />
       <AddItemModal isOpen={isAddItemModalOpen} onClose={toggleAddItemModal} />
       <AddFolderModal
