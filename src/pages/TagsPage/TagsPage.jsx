@@ -1,26 +1,14 @@
 import { useState } from "react";
 import Button from "../../components/Button/Button";
 import SlidingMenu from "../../components/SlidingMenu/SlidingMenu";
+import AddTagModal from "../../components/AddTagModal/AddTagModal";
 import "./TagsPage.scss";
 
 const TagsPage = () => {
-  const [tags, setTags] = useState([
-    { tagName: "Work", item: "Report 1", folder: "Business" },
-    { tagName: "Personal", item: "Photo Album", folder: "Memories" },
-    { tagName: "Fitness", item: "Workout Plan", folder: "Health" },
-    { tagName: "Travel", item: "Itinerary", folder: "Vacations" },
-    { tagName: "Work", item: "Report 1", folder: "Business" },
-    { tagName: "Personal", item: "Photo Album", folder: "Memories" },
-    { tagName: "Fitness", item: "Workout Plan", folder: "Health" },
-    { tagName: "Travel", item: "Itinerary", folder: "Vacations" },
-    { tagName: "Work", item: "Report 1", folder: "Business" },
-    { tagName: "Personal", item: "Photo Album", folder: "Memories" },
-    { tagName: "Fitness", item: "Workout Plan", folder: "Health" },
-    { tagName: "Travel", item: "Itinerary", folder: "Vacations" },
-  ]);
-
+  const [tags, setTags] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [visibleTagsCount, setVisibleTagsCount] = useState(3);
+  const [isAddTagModalOpen, setIsAddTagModalOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -28,6 +16,10 @@ const TagsPage = () => {
 
   const showMoreTags = () => {
     setVisibleTagsCount((prevCount) => prevCount + 5);
+  };
+
+  const toggleAddTagModal = () => {
+    setIsAddTagModalOpen(!isAddTagModalOpen);
   };
 
   return (
@@ -70,8 +62,14 @@ const TagsPage = () => {
             <h3 className="tags__body-text">Click below to get started!</h3>
           </div>
           <div className="tags__button-container">
-            <Button className="tags__button button--addtag">+ Add Tag</Button>
+            <Button
+              className="tags__button button--addtag"
+              onClick={toggleAddTagModal}
+            >
+              + Add Tag
+            </Button>
           </div>
+          <AddTagModal isOpen={isAddTagModalOpen} onClose={toggleAddTagModal} />
         </div>
       ) : (
         <div className="tags__list">

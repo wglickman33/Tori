@@ -1,0 +1,126 @@
+@use "../../styles/partials/variables" as *;
+@use "../../styles/partials/breakpoints" as *;
+
+.addtag-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1500;
+  
+    &__content {
+      background-color: $darkBlue;
+      color: $lightCream;
+      width: 60%;
+      padding: 2.5rem;
+      border-radius: 1rem;
+      position: relative;
+      z-index: 2000;
+    }
+  
+    &__close {
+      display: flex;
+      justify-content: flex-end;
+      position: absolute;
+      right: 15px;
+      top: 5px;
+      background: none;
+      border: none;
+      width: 40px;
+      border-radius: 1.25rem;
+      transition: background-color 0.3s, color 0.3s, filter 0.3s;
+  
+      &:hover {
+          cursor: pointer;
+          background-color: $lightCream;
+
+          .addtag-modal__close-icon {
+            filter: $icon-color-default;
+          }
+      }
+    }
+  
+    &__close-icon {
+      width: 40px;
+      height: 40px;
+      transition: filter 0.3s;
+    }
+  
+    &__title {
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+  
+    &__form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+    }
+  
+    &__row {
+      display: flex;
+      justify-content: space-between;
+      gap: 3rem;
+    }
+  
+    &__group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+  
+    &__label {
+      font-size: 1.75rem;
+      margin-bottom: 0.5rem;
+    }
+  
+    &__input,
+    &__select {
+      padding: 0.75rem 1rem;
+      border-radius: 1.25rem;
+      border: 1px solid $lightCream;
+      font-size: 1.5rem;
+      color: $darkBlue;
+      background-color: $lightCream;
+      height: 44px;
+      flex: 1;
+  
+      &::placeholder {
+        color: $darkBlue;
+      }
+  
+      &:focus {
+        outline: none;
+        border-color: $lightCream;
+      }
+    }
+  
+    &__submit {
+      max-width: 12.5rem;
+      padding: 0.75rem 2rem;
+      background-color: $lightCream;
+      color: $darkBlue;
+      border: 2px solid $darkBlue;
+      border-radius: 2.5rem;
+      font-size: 2rem;
+      margin: 2rem auto 0 auto;
+      transition: background-color 0.3s, color 0.3s;
+  
+      &:hover {
+        background-color: $darkBlue;
+        cursor: pointer;
+        color: $lightCream;
+      }
+    }
+  
+    &__option {
+      color: $darkBlue;
+    }
+  }
+  
