@@ -60,7 +60,7 @@ const TagsPage = () => {
         <div className="tags__body-content">
           <div className="tags__icon-container">
             <img
-              className="tags__icon icon"
+              className="tags__main-icon icon"
               src="../../../src/assets/icons/tags.svg"
               alt="Tags Icon"
             />
