@@ -129,8 +129,8 @@ const HomePage = () => {
           </div>
         </div>
         <div className="itempage__counts">
-          <h2 className="itempage__count-text">Folders: 1</h2>
-          <h2 className="itempage__count-text">Items: 1</h2>
+          <h2 className="itempage__count-text">Folders: 2</h2>
+          <h2 className="itempage__count-text">Items: 3</h2>
         </div>
         <div className="itempage__left-bottom">
           <Button to="/help" className="button--help itempage__button">
@@ -143,7 +143,6 @@ const HomePage = () => {
           </Button>
         </div>
       </section>
-
       <section className="itempage__right">
         <div className="itempage__right-top">
           <div className="itempage__search-folders">

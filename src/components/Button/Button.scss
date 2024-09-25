@@ -167,4 +167,16 @@
         border-radius: 2.5rem;
         font-size: 1.75rem;
     }
+
+    &--more {
+        color: $darkBlue;
+        border: 3px solid $darkBlue;
+        transition: background-color 0.3s, color 0.3s;
+
+        &:hover {
+            color: $lightCream;
+            background-color: $darkBlue;
+            cursor: pointer;
+        }
+    }
 }
