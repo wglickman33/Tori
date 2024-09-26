@@ -13,12 +13,16 @@
   }
 
   &__left {
-    width: 75%;
+    width: 70%;
     display: flex;
     flex-direction: column;
     border-right: 3px solid $darkBlue;
     border-bottom: 3px solid $darkBlue;
     border-left: 3px solid $darkBlue;
+
+    @include large-desktop {
+      width: 75%;
+    }
   }
 
   &__left-top {
@@ -117,14 +121,6 @@
     height: 40px;
   }
 
-  &__view-button {
-    transition: background-color 0.3s;
-
-    &:hover {
-      background-color: $lightCream;
-    }
-  }
-
   &__counts {
     display: flex;
     gap: 3rem;
@@ -155,11 +151,18 @@
   }
 
   &__right {
-    width: 25%;
+    width: 30%;
+    display: flex;
+    flex-direction: column;
     border-top: 3px solid $darkBlue;
     border-bottom: 3px solid $darkBlue;
     border-right: 3px solid $darkBlue;
     background-color: $paleBlue;
+    overflow-y: auto;
+
+    @include large-desktop {
+      width: 25%;
+    }
   }
 
   &__right-top {
@@ -206,27 +209,14 @@
     height: 40px;
   }
 
-  &__all-items {
-    display: flex;
-    padding: 2rem 2rem 1.5rem 2rem;
-    margin-left: 1rem;
-    font-size: 1.5rem;
-  }
-
-  &__items-icon {
-    width: 35px;
-    height: 35px;
-  }
-
-  &__all-items-text {
-    margin-left: 0.75rem;
-    margin-top: 0.125rem;
-  }
-
-  &__folder-list {
-    max-height: 60vh;
+  &__folders-list {
+    max-height: 50vh;
     overflow-y: auto;
-    padding: 1rem;
+    padding: 1rem 1rem 0 1rem;
+
+    @include large-desktop {
+      max-height: 60vh;
+    }
   }
 
   &__folder {
@@ -239,26 +229,59 @@
     justify-content: space-between;
   }
 
-  &__all-items-list-left {
+  &__folder-name {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    font-size: 1.5rem;
+
+    @include large-desktop {
+      font-size: 2rem;
+    }
   }
 
-  &__all-items-folders {
-    font-size: 2rem;
+  &__folder-icon {
+    width: 35px;
+    height: 35px;
   }
 
-  &__items {
-    margin-left: 2rem;
+  &__items-icon {
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+  }
+
+  &__folder-items {
+    padding-left: 2rem;
+  }
+
+  &__folder-item {
+    font-size: 1.5rem;
+    padding: 0.25rem 0;
+    margin-left: 1.5rem;
+  }
+
+  &__folder-icons {
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  &__items-list {
+    max-height: 25vh;
+    overflow-y: auto;
+    padding: 1rem;
+
+    @include large-desktop {
+      max-height: 30vh;
+    }
   }
 
   &__all-items-item-group {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5rem 0 0.25rem 0;
-    margin: 0 0 0 2rem;
+    padding: 0.5rem 2rem 0.25rem 2rem;
+    margin: 0 1rem 0 2rem;
   }
 
   &__all-items-item {

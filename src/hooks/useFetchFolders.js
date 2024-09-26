@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { fetchFolders } from "../services/firebaseService.js";
+import { ref, onValue } from "firebase/database";
+import { database } from "../services/firebaseConfig.js";
 
 const useFetchFolders = (userId) => {
   const [folders, setFolders] = useState([]);
@@ -7,17 +8,32 @@ const useFetchFolders = (userId) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const fetchedFolders = await fetchFolders(userId);
-        setFolders(fetchedFolders);
+    if (!userId) return;
+
+    const folderRef = ref(database, `users/${userId}/folders`);
+
+    const unsubscribe = onValue(
+      folderRef,
+      (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          const fetchedFolders = Object.keys(data).map((key) => ({
+            id: key,
+            ...data[key],
+          }));
+          setFolders(fetchedFolders);
+        } else {
+          setFolders([]);
+        }
         setLoading(false);
-      } catch (err) {
-        setError(err.message);
+      },
+      (error) => {
+        setError(error.message);
         setLoading(false);
       }
-    };
-    fetchData();
+    );
+
+    return () => unsubscribe();
   }, [userId]);
 
   return { folders, loading, error };

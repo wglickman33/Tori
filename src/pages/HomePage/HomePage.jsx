@@ -1,4 +1,7 @@
 import { useState } from "react";
+import useFetchItems from "../../hooks/useFetchItems.js";
+import useFetchFolders from "../../hooks/useFetchFolders.js";
+import { useAuth } from "../../context/AuthContext";
 import Button from "../../components/Button/Button";
 import SlidingMenu from "../../components/SlidingMenu/SlidingMenu";
 import AddItemModal from "../../components/AddItemModal/AddItemModal";
@@ -9,23 +12,8 @@ import DeleteItemModal from "../../components/DeleteItemModal/DeleteItemModal";
 import DeleteFolderModal from "../../components/DeleteFolderModal/DeleteFolderModal";
 import "./HomePage.scss";
 
-const mockFolders = [
-  {
-    id: "folder1",
-    name: "Folder 1",
-    items: [{ id: "item1", name: "Item 1" }],
-  },
-  {
-    id: "folder2",
-    name: "Folder 2",
-    items: [
-      { id: "item2", name: "Item 2" },
-      { id: "item3", name: "Item 3" },
-    ],
-  },
-];
-
 const HomePage = () => {
+  const { currentUser } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
   const [isAddFolderModalOpen, setIsAddFolderModalOpen] = useState(false);
@@ -34,6 +22,22 @@ const HomePage = () => {
   const [isDeleteItemModalOpen, setIsDeleteItemModalOpen] = useState(false);
   const [isDeleteFolderModalOpen, setIsDeleteFolderModalOpen] = useState(false);
   const [openFolders, setOpenFolders] = useState({});
+  const [newItems, setNewItems] = useState([]);
+  const [newFolders, setNewFolders] = useState([]);
+  const [currentItem, setCurrentItem] = useState(null);
+  const [currentFolder, setCurrentFolder] = useState(null);
+
+  const {
+    items = [],
+    loading: itemsLoading,
+    error: itemsError,
+  } = useFetchItems(currentUser?.uid);
+
+  const {
+    folders = [],
+    loading: foldersLoading,
+    error: foldersError,
+  } = useFetchFolders(currentUser?.uid);
 
   const toggleFolder = (folderId) => {
     setOpenFolders((prev) => ({
@@ -54,20 +58,32 @@ const HomePage = () => {
     setIsAddFolderModalOpen(!isAddFolderModalOpen);
   };
 
-  const toggleEditItemModal = () => {
+  const toggleEditItemModal = (item = null) => {
+    setCurrentItem(item);
     setIsEditItemModalOpen(!isEditItemModalOpen);
   };
 
-  const toggleEditFolderModal = () => {
+  const toggleEditFolderModal = (folder = null) => {
+    setCurrentFolder(folder);
     setIsEditFolderModalOpen(!isEditFolderModalOpen);
   };
 
-  const toggleDeleteItemModal = () => {
+  const toggleDeleteItemModal = (item = null) => {
+    setCurrentItem(item);
     setIsDeleteItemModalOpen(!isDeleteItemModalOpen);
   };
 
-  const toggleDeleteFolderModal = () => {
+  const toggleDeleteFolderModal = (folder = null) => {
+    setCurrentFolder(folder);
     setIsDeleteFolderModalOpen(!isDeleteFolderModalOpen);
+  };
+
+  const handleItemAdded = (newItem) => {
+    setNewItems((prevItems) => [...prevItems, newItem]);
+  };
+
+  const handleFolderAdded = (newFolder) => {
+    setNewFolders((prevFolders) => [...prevFolders, newFolder]);
   };
 
   return (
@@ -129,8 +145,18 @@ const HomePage = () => {
           </div>
         </div>
         <div className="itempage__counts">
-          <h2 className="itempage__count-text">Folders: 2</h2>
-          <h2 className="itempage__count-text">Items: 3</h2>
+          <h2 className="itempage__count-text">
+            Folders:{" "}
+            {foldersLoading
+              ? "Loading..."
+              : [...(folders || []), ...newFolders].length}
+          </h2>
+          <h2 className="itempage__count-text">
+            Items:{" "}
+            {itemsLoading
+              ? "Loading..."
+              : [...(items || []), ...newItems].length}
+          </h2>
         </div>
         <div className="itempage__left-bottom">
           <Button to="/help" className="button--help itempage__button">
@@ -169,69 +195,91 @@ const HomePage = () => {
             </Button>
           </div>
         </div>
-        <div className="itempage__folder-list">
-          {mockFolders.map((folder) => (
-            <div key={folder.id} className="itempage__folder">
-              <div className="itempage__folder-header">
-                <div className="itempage__all-items-list-left">
-                  <img
-                    className="itempage__items-icon icon"
-                    src="../../../src/assets/icons/folder.svg"
-                    alt="Folder Icon"
-                  />
-                  <h3 className="itempage__all-items-folders">{folder.name}</h3>
-                  <img
-                    className="itempage__items-icon icon clickable"
-                    src={`../../../src/assets/icons/arrow-${
-                      openFolders[folder.id] ? "drop-up" : "drop-down"
-                    }.svg`}
-                    alt="Toggle Icon"
-                    onClick={() => toggleFolder(folder.id)}
-                  />
+        <div className="itempage__folders-list">
+          {foldersLoading ? (
+            <p>Loading folders...</p>
+          ) : foldersError ? (
+            <p>No folders found</p>
+          ) : (
+            [...(folders || []), ...newFolders].map((folder) => (
+              <div key={folder.id} className="itempage__folder">
+                <div
+                  className="itempage__folder-header"
+                  onClick={() => toggleFolder(folder.id)}
+                >
+                  <div className="itempage__folder-name">
+                    <img
+                      className="itempage__folder-icon icon clickable"
+                      src="../../../src/assets/icons/folder.svg"
+                      alt="Folder Icon"
+                    />
+                    {folder.name}
+                    <img
+                      className="itempage__items-icon icon clickable"
+                      src={
+                        openFolders[folder.id]
+                          ? "../../../src/assets/icons/arrow-drop-up.svg"
+                          : "../../../src/assets/icons/arrow-drop-down.svg"
+                      }
+                      alt="Dropdown Icon"
+                    />
+                  </div>
+                  <div className="itempage__folder-icons">
+                    <img
+                      className="itempage__items-icon icon clickable hoverable"
+                      src="../../../src/assets/icons/edit.svg"
+                      alt="Edit Icon"
+                      onClick={() => toggleEditFolderModal(folder)}
+                    />
+                    <img
+                      className="itempage__items-icon icon clickable hoverable"
+                      src="../../../src/assets/icons/delete.svg"
+                      alt="Delete Icon"
+                      onClick={() => toggleDeleteFolderModal(folder)}
+                    />
+                  </div>
                 </div>
-                <div className="itempage__all-items-list-right">
+                {openFolders[folder.id] && (
+                  <div className="itempage__folder-items">
+                    {items
+                      .filter((item) => item.folderId === folder.id)
+                      .map((item) => (
+                        <div key={item.id} className="itempage__folder-item">
+                          <p>{item.name}</p>
+                        </div>
+                      ))}
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+        <div className="itempage__items-list">
+          {itemsLoading ? (
+            <p>Loading items...</p>
+          ) : itemsError ? (
+            <p>No items found</p>
+          ) : (
+            [...(items || []), ...newItems].map((item) => (
+              <div key={item.id} className="itempage__all-items-item-group">
+                <h4 className="itempage__all-items-item">{item.name}</h4>
+                <div className="itempage__all-items-item-icons">
                   <img
                     className="itempage__items-icon icon clickable hoverable"
                     src="../../../src/assets/icons/edit.svg"
                     alt="Edit Icon"
-                    onClick={toggleEditFolderModal}
+                    onClick={() => toggleEditItemModal(item)}
                   />
                   <img
                     className="itempage__items-icon icon clickable hoverable"
                     src="../../../src/assets/icons/delete.svg"
-                    alt="Trash Icon"
-                    onClick={toggleDeleteFolderModal}
+                    alt="Delete Icon"
+                    onClick={() => toggleDeleteItemModal(item)}
                   />
                 </div>
               </div>
-              {openFolders[folder.id] && (
-                <div className="itempage__items">
-                  {folder.items.map((item) => (
-                    <div
-                      key={item.id}
-                      className="itempage__all-items-item-group"
-                    >
-                      <h4 className="itempage__all-items-item">{item.name}</h4>
-                      <div className="itempage__all-items-item-icons">
-                        <img
-                          className="itempage__items-icon icon clickable hoverable"
-                          src="../../../src/assets/icons/edit.svg"
-                          alt="Edit Icon"
-                          onClick={toggleEditItemModal}
-                        />
-                        <img
-                          className="itempage__items-icon icon clickable hoverable"
-                          src="../../../src/assets/icons/delete.svg"
-                          alt="Trash Icon"
-                          onClick={toggleDeleteItemModal}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
+            ))
+          )}
         </div>
         <div className="itempage__right-bottom">
           <Button className="button--trash itempage__button">
@@ -245,26 +293,37 @@ const HomePage = () => {
         </div>
       </section>
       <SlidingMenu isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} />
-      <AddItemModal isOpen={isAddItemModalOpen} onClose={toggleAddItemModal} />
+      <AddItemModal
+        isOpen={isAddItemModalOpen}
+        onClose={toggleAddItemModal}
+        userId={currentUser?.uid}
+        onItemAdded={handleItemAdded}
+      />
       <AddFolderModal
         isOpen={isAddFolderModalOpen}
         onClose={toggleAddFolderModal}
+        onFolderAdded={handleFolderAdded}
+        userId={currentUser?.uid}
       />
       <EditItemModal
         isOpen={isEditItemModalOpen}
         onClose={toggleEditItemModal}
+        item={currentItem}
       />
       <EditFolderModal
         isOpen={isEditFolderModalOpen}
         onClose={toggleEditFolderModal}
+        folder={currentFolder}
       />
       <DeleteItemModal
         isOpen={isDeleteItemModalOpen}
         onClose={toggleDeleteItemModal}
+        item={currentItem}
       />
       <DeleteFolderModal
         isOpen={isDeleteFolderModalOpen}
         onClose={toggleDeleteFolderModal}
+        folder={currentFolder}
       />
     </main>
   );
