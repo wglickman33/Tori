@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import useAuth from "../../hooks/useAuth.js";
 import Button from "../../components/Button/Button";
 import loginIcon from "../../assets/icons/login.svg";
 import emailIcon from "../../assets/icons/mail.svg";
@@ -8,10 +9,26 @@ import unlockIcon from "../../assets/icons/unlock.svg";
 import "./LoginForm.scss";
 
 const LoginForm = () => {
+  const { loginUser, error } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [formError, setFormError] = useState("");
+  const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible((prevState) => !prevState);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      await loginUser(email, password);
+      navigate("/");
+    } catch (err) {
+      setFormError(error || "Failed to log in. Please check your credentials.");
+    }
   };
 
   return (
@@ -21,7 +38,8 @@ const LoginForm = () => {
           <h1 className="login__header">LOGIN</h1>
         </div>
         <div className="login__form-container">
-          <form className="login__form" id="loginForm">
+          <form className="login__form" id="loginForm" onSubmit={handleSubmit}>
+            {formError && <p className="login__error">{formError}</p>}
             <label className="login__form-label" htmlFor="email">
               Enter Email
               <input
@@ -30,6 +48,9 @@ const LoginForm = () => {
                 id="email"
                 name="email"
                 placeholder="example@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
               />
               <img
                 className="login__mail-icon"
@@ -45,6 +66,9 @@ const LoginForm = () => {
                 id="password"
                 name="password"
                 placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
               />
               <img
                 className={`login__lock-icon ${
