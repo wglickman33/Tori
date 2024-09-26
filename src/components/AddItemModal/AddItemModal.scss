@@ -96,6 +96,21 @@
     }
   }
 
+  &__message {
+    font-size: 2.25rem;
+    margin-top: 0.5rem;
+    text-align: center;
+    padding: 0.25rem;
+  }
+
+  &__message--success {
+    color: $successYellow;
+  }
+
+  &__message--error {
+    color: $errorRed;
+  }
+
   &__submit {
     max-width: 12.5rem;
     padding: 0.75rem 2rem;

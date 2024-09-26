@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchItems } from "../services/firebaseService";
+import { fetchItems } from "../services/firebaseService.js";
 
 const useFetchItems = (userId, folderId = null) => {
   const [items, setItems] = useState([]);
@@ -10,7 +10,7 @@ const useFetchItems = (userId, folderId = null) => {
     const fetchData = async () => {
       try {
         const fetchedItems = await fetchItems(userId, folderId);
-        setItems(fetchedItems);
+        setItems(Object.values(fetchedItems));
         setLoading(false);
       } catch (err) {
         setError(err.message);

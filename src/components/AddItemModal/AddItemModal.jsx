@@ -1,7 +1,61 @@
+import { useState } from "react";
+import { createItem } from "../../services/firebaseService.js";
 import Button from "../Button/Button";
 import "./AddItemModal.scss";
 
-const AddItemModal = ({ isOpen, onClose }) => {
+const AddItemModal = ({ isOpen, onClose, onItemAdded, userId }) => {
+  const [name, setName] = useState("");
+  const [location, setLocation] = useState("");
+  const [purchaseDate, setPurchaseDate] = useState("");
+  const [quantity, setQuantity] = useState(0);
+  const [expirationDate, setExpirationDate] = useState("");
+  const [customTag, setCustomTag] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const resetForm = () => {
+    setName("");
+    setLocation("");
+    setPurchaseDate("");
+    setQuantity(0);
+    setExpirationDate("");
+    setCustomTag("");
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!name) {
+      setErrorMessage("Please enter a name for the item.");
+      setSuccessMessage("");
+      return;
+    }
+
+    const newItemData = {
+      name,
+      location: location || null,
+      purchaseDate: purchaseDate || null,
+      quantity: quantity || null,
+      expirationDate: expirationDate || null,
+      customTag: customTag || null,
+    };
+
+    try {
+      const newItem = await createItem(userId, null, newItemData);
+      onItemAdded(newItem);
+      setSuccessMessage("Item successfully created!");
+      setErrorMessage("");
+      resetForm();
+      setTimeout(() => {
+        setSuccessMessage("");
+        onClose();
+      }, 2000);
+    } catch (error) {
+      setErrorMessage("Error adding item. Please try again.");
+      setSuccessMessage("");
+    }
+  };
+
   if (!isOpen) {
     return null;
   }
@@ -20,7 +74,7 @@ const AddItemModal = ({ isOpen, onClose }) => {
           />
         </Button>
         <h2 className="additem-modal__title">Add a new item:</h2>
-        <form className="additem-modal__form">
+        <form className="additem-modal__form" onSubmit={handleSubmit}>
           <div className="additem-modal__row">
             <div className="additem-modal__group">
               <label className="additem-modal__label">Name</label>
@@ -28,11 +82,18 @@ const AddItemModal = ({ isOpen, onClose }) => {
                 className="additem-modal__input"
                 type="text"
                 placeholder="Name..."
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
               />
             </div>
             <div className="additem-modal__group">
               <label className="additem-modal__label">Location</label>
-              <select className="additem-modal__select">
+              <select
+                className="additem-modal__select"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+              >
                 <option className="additem-modal__option">
                   Select a Location
                 </option>
@@ -61,22 +122,38 @@ const AddItemModal = ({ isOpen, onClose }) => {
               </select>
             </div>
           </div>
+
           <div className="additem-modal__row">
             <div className="additem-modal__group">
               <label className="additem-modal__label">Purchase Date</label>
-              <input type="date" className="additem-modal__input" />
+              <input
+                type="date"
+                className="additem-modal__input"
+                value={purchaseDate}
+                onChange={(e) => setPurchaseDate(e.target.value)}
+              />
             </div>
             <div className="additem-modal__group">
               <label className="additem-modal__label">Quantity</label>
-              <input className="additem-modal__input" type="number" min="0" />
+              <input
+                className="additem-modal__input"
+                type="number"
+                min="0"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+              />
             </div>
           </div>
+
           <div className="additem-modal__row">
             <div className="additem-modal__group">
-              <label className="additem-modal__label">
-                Expiration Date (optional)
-              </label>
-              <input className="additem-modal__input" type="date" />
+              <label className="additem-modal__label">Expiration Date</label>
+              <input
+                className="additem-modal__input"
+                type="date"
+                value={expirationDate}
+                onChange={(e) => setExpirationDate(e.target.value)}
+              />
             </div>
             <div className="additem-modal__group">
               <label className="additem-modal__label">Custom Tag</label>
@@ -84,9 +161,23 @@ const AddItemModal = ({ isOpen, onClose }) => {
                 className="additem-modal__input"
                 type="text"
                 placeholder="Tag..."
+                value={customTag}
+                onChange={(e) => setCustomTag(e.target.value)}
               />
             </div>
           </div>
+
+          {successMessage && (
+            <p className="additem-modal__message additem-modal__message--success">
+              {successMessage}
+            </p>
+          )}
+          {errorMessage && (
+            <p className="additem-modal__message additem-modal__message--error">
+              {errorMessage}
+            </p>
+          )}
+
           <Button
             className="additem-modal__submit button--additem"
             type="submit"

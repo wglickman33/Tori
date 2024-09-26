@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateProfile } from "firebase/auth";
 import { auth } from "../services/firebaseConfig.js";
 
 const useAuth = () => {
@@ -18,6 +18,18 @@ const useAuth = () => {
     }
   };
 
+  const createUser = async (email, password, fullName) => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(userCredential.user, { displayName: fullName });
+      setCurrentUser(userCredential.user);
+      setLoading(false);
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+    }
+  };
+
   const logOutUser = async () => {
     try {
       await signOut(auth);
@@ -27,7 +39,7 @@ const useAuth = () => {
     }
   };
 
-  return { currentUser, loading, error, loginUser, logOutUser };
+  return { currentUser, loading, error, loginUser, createUser, logOutUser };
 };
 
 export default useAuth;
