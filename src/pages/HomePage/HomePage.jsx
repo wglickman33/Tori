@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import useFetchItems from "../../hooks/useFetchItems.js";
 import useFetchFolders from "../../hooks/useFetchFolders.js";
 import { useAuth } from "../../context/AuthContext";
@@ -84,6 +84,23 @@ const HomePage = () => {
 
   const handleFolderAdded = (newFolder) => {
     setNewFolders((prevFolders) => [...prevFolders, newFolder]);
+  };
+
+  const getItemsByFolder = (folderId) => {
+    const folderItems = items.filter((item) => item.folderId === folderId);
+    const newFolderItems = newItems.filter(
+      (item) => item.folderId === folderId
+    );
+    return folderItems.concat(newFolderItems);
+  };
+
+  const getIndependentItems = () => {
+    const independentItems = items.filter((item) => !item.folderId);
+    const newIndependentItems = newItems.filter((item) => !item.folderId);
+
+    const combinedIndependentItems =
+      independentItems.concat(newIndependentItems);
+    return combinedIndependentItems;
   };
 
   return (
@@ -218,10 +235,10 @@ const HomePage = () => {
                       className="itempage__items-icon icon clickable"
                       src={
                         openFolders[folder.id]
-                          ? "../../../src/assets/icons/arrow-drop-up.svg"
-                          : "../../../src/assets/icons/arrow-drop-down.svg"
+                          ? "../../../src/assets/icons/arrow-drop-down.svg"
+                          : "../../../src/assets/icons/arrow-drop-up.svg"
                       }
-                      alt="Dropdown Icon"
+                      alt="Dropdown or Dropup Icon"
                     />
                   </div>
                   <div className="itempage__folder-icons">
@@ -241,13 +258,27 @@ const HomePage = () => {
                 </div>
                 {openFolders[folder.id] && (
                   <div className="itempage__folder-items">
-                    {items
-                      .filter((item) => item.folderId === folder.id)
-                      .map((item) => (
-                        <div key={item.id} className="itempage__folder-item">
-                          <p>{item.name}</p>
+                    {getItemsByFolder(folder.id).map((item) => (
+                      <div key={item.id} className="itempage__folder-item">
+                        <p className="itempage__folder-item-text">
+                          {item.name}
+                        </p>
+                        <div className="itempage__all-items-item-icons">
+                          <img
+                            className="itempage__items-icon icon clickable hoverable"
+                            src="../../../src/assets/icons/edit.svg"
+                            alt="Edit Icon"
+                            onClick={() => toggleEditItemModal(item)}
+                          />
+                          <img
+                            className="itempage__items-icon icon clickable hoverable"
+                            src="../../../src/assets/icons/delete.svg"
+                            alt="Delete Icon"
+                            onClick={() => toggleDeleteItemModal(item)}
+                          />
                         </div>
-                      ))}
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
@@ -260,7 +291,7 @@ const HomePage = () => {
           ) : itemsError ? (
             <p>No items found</p>
           ) : (
-            [...(items || []), ...newItems].map((item) => (
+            getIndependentItems().map((item) => (
               <div key={item.id} className="itempage__all-items-item-group">
                 <h4 className="itempage__all-items-item">{item.name}</h4>
                 <div className="itempage__all-items-item-icons">
@@ -298,6 +329,7 @@ const HomePage = () => {
         onClose={toggleAddItemModal}
         userId={currentUser?.uid}
         onItemAdded={handleItemAdded}
+        folders={[...(folders || []), ...newFolders]}
       />
       <AddFolderModal
         isOpen={isAddFolderModalOpen}

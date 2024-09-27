@@ -112,6 +112,7 @@ export const createItem = async (userId, folderId = null, itemData) => {
     const newItemData = {
       id: itemId,
       ...itemData,
+      folderId: folderId || null,
       created_at: generateTimestamp(),
       updated_at: generateTimestamp(),
     };
@@ -123,19 +124,41 @@ export const createItem = async (userId, folderId = null, itemData) => {
   }
 };
 
-export const fetchItems = async (userId, folderId = null) => {
+export const fetchItems = async (userId) => {
   try {
-    const itemRef = ref(database, folderId ? `users/${userId}/folders/${folderId}/items` : `users/${userId}/items`);
-    const snapshot = await get(itemRef);
-    if (snapshot.exists()) {
-      return snapshot.val();
+    const items = [];
+    const independentItemRef = ref(database, `users/${userId}/items`);
+    const independentSnapshot = await get(independentItemRef);
+    
+    if (independentSnapshot.exists()) {
+      const independentItems = Object.values(independentSnapshot.val());
+      items.push(...independentItems);
     }
-    throw new Error(`No items found for userId ${userId}${folderId ? ` in folder ${folderId}` : ''}`);
+
+    const folderRef = ref(database, `users/${userId}/folders`);
+    const folderSnapshot = await get(folderRef);
+    
+    if (folderSnapshot.exists()) {
+      const folders = folderSnapshot.val();
+      
+      for (const folderId in folders) {
+        const folderItemRef = ref(database, `users/${userId}/folders/${folderId}/items`);
+        const folderItemsSnapshot = await get(folderItemRef);
+
+        if (folderItemsSnapshot.exists()) {
+          const folderItems = Object.values(folderItemsSnapshot.val());
+          items.push(...folderItems);
+        }
+      }
+    }
+
+    return items;
   } catch (error) {
     console.error(`Error fetching items for userId ${userId}:`, error);
     throw new Error(`Failed to fetch items: ${error.message}`);
   }
 };
+
 
 export const updateItem = async (userId, itemId, folderId = null, updatedData) => {
   try {

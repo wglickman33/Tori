@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchItems } from "../services/firebaseService.js";
 
-const useFetchItems = (userId, folderId = null) => {
+const useFetchItems = (userId) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -9,7 +9,7 @@ const useFetchItems = (userId, folderId = null) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const fetchedItems = await fetchItems(userId, folderId);
+        const fetchedItems = await fetchItems(userId);
         setItems(Object.values(fetchedItems));
         setLoading(false);
       } catch (err) {
@@ -18,7 +18,7 @@ const useFetchItems = (userId, folderId = null) => {
       }
     };
     fetchData();
-  }, [userId, folderId]);
+  }, [userId]);
 
   return { items, loading, error };
 };

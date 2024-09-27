@@ -119,6 +119,11 @@
   &__view-icon {
     width: 40px;
     height: 40px;
+    transition: filter 0.3s;
+
+    &:hover {
+      filter: $icon-color-hover;
+    }
   }
 
   &__counts {
@@ -127,6 +132,10 @@
     margin: 0 2rem;
     padding: 0 2rem;
     font-size: 1.5rem;
+
+    @include large-desktop {
+      font-size: 1.75rem;
+    }
   }
 
   &__left-bottom {
@@ -233,7 +242,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 1.5rem;
+    font-size: 1.75rem;
 
     @include large-desktop {
       font-size: 2rem;
@@ -243,6 +252,7 @@
   &__folder-icon {
     width: 35px;
     height: 35px;
+    margin-bottom: 0.375rem;
   }
 
   &__items-icon {
@@ -256,9 +266,19 @@
   }
 
   &__folder-item {
-    font-size: 1.5rem;
     padding: 0.25rem 0;
     margin-left: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__folder-item-text {
+    font-size: 1.75rem;
+
+    @include large-desktop {
+      font-size: 2rem;
+    }
   }
 
   &__folder-icons {
@@ -285,7 +305,11 @@
   }
 
   &__all-items-item {
-    font-size: 2rem;
+    font-size: 1.75rem;
+
+    @include large-desktop {
+      font-size: 2rem;
+    }
   }
 
   &__all-items-item-icons {

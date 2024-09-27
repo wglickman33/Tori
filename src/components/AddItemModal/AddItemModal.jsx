@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createItem } from "../../services/firebaseService.js";
 import Button from "../Button/Button";
+import useFetchFolders from "../../hooks/useFetchFolders.js";
 import "./AddItemModal.scss";
 
 const AddItemModal = ({ isOpen, onClose, onItemAdded, userId }) => {
@@ -10,8 +11,11 @@ const AddItemModal = ({ isOpen, onClose, onItemAdded, userId }) => {
   const [quantity, setQuantity] = useState(0);
   const [expirationDate, setExpirationDate] = useState("");
   const [customTag, setCustomTag] = useState("");
+  const [folderId, setFolderId] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+
+  const { folders, loading: foldersLoading } = useFetchFolders(userId);
 
   const resetForm = () => {
     setName("");
@@ -20,6 +24,7 @@ const AddItemModal = ({ isOpen, onClose, onItemAdded, userId }) => {
     setQuantity(0);
     setExpirationDate("");
     setCustomTag("");
+    setFolderId("");
   };
 
   const handleSubmit = async (e) => {
@@ -41,7 +46,7 @@ const AddItemModal = ({ isOpen, onClose, onItemAdded, userId }) => {
     };
 
     try {
-      const newItem = await createItem(userId, null, newItemData);
+      const newItem = await createItem(userId, folderId, newItemData);
       onItemAdded(newItem);
       setSuccessMessage("Item successfully created!");
       setErrorMessage("");
@@ -122,6 +127,29 @@ const AddItemModal = ({ isOpen, onClose, onItemAdded, userId }) => {
               </select>
             </div>
           </div>
+          <div className="additem-modal__row">
+            <div className="additem-modal__group">
+              <label className="additem-modal__label">Folder (optional)</label>
+              <select
+                className="additem-modal__select"
+                value={folderId}
+                onChange={(e) => setFolderId(e.target.value)}
+              >
+                <option value="">None</option>
+                {foldersLoading ? (
+                  <option>Loading folders...</option>
+                ) : folders.length === 0 ? (
+                  <option>No folders available</option>
+                ) : (
+                  folders.map((folder) => (
+                    <option key={folder.id} value={folder.id}>
+                      {folder.name}
+                    </option>
+                  ))
+                )}
+              </select>
+            </div>
+          </div>
 
           <div className="additem-modal__row">
             <div className="additem-modal__group">
@@ -144,7 +172,6 @@ const AddItemModal = ({ isOpen, onClose, onItemAdded, userId }) => {
               />
             </div>
           </div>
-
           <div className="additem-modal__row">
             <div className="additem-modal__group">
               <label className="additem-modal__label">Expiration Date</label>
@@ -166,7 +193,6 @@ const AddItemModal = ({ isOpen, onClose, onItemAdded, userId }) => {
               />
             </div>
           </div>
-
           {successMessage && (
             <p className="additem-modal__message additem-modal__message--success">
               {successMessage}
