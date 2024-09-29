@@ -1,10 +1,41 @@
 import Button from "../Button/Button";
+import { useState } from "react";
+import { removeItem } from "../../services/firebaseService.js";
 import "./DeleteItemModal.scss";
 
-const DeleteItemModal = ({ isOpen, onClose }) => {
-  if (!isOpen) {
-    return null;
-  }
+const DeleteItemModal = ({ isOpen, onClose, item, onItemDeleted, userId }) => {
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const handleDelete = async () => {
+    if (loading) return;
+    setLoading(true);
+
+    try {
+      const result = await removeItem(userId, item.id, item.folderId);
+
+      if (result.success) {
+        onItemDeleted(item.id);
+        setSuccessMessage("Item successfully deleted!");
+        setErrorMessage("");
+
+        setTimeout(() => {
+          setLoading(false);
+          setSuccessMessage("");
+          onClose();
+        }, 1000);
+      } else {
+        setErrorMessage("Failed to delete item. Please try again.");
+        setLoading(false);
+      }
+    } catch (error) {
+      setErrorMessage("Error deleting item. Please try again.");
+      setLoading(false);
+    }
+  };
+
+  if (!isOpen) return null;
 
   return (
     <div className="deleteitem-modal">
@@ -44,11 +75,23 @@ const DeleteItemModal = ({ isOpen, onClose }) => {
           </Button>
           <Button
             className="deleteitem-modal__submit button--deleteitem"
-            type="submit"
+            type="button"
+            onClick={handleDelete}
+            disabled={loading}
           >
-            Delete
+            {loading ? "Deleting..." : "Delete"}
           </Button>
         </div>
+        {errorMessage && (
+          <p className="deleteitem-modal__message deleteitem-modal__message--error">
+            {errorMessage}
+          </p>
+        )}
+        {successMessage && (
+          <p className="deleteitem-modal__message deleteitem-modal__message--success">
+            {successMessage}
+          </p>
+        )}
       </div>
     </div>
   );

@@ -1,10 +1,47 @@
 import Button from "../Button/Button";
+import { useState } from "react";
+import { removeFolder } from "../../services/firebaseService.js";
 import "./DeleteFolderModal.scss";
 
-const DeleteFolderModal = ({ isOpen, onClose }) => {
-  if (!isOpen) {
-    return null;
-  }
+const DeleteFolderModal = ({
+  isOpen,
+  onClose,
+  folder,
+  onFolderDeleted,
+  userId,
+}) => {
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const handleDelete = async () => {
+    if (loading) return;
+    setLoading(true);
+
+    try {
+      const result = await removeFolder(userId, folder.id);
+
+      if (result.success) {
+        onFolderDeleted(folder.id);
+        setSuccessMessage("Folder successfully deleted!");
+        setErrorMessage("");
+
+        setTimeout(() => {
+          setLoading(false);
+          setSuccessMessage("");
+          onClose();
+        }, 1000);
+      } else {
+        setErrorMessage("Failed to delete folder. Please try again.");
+        setLoading(false);
+      }
+    } catch (error) {
+      setErrorMessage("Error deleting folder. Please try again.");
+      setLoading(false);
+    }
+  };
+
+  if (!isOpen) return null;
 
   return (
     <div className="deletefolder-modal">
@@ -44,11 +81,23 @@ const DeleteFolderModal = ({ isOpen, onClose }) => {
           </Button>
           <Button
             className="deletefolder-modal__submit button--deletefolder"
-            type="submit"
+            type="button"
+            onClick={handleDelete}
+            disabled={loading}
           >
-            Delete
+            {loading ? "Deleting..." : "Delete"}
           </Button>
         </div>
+        {errorMessage && (
+          <p className="deletefolder-modal__message deletefolder-modal__message--error">
+            {errorMessage}
+          </p>
+        )}
+        {successMessage && (
+          <p className="deletefolder-modal__message deletefolder-modal__message--success">
+            {successMessage}
+          </p>
+        )}
       </div>
     </div>
   );

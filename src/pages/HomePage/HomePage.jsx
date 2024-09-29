@@ -125,6 +125,30 @@ const HomePage = () => {
     }));
   };
 
+  const handleItemDeleted = (deletedItemId) => {
+    setNewItems((prevItems) =>
+      prevItems.filter((item) => item.id !== deletedItemId)
+    );
+  };
+
+  const handleFolderDeleted = (deletedFolderId) => {
+    setNewFolders((prevFolders) =>
+      prevFolders.filter((folder) => folder.id !== deletedFolderId)
+    );
+
+    const deletedItemsCount = newItems.filter(
+      (item) => item.folderId === deletedFolderId
+    ).length;
+
+    setNewItems((prevItems) =>
+      prevItems.filter((item) => item.folderId !== deletedFolderId)
+    );
+
+    setNewItems((prevItems) =>
+      prevItems.slice(0, prevItems.length - deletedItemsCount)
+    );
+  };
+
   const getItemsByFolder = (folderId) => {
     const folderItems = items.filter((item) => item.folderId === folderId);
     const newFolderItems = newItems.filter(
@@ -392,12 +416,14 @@ const HomePage = () => {
         onClose={toggleDeleteItemModal}
         item={currentItem}
         userId={currentUser?.uid}
+        onItemDeleted={handleItemDeleted}
       />
       <DeleteFolderModal
         isOpen={isDeleteFolderModalOpen}
         onClose={toggleDeleteFolderModal}
         folder={currentFolder}
         userId={currentUser?.uid}
+        onFolderDeleted={handleFolderDeleted}
       />
     </main>
   );

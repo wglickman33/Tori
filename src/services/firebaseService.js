@@ -101,10 +101,21 @@ export const updateFolder = async (userId, folderId, updatedData) => {
 
 export const removeFolder = async (userId, folderId) => {
   try {
+    const folderItemsRef = ref(database, `users/${userId}/folders/${folderId}/items`);
+    const folderItemsSnapshot = await get(folderItemsRef);
+
+    if (folderItemsSnapshot.exists()) {
+      const items = folderItemsSnapshot.val();
+      for (const itemId in items) {
+        await remove(ref(database, `users/${userId}/folders/${folderId}/items/${itemId}`));
+      }
+    }
+
     await remove(ref(database, `users/${userId}/folders/${folderId}`));
+    return { success: true };
   } catch (error) {
-    console.error(`Error removing folder for userId ${userId}, folderId ${folderId}:`, error);
-    throw new Error(`Failed to remove folder: ${error.message}`);
+    console.error(`Error removing folder:`, error);
+    return { success: false };
   }
 };
 
@@ -190,9 +201,18 @@ export const updateItem = async (userId, itemId, folderId = null, currentFolderI
 
 export const removeItem = async (userId, itemId, folderId = null) => {
   try {
-    await remove(ref(database, folderId ? `users/${userId}/folders/${folderId}/items/${itemId}` : `users/${userId}/items/${itemId}`));
+    await remove(
+      ref(
+        database,
+        folderId
+          ? `users/${userId}/folders/${folderId}/items/${itemId}`
+          : `users/${userId}/items/${itemId}`
+      )
+    );
+    return { success: true };
   } catch (error) {
-    console.error(`Error removing item for userId ${userId}, itemId ${itemId}:`, error);
-    throw new Error(`Failed to remove item: ${error.message}`);
+    console.error(`Error removing item:`, error);
+    return { success: false };
   }
 };
+
