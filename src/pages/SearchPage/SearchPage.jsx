@@ -10,11 +10,16 @@ const SearchPage = () => {
   const [folders, setFolders] = useState([]);
   const [items, setItems] = useState([]);
   const [tags, setTags] = useState([]);
+  const [filteredResults, setFilteredResults] = useState([]);
+  const [filtersApplied, setFiltersApplied] = useState(false);
   const [isFoldersOpen, setIsFoldersOpen] = useState(true);
   const [isNameOpen, setIsNameOpen] = useState(true);
   const [isPriceOpen, setIsPriceOpen] = useState(true);
   const [isTagsOpen, setIsTagsOpen] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [selectedFolders, setSelectedFolders] = useState([]);
+  const [selectedNames, setSelectedNames] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -56,6 +61,43 @@ const SearchPage = () => {
     loadData();
   }, [currentUser]);
 
+  const handleApplyFilters = () => {
+    const filteredItems = items.filter((item) => {
+      const folderMatch =
+        selectedFolders.length === 0 ||
+        selectedFolders.includes(item.folderId || "Independent Item");
+      const nameMatch =
+        selectedNames.length === 0 || selectedNames.includes(item.name);
+      const tagMatch =
+        selectedTags.length === 0 || selectedTags.includes(item.customTag);
+
+      return folderMatch && nameMatch && tagMatch;
+    });
+
+    setFilteredResults(filteredItems);
+    setFiltersApplied(true);
+  };
+
+  const handleFolderSelection = (folderId) => {
+    setSelectedFolders((prev) =>
+      prev.includes(folderId)
+        ? prev.filter((id) => id !== folderId)
+        : [...prev, folderId]
+    );
+  };
+
+  const handleNameSelection = (name) => {
+    setSelectedNames((prev) =>
+      prev.includes(name) ? prev.filter((n) => n !== name) : [...prev, name]
+    );
+  };
+
+  const handleTagSelection = (tag) => {
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    );
+  };
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -88,8 +130,14 @@ const SearchPage = () => {
             {isFoldersOpen && (
               <div className="search__filter-checkbox-list">
                 <div className="search__filter-checkbox-container">
-                  <input type="checkbox" className="search__filter-checkbox" />
-                  <label className="search__filter-label">All Items</label>
+                  <input
+                    type="checkbox"
+                    className="search__filter-checkbox"
+                    onChange={() => handleFolderSelection("Independent Item")}
+                  />
+                  <label className="search__filter-label">
+                    Independent Items
+                  </label>
                 </div>
                 {folders.map((folder) => (
                   <div
@@ -99,6 +147,7 @@ const SearchPage = () => {
                     <input
                       type="checkbox"
                       className="search__filter-checkbox"
+                      onChange={() => handleFolderSelection(folder.id)}
                     />
                     <label className="search__filter-label">
                       {folder.name}
@@ -141,6 +190,7 @@ const SearchPage = () => {
                       <input
                         type="checkbox"
                         className="search__filter-checkbox"
+                        onChange={() => handleNameSelection(item.name)}
                       />
                       <label className="search__filter-label">
                         {item.name}
@@ -217,6 +267,7 @@ const SearchPage = () => {
                       <input
                         type="checkbox"
                         className="search__filter-checkbox"
+                        onChange={() => handleTagSelection(tag)}
                       />
                       <label className="search__filter-label">{tag}</label>
                     </div>
@@ -227,7 +278,10 @@ const SearchPage = () => {
           </div>
         </div>
         <div className="search__left-bottom">
-          <Button className="search__apply-button button--apply">
+          <Button
+            className="search__apply-button button--apply"
+            onClick={handleApplyFilters}
+          >
             Apply Filters
           </Button>
         </div>
@@ -258,55 +312,89 @@ const SearchPage = () => {
           </div>
         </div>
         <div className="search__content">
-          <h3 className="search__description">
-            Create a list of any item in your inventory using these filters.
-          </h3>
-          <div className="search__icon-group">
-            <div className="search__icon-group-top">
-              <div className="search__icon-item">
-                <div className="search__icon-container">
-                  <img
-                    className="search__icon icon"
-                    src="../../../src/assets/icons/folder.svg"
-                    alt="Folder Icon"
-                  />
+          {!filtersApplied ? (
+            <>
+              <h3 className="search__description">
+                Create a list of any item in your inventory using these filters.
+              </h3>
+              <div className="search__icon-group">
+                <div className="search__icon-group-top">
+                  <div className="search__icon-item">
+                    <div className="search__icon-container">
+                      <img
+                        className="search__icon icon"
+                        src="../../../src/assets/icons/folder.svg"
+                        alt="Folder Icon"
+                      />
+                    </div>
+                    <h3 className="search__icon-item-text">Folders</h3>
+                  </div>
+                  <div className="search__icon-item">
+                    <div className="search__icon-container">
+                      <img
+                        className="search__icon icon"
+                        src="../../../src/assets/icons/items.svg"
+                        alt="Items Icon"
+                      />
+                    </div>
+                    <h3 className="search__icon-item-text">Name</h3>
+                  </div>
+                  <div className="search__icon-item">
+                    <div className="search__icon-container">
+                      <img
+                        className="search__icon icon"
+                        src="../../../src/assets/icons/money.svg"
+                        alt="Price Icon"
+                      />
+                    </div>
+                    <h3 className="search__icon-item-text">Price</h3>
+                  </div>
                 </div>
-                <h3 className="search__icon-item-text">Folders</h3>
-              </div>
-              <div className="search__icon-item">
-                <div className="search__icon-container">
-                  <img
-                    className="search__icon icon"
-                    src="../../../src/assets/icons/items.svg"
-                    alt="Items Icon"
-                  />
+                <div className="search__icon-group-bottom">
+                  <div className="search__icon-item">
+                    <div className="search__icon-container">
+                      <img
+                        className="search__icon icon"
+                        src="../../../src/assets/icons/tags.svg"
+                        alt="Tags Icon"
+                      />
+                    </div>
+                    <h3 className="search__icon-item-text">Tags</h3>
+                  </div>
                 </div>
-                <h3 className="search__icon-item-text">Name</h3>
               </div>
-              <div className="search__icon-item">
-                <div className="search__icon-container">
-                  <img
-                    className="search__icon icon"
-                    src="../../../src/assets/icons/money.svg"
-                    alt="Price Icon"
-                  />
+            </>
+          ) : (
+            <div className="search__results">
+              {filteredResults.length === 0 ? (
+                <h3 className="search__results-none">
+                  No items match your filters.
+                </h3>
+              ) : (
+                <div className="search__table">
+                  <div className="search__table-header">
+                    <span className="search__table-column">Name</span>
+                    <span className="search__table-column">Folder</span>
+                    <span className="search__table-column">Tag</span>
+                  </div>
+                  <div className="search__table-body">
+                    {filteredResults.map((item) => (
+                      <div key={item.id} className="search__table-row">
+                        <span className="search__table-data">{item.name}</span>
+                        <span className="search__table-data">
+                          {folders.find((f) => f.id === item.folderId)?.name ||
+                            "Independent Item"}
+                        </span>
+                        <span className="search__table-data">
+                          {item.customTag || "No Tag"}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <h3 className="search__icon-item-text">Price</h3>
-              </div>
+              )}
             </div>
-            <div className="search__icon-group-bottom">
-              <div className="search__icon-item">
-                <div className="search__icon-container">
-                  <img
-                    className="search__icon icon"
-                    src="../../../src/assets/icons/tags.svg"
-                    alt="Tags Icon"
-                  />
-                </div>
-                <h3 className="search__icon-item-text">Tags</h3>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
         <div className="search__right-bottom">
           <Button to="/help" className="button--help search__help-button">
