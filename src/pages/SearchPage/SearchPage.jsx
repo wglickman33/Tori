@@ -1,14 +1,60 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "../../components/Button/Button";
 import SlidingMenu from "../../components/SlidingMenu/SlidingMenu";
+import { fetchItems, fetchFolders } from "../../services/firebaseService.js";
+import { useAuth } from "../../context/AuthContext";
 import "./SearchPage.scss";
 
 const SearchPage = () => {
+  const { currentUser } = useAuth();
+  const [folders, setFolders] = useState([]);
+  const [items, setItems] = useState([]);
+  const [tags, setTags] = useState([]);
   const [isFoldersOpen, setIsFoldersOpen] = useState(true);
   const [isNameOpen, setIsNameOpen] = useState(true);
   const [isPriceOpen, setIsPriceOpen] = useState(true);
   const [isTagsOpen, setIsTagsOpen] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const loadData = async () => {
+      if (!currentUser) return;
+
+      try {
+        const fetchedFolders = await fetchFolders(currentUser.uid);
+        const fetchedItems = await fetchItems(currentUser.uid);
+
+        setFolders(Object.values(fetchedFolders || {}));
+        setItems(Object.values(fetchedItems || {}));
+
+        const allTags = [];
+        if (fetchedFolders) {
+          Object.values(fetchedFolders).forEach((folder) => {
+            if (folder.items) {
+              Object.values(folder.items).forEach((item) => {
+                if (item.customTag) {
+                  allTags.push(item.customTag);
+                }
+              });
+            }
+          });
+        }
+        if (fetchedItems) {
+          Object.values(fetchedItems).forEach((item) => {
+            if (item.customTag) {
+              allTags.push(item.customTag);
+            }
+          });
+        }
+
+        setTags([...new Set(allTags)]);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    loadData();
+  }, [currentUser]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -38,18 +84,27 @@ const SearchPage = () => {
                 />
                 <h3 className="search__filter-title">Folders</h3>
               </div>
-              <div className="search__filter-icon-container">
-                <img
-                  className="search__filter-icon icon"
-                  src="../../../src/assets/icons/search.svg"
-                  alt="Search Icon"
-                />
-              </div>
             </div>
             {isFoldersOpen && (
-              <div className="search__filter-checkbox-container">
-                <input type="checkbox" className="search__filter-checkbox" />
-                <label className="search__filter-label">All Items</label>
+              <div className="search__filter-checkbox-list">
+                <div className="search__filter-checkbox-container">
+                  <input type="checkbox" className="search__filter-checkbox" />
+                  <label className="search__filter-label">All Items</label>
+                </div>
+                {folders.map((folder) => (
+                  <div
+                    key={folder.id}
+                    className="search__filter-checkbox-container"
+                  >
+                    <input
+                      type="checkbox"
+                      className="search__filter-checkbox"
+                    />
+                    <label className="search__filter-label">
+                      {folder.name}
+                    </label>
+                  </div>
+                ))}
               </div>
             )}
           </div>
@@ -70,19 +125,29 @@ const SearchPage = () => {
                 />
                 <h3 className="search__filter-title">Name</h3>
               </div>
-              <div className="search__filter-icon-container">
-                <img
-                  className="search__filter-icon icon"
-                  src="../../../src/assets/icons/search.svg"
-                  alt="Search Icon"
-                />
-              </div>
             </div>
             {isNameOpen && (
-              <div className="search__filter-status">
-                <h3 className="search__filter-status-text">
-                  No data available
-                </h3>
+              <div className="search__filter-checkbox-list">
+                {items.length === 0 ? (
+                  <h3 className="search__filter-status-text">
+                    No data available
+                  </h3>
+                ) : (
+                  items.map((item) => (
+                    <div
+                      key={item.id}
+                      className="search__filter-checkbox-container"
+                    >
+                      <input
+                        type="checkbox"
+                        className="search__filter-checkbox"
+                      />
+                      <label className="search__filter-label">
+                        {item.name}
+                      </label>
+                    </div>
+                  ))
+                )}
               </div>
             )}
           </div>
@@ -136,31 +201,37 @@ const SearchPage = () => {
                 />
                 <h3 className="search__filter-title">Tags</h3>
               </div>
-              <div className="search__filter-icon-container">
-                <img
-                  className="search__filter-icon icon"
-                  src="../../../src/assets/icons/search.svg"
-                  alt="Search Icon"
-                />
-              </div>
             </div>
             {isTagsOpen && (
-              <div className="search__filter-status">
-                <h3 className="search__filter-status-text">
-                  No data available
-                </h3>
+              <div className="search__filter-checkbox-list">
+                {tags.length === 0 ? (
+                  <h3 className="search__filter-status-text">
+                    No data available
+                  </h3>
+                ) : (
+                  tags.map((tag, index) => (
+                    <div
+                      key={index}
+                      className="search__filter-checkbox-container"
+                    >
+                      <input
+                        type="checkbox"
+                        className="search__filter-checkbox"
+                      />
+                      <label className="search__filter-label">{tag}</label>
+                    </div>
+                  ))
+                )}
               </div>
             )}
           </div>
         </div>
-
         <div className="search__left-bottom">
           <Button className="search__apply-button button--apply">
             Apply Filters
           </Button>
         </div>
       </section>
-
       <section className="search__right">
         <div className="search__right-top">
           <div className="search__header-container">
@@ -186,7 +257,6 @@ const SearchPage = () => {
             </Button>
           </div>
         </div>
-
         <div className="search__content">
           <h3 className="search__description">
             Create a list of any item in your inventory using these filters.
@@ -238,7 +308,6 @@ const SearchPage = () => {
             </div>
           </div>
         </div>
-
         <div className="search__right-bottom">
           <Button to="/help" className="button--help search__help-button">
             <img
@@ -250,7 +319,6 @@ const SearchPage = () => {
           </Button>
         </div>
       </section>
-
       <SlidingMenu isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} />
     </main>
   );
