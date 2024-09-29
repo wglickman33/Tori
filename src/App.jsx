@@ -10,22 +10,79 @@ import HelpPage from "./pages/HelpPage/HelpPage";
 import SettingsPage from "./pages/SettingsPage/SettingsPage";
 import FAQPage from "./pages/FAQPage/FAQPage";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Navigate to="/items" replace />} />
-        <Route path="/items" element={<HomePage />} />
-        <Route path="/items/:id" element={<HomePage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/create-account" element={<CreateAccountPage />} />
-        <Route path="/search" element={<SearchPage />} />
-        <Route path="/tags" element={<TagsPage />} />
-        <Route path="/help" element={<HelpPage />} />
-        <Route path="/settings" element={<SettingsPage />} />
-        <Route path="/faqs" element={<FAQPage />} />
+        <Route
+          path="/items"
+          element={
+            <ProtectedRoute>
+              <HomePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/items/:id"
+          element={
+            <ProtectedRoute>
+              <HomePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/search"
+          element={
+            <ProtectedRoute>
+              <SearchPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tags"
+          element={
+            <ProtectedRoute>
+              <TagsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/help"
+          element={
+            <ProtectedRoute>
+              <HelpPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <SettingsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/faqs"
+          element={
+            <ProtectedRoute>
+              <FAQPage />
+            </ProtectedRoute>
+          }
+        />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
