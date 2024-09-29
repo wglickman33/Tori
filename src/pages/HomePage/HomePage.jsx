@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import useFetchItems from "../../hooks/useFetchItems.js";
 import useFetchFolders from "../../hooks/useFetchFolders.js";
 import { useAuth } from "../../context/AuthContext";
@@ -101,6 +101,35 @@ const HomePage = () => {
     const combinedIndependentItems =
       independentItems.concat(newIndependentItems);
     return combinedIndependentItems;
+  };
+
+  const handleItemUpdated = (updatedItemData) => {
+    setNewItems((prevItems) => {
+      let filteredItems = prevItems.filter(
+        (item) => item.id !== updatedItemData.id
+      );
+
+      return [...filteredItems, updatedItemData];
+    });
+
+    if (updatedItemData.folderId) {
+      setOpenFolders((prevOpenFolders) => ({
+        ...prevOpenFolders,
+        [updatedItemData.folderId]: true,
+      }));
+    }
+
+    if (
+      updatedItemData.previousFolderId &&
+      updatedItemData.previousFolderId !== updatedItemData.folderId
+    ) {
+      setOpenFolders((prevOpenFolders) => ({
+        ...prevOpenFolders,
+        [updatedItemData.previousFolderId]: false,
+      }));
+    }
+
+    setNewItems((prevItems) => [...prevItems]);
   };
 
   return (
@@ -341,21 +370,26 @@ const HomePage = () => {
         isOpen={isEditItemModalOpen}
         onClose={toggleEditItemModal}
         item={currentItem}
+        userId={currentUser?.uid}
+        onItemUpdated={handleItemUpdated}
       />
       <EditFolderModal
         isOpen={isEditFolderModalOpen}
         onClose={toggleEditFolderModal}
         folder={currentFolder}
+        userId={currentUser?.uid}
       />
       <DeleteItemModal
         isOpen={isDeleteItemModalOpen}
         onClose={toggleDeleteItemModal}
         item={currentItem}
+        userId={currentUser?.uid}
       />
       <DeleteFolderModal
         isOpen={isDeleteFolderModalOpen}
         onClose={toggleDeleteFolderModal}
         folder={currentFolder}
+        userId={currentUser?.uid}
       />
     </main>
   );

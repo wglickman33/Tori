@@ -159,19 +159,32 @@ export const fetchItems = async (userId) => {
   }
 };
 
-
-export const updateItem = async (userId, itemId, folderId = null, updatedData) => {
+export const updateItem = async (userId, itemId, folderId = null, currentFolderId = null, updatedData) => {
   try {
     const updates = {
       ...updatedData,
       updated_at: generateTimestamp(),
     };
-    await update(ref(database, folderId ? `users/${userId}/folders/${folderId}/items/${itemId}` : `users/${userId}/items/${itemId}`), updates);
+
+    if (currentFolderId) {
+      await remove(ref(database, `users/${userId}/folders/${currentFolderId}/items/${itemId}`));
+    } else {
+      await remove(ref(database, `users/${userId}/items/${itemId}`));
+    }
+
+    const newLocationRef = folderId
+      ? ref(database, `users/${userId}/folders/${folderId}/items/${itemId}`)
+      : ref(database, `users/${userId}/items/${itemId}`);
+
+    await set(newLocationRef, updates);
+
+    return { success: true };
   } catch (error) {
     console.error(`Error updating item for userId ${userId}, itemId ${itemId}:`, error);
     throw new Error(`Failed to update item: ${error.message}`);
   }
 };
+
 
 export const removeItem = async (userId, itemId, folderId = null) => {
   try {
