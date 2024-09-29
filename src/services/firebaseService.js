@@ -91,11 +91,13 @@ export const updateFolder = async (userId, folderId, updatedData) => {
       updated_at: generateTimestamp(),
     };
     await update(ref(database, `users/${userId}/folders/${folderId}`), updates);
+    return { success: true };
   } catch (error) {
     console.error(`Error updating folder for userId ${userId}, folderId ${folderId}:`, error);
     throw new Error(`Failed to update folder: ${error.message}`);
   }
 };
+
 
 export const removeFolder = async (userId, folderId) => {
   try {

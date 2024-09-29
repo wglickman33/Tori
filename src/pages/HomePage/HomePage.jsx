@@ -86,29 +86,11 @@ const HomePage = () => {
     setNewFolders((prevFolders) => [...prevFolders, newFolder]);
   };
 
-  const getItemsByFolder = (folderId) => {
-    const folderItems = items.filter((item) => item.folderId === folderId);
-    const newFolderItems = newItems.filter(
-      (item) => item.folderId === folderId
-    );
-    return folderItems.concat(newFolderItems);
-  };
-
-  const getIndependentItems = () => {
-    const independentItems = items.filter((item) => !item.folderId);
-    const newIndependentItems = newItems.filter((item) => !item.folderId);
-
-    const combinedIndependentItems =
-      independentItems.concat(newIndependentItems);
-    return combinedIndependentItems;
-  };
-
   const handleItemUpdated = (updatedItemData) => {
     setNewItems((prevItems) => {
-      let filteredItems = prevItems.filter(
+      const filteredItems = prevItems.filter(
         (item) => item.id !== updatedItemData.id
       );
-
       return [...filteredItems, updatedItemData];
     });
 
@@ -128,8 +110,33 @@ const HomePage = () => {
         [updatedItemData.previousFolderId]: false,
       }));
     }
+  };
 
-    setNewItems((prevItems) => [...prevItems]);
+  const handleFolderUpdated = (updatedFolderData) => {
+    setNewFolders((prevFolders) => {
+      return prevFolders.map((folder) =>
+        folder.id === updatedFolderData.id ? updatedFolderData : folder
+      );
+    });
+
+    setOpenFolders((prevOpenFolders) => ({
+      ...prevOpenFolders,
+      [updatedFolderData.id]: true,
+    }));
+  };
+
+  const getItemsByFolder = (folderId) => {
+    const folderItems = items.filter((item) => item.folderId === folderId);
+    const newFolderItems = newItems.filter(
+      (item) => item.folderId === folderId
+    );
+    return folderItems.concat(newFolderItems);
+  };
+
+  const getIndependentItems = () => {
+    const independentItems = items.filter((item) => !item.folderId);
+    const newIndependentItems = newItems.filter((item) => !item.folderId);
+    return independentItems.concat(newIndependentItems);
   };
 
   return (
@@ -378,6 +385,7 @@ const HomePage = () => {
         onClose={toggleEditFolderModal}
         folder={currentFolder}
         userId={currentUser?.uid}
+        onFolderUpdated={handleFolderUpdated}
       />
       <DeleteItemModal
         isOpen={isDeleteItemModalOpen}
