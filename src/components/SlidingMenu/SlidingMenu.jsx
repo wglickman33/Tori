@@ -1,12 +1,24 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Button from "../../components/Button/Button";
+import useAuth from "../../hooks/useAuth.js";
 import "./SlidingMenu.scss";
 
 const SlidingMenu = ({ isMenuOpen, toggleMenu }) => {
+  const { logOutUser } = useAuth();
+  const navigate = useNavigate();
   const location = useLocation();
 
   const isActive = (path) => {
     return location.pathname === path ? "sliding-menu__list-link--active" : "";
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logOutUser();
+      navigate("/login");
+    } catch (error) {
+      console.error("Failed to log out", error);
+    }
   };
 
   return (
@@ -98,7 +110,10 @@ const SlidingMenu = ({ isMenuOpen, toggleMenu }) => {
           </Link>
         </li>
         <li className="sliding-menu__list-item">
-          <Button className="sliding-menu__button button--logout">
+          <Button
+            className="sliding-menu__button button--logout"
+            onClick={handleLogout}
+          >
             <img
               className="sliding-menu__list-icon logout-icon"
               src="../../../src/assets/icons/logout.svg"

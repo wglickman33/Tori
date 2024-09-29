@@ -1,14 +1,26 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Button from "../../components/Button/Button";
 import SlidingMenu from "../../components/SlidingMenu/SlidingMenu";
+import useAuth from "../../hooks/useAuth.js";
 import "./SettingsPage.scss";
 
 const SettingsPage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { logOutUser } = useAuth();
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logOutUser();
+      navigate("/login");
+    } catch (error) {
+      console.error("Failed to log out", error);
+    }
   };
 
   return (
@@ -52,7 +64,10 @@ const SettingsPage = () => {
           <h3 className="settings__body-text">Click below to logout</h3>
         </div>
         <div className="settings__button-container">
-          <Button className="settings__button button--logout">
+          <Button
+            className="settings__button button--logout"
+            onClick={handleLogout}
+          >
             <img
               className="settings__icon logout-icon icon"
               src="../../../src/assets/icons/logout.svg"
