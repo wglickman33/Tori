@@ -2,10 +2,24 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "../../components/Button/Button";
 import SlidingMenu from "../../components/SlidingMenu/SlidingMenu";
+import useFetchItems from "../../hooks/useFetchItems.js";
+import useFetchFolders from "../../hooks/useFetchFolders.js";
+import { useAuth } from "../../context/AuthContext";
 import "./DashboardPage.scss";
 
 const DashboardPage = () => {
+  const { currentUser } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const { folders = [], loading: foldersLoading } = useFetchFolders(
+    currentUser?.uid
+  );
+  const { items = [], loading: itemsLoading } = useFetchItems(currentUser?.uid);
+
+  const totalQuantity = items.reduce((acc, item) => {
+    const itemQuantity = parseInt(item.quantity, 10) || 1;
+    return acc + itemQuantity;
+  }, 0);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -52,7 +66,7 @@ const DashboardPage = () => {
                 </div>
               </Link>
               <div className="inventory__card-text">
-                <h3>0</h3>
+                <h3>{foldersLoading ? "Loading..." : folders.length}</h3>
                 <h3>Folders</h3>
               </div>
             </div>
@@ -67,7 +81,7 @@ const DashboardPage = () => {
                 </div>
               </Link>
               <div className="inventory__card-text">
-                <h3>0</h3>
+                <h3>{itemsLoading ? "Loading..." : items.length}</h3>
                 <h3>Items</h3>
               </div>
             </div>
@@ -80,7 +94,7 @@ const DashboardPage = () => {
                 />
               </div>
               <div className="inventory__card-text">
-                <h3>0</h3>
+                <h3>{itemsLoading ? "Loading..." : totalQuantity}</h3>
                 <h3>Total Quantity</h3>
               </div>
             </div>
