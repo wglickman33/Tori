@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth.js";
 import Button from "../../components/Button/Button";
@@ -9,7 +9,7 @@ import unlockIcon from "../../assets/icons/unlock.svg";
 import "./LoginForm.scss";
 
 const LoginForm = () => {
-  const { loginUser, error } = useAuth();
+  const { loginUser, currentUser, error } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -22,14 +22,18 @@ const LoginForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       await loginUser(email, password);
-      navigate("/");
     } catch (err) {
       setFormError(error || "Failed to log in. Please check your credentials.");
     }
   };
+
+  useEffect(() => {
+    if (currentUser) {
+      navigate("/items");
+    }
+  }, [currentUser, navigate]);
 
   return (
     <section className="login">

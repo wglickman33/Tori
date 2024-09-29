@@ -1,5 +1,12 @@
-import { useState } from "react";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateProfile } from "firebase/auth";
+import { useState, useEffect } from "react";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  updateProfile,
+  onAuthStateChanged,
+} from "firebase/auth";
 import { auth } from "../services/firebaseConfig.js";
 
 const useAuth = () => {
@@ -7,7 +14,19 @@ const useAuth = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   const loginUser = async (email, password) => {
+    setLoading(true);
+    setError(null);
+
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       setCurrentUser(userCredential.user);
@@ -19,6 +38,9 @@ const useAuth = () => {
   };
 
   const createUser = async (email, password, fullName) => {
+    setLoading(true);
+    setError(null);
+
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(userCredential.user, { displayName: fullName });
