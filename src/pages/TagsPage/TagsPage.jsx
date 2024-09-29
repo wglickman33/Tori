@@ -1,12 +1,62 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "../../components/Button/Button";
 import SlidingMenu from "../../components/SlidingMenu/SlidingMenu";
+import { fetchItems, fetchFolders } from "../../services/firebaseService.js";
+import { useAuth } from "../../context/AuthContext";
 import "./TagsPage.scss";
 
 const TagsPage = () => {
+  const { currentUser } = useAuth();
   const [tags, setTags] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [visibleTagsCount, setVisibleTagsCount] = useState(3);
+
+  useEffect(() => {
+    const loadTags = async () => {
+      if (!currentUser) return;
+
+      try {
+        const fetchedFolders = await fetchFolders(currentUser.uid);
+        const fetchedItems = await fetchItems(currentUser.uid);
+
+        const allTags = [];
+
+        if (fetchedFolders) {
+          Object.values(fetchedFolders).forEach((folder) => {
+            if (folder.items) {
+              Object.values(folder.items).forEach((item) => {
+                if (item.customTag) {
+                  allTags.push({
+                    tagName: item.customTag,
+                    item: item.name,
+                    folder: folder.name,
+                  });
+                }
+              });
+            }
+          });
+        }
+
+        if (fetchedItems) {
+          Object.values(fetchedItems).forEach((item) => {
+            if (item.customTag && !item.folderId) {
+              allTags.push({
+                tagName: item.customTag,
+                item: item.name,
+                folder: "Independent Item",
+              });
+            }
+          });
+        }
+
+        setTags(allTags);
+      } catch (error) {
+        console.error("Error fetching tags:", error);
+      }
+    };
+
+    loadTags();
+  }, [currentUser]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -53,7 +103,9 @@ const TagsPage = () => {
           </div>
           <div className="tags__body">
             <h2 className="tags__body-title">You don't have any tags</h2>
-            <h3 className="tags__body-text">Click below to get started!</h3>
+            <h3 className="tags__body-text">
+              Click below to redirect to the item page to get started!
+            </h3>
           </div>
           <div className="tags__button-container">
             <Button to="/" className="tags__button button--addtag">
