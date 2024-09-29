@@ -138,6 +138,25 @@
     }
   }
 
+  &__item-details {
+    padding: 2rem;
+    margin-left: 2rem;
+
+    @include large-desktop {
+      margin: 1.25rem 0 0 2rem;
+    }
+  }
+
+  &__item-details-title {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+  }
+
+  &__item-details-text {
+    font-size: 2rem;
+    margin-top: 0.5rem;
+  }
+
   &__left-bottom {
     position: absolute;
     bottom: 5px;
@@ -358,7 +377,18 @@
 
 .hoverable {
   transition: filter 0.3s;
+  cursor: pointer;
+
   &:hover {
     filter: $icon-color-hover;
+  }
+}
+
+.hoverable-item {
+  transition: color 0.3s;
+  cursor: pointer;
+
+  &:hover {
+    color: $lightCream;
   }
 }

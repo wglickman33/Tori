@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import useFetchItems from "../../hooks/useFetchItems.js";
 import useFetchFolders from "../../hooks/useFetchFolders.js";
 import { useAuth } from "../../context/AuthContext";
@@ -14,6 +15,8 @@ import "./HomePage.scss";
 
 const HomePage = () => {
   const { currentUser } = useAuth();
+  const navigate = useNavigate();
+  const { id: itemId } = useParams();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
   const [isAddFolderModalOpen, setIsAddFolderModalOpen] = useState(false);
@@ -163,6 +166,14 @@ const HomePage = () => {
     return independentItems.concat(newIndependentItems);
   };
 
+  const handleItemClick = (id) => {
+    navigate(`/items/${id}`);
+  };
+
+  const selectedItem = [...items, ...newItems].find(
+    (item) => item.id === itemId
+  );
+
   return (
     <main className="itempage">
       <section className="itempage__left">
@@ -235,6 +246,35 @@ const HomePage = () => {
               : [...(items || []), ...newItems].length}
           </h2>
         </div>
+        {selectedItem && (
+          <div className="itempage__item-details">
+            <h3 className="itempage__item-details-title">
+              Item: {selectedItem.name}
+            </h3>
+            <p className="itempage__item-details-text">
+              <u>Folder</u>:{" "}
+              {selectedItem.folderId
+                ? folders.find((folder) => folder.id === selectedItem.folderId)
+                    ?.name || "N/A"
+                : "Independent"}
+            </p>
+            <p className="itempage__item-details-text">
+              <u>Purchase Date</u>: {selectedItem.purchaseDate || "N/A"}
+            </p>
+            <p className="itempage__item-details-text">
+              <u>Expiration Date</u>: {selectedItem.expirationDate || "N/A"}
+            </p>
+            <p className="itempage__item-details-text">
+              <u>Location</u>: {selectedItem.location || "N/A"}
+            </p>
+            <p className="itempage__item-details-text">
+              <u>Quantity</u>: {selectedItem.quantity || "N/A"}
+            </p>
+            <p className="itempage__item-details-text">
+              <u>Custom Tag</u>: {selectedItem.customTag || "N/A"}
+            </p>
+          </div>
+        )}
         <div className="itempage__left-bottom">
           <Button to="/help" className="button--help itempage__button">
             <img
@@ -319,8 +359,12 @@ const HomePage = () => {
                 {openFolders[folder.id] && (
                   <div className="itempage__folder-items">
                     {getItemsByFolder(folder.id).map((item) => (
-                      <div key={item.id} className="itempage__folder-item">
-                        <p className="itempage__folder-item-text">
+                      <div
+                        key={item.id}
+                        className="itempage__folder-item"
+                        onClick={() => handleItemClick(item.id)}
+                      >
+                        <p className="itempage__folder-item-text hoverable-item">
                           {item.name}
                         </p>
                         <div className="itempage__all-items-item-icons">
@@ -328,13 +372,19 @@ const HomePage = () => {
                             className="itempage__items-icon icon clickable hoverable"
                             src="../../../src/assets/icons/edit.svg"
                             alt="Edit Icon"
-                            onClick={() => toggleEditItemModal(item)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleEditItemModal(item);
+                            }}
                           />
                           <img
                             className="itempage__items-icon icon clickable hoverable"
                             src="../../../src/assets/icons/delete.svg"
                             alt="Delete Icon"
-                            onClick={() => toggleDeleteItemModal(item)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleDeleteItemModal(item);
+                            }}
                           />
                         </div>
                       </div>
@@ -352,20 +402,32 @@ const HomePage = () => {
             <p>No items found</p>
           ) : (
             getIndependentItems().map((item) => (
-              <div key={item.id} className="itempage__all-items-item-group">
-                <h4 className="itempage__all-items-item">{item.name}</h4>
+              <div
+                key={item.id}
+                className="itempage__all-items-item-group"
+                onClick={() => handleItemClick(item.id)}
+              >
+                <h4 className="itempage__all-items-item hoverable-item">
+                  {item.name}
+                </h4>
                 <div className="itempage__all-items-item-icons">
                   <img
                     className="itempage__items-icon icon clickable hoverable"
                     src="../../../src/assets/icons/edit.svg"
                     alt="Edit Icon"
-                    onClick={() => toggleEditItemModal(item)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleEditItemModal(item);
+                    }}
                   />
                   <img
                     className="itempage__items-icon icon clickable hoverable"
                     src="../../../src/assets/icons/delete.svg"
                     alt="Delete Icon"
-                    onClick={() => toggleDeleteItemModal(item)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleDeleteItemModal(item);
+                    }}
                   />
                 </div>
               </div>
