@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import {
-  getAuth,
-  signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
   signOut,
   updateProfile,
   onAuthStateChanged,
@@ -46,9 +45,11 @@ const useAuth = () => {
       await updateProfile(userCredential.user, { displayName: fullName });
       setCurrentUser(userCredential.user);
       setLoading(false);
+      return userCredential.user;
     } catch (err) {
       setError(err.message);
       setLoading(false);
+      throw err;
     }
   };
 

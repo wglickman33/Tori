@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth.js";
 import Button from "../../components/Button/Button";
 import emailIcon from "../../assets/icons/mail.svg";
@@ -8,7 +8,7 @@ import unlockIcon from "../../assets/icons/unlock.svg";
 import "./CreateAccountForm.scss";
 
 const CreateAccountForm = () => {
-  const { createUser, error } = useAuth();
+  const { createUser, currentUser, error } = useAuth();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,11 +32,16 @@ const CreateAccountForm = () => {
 
     try {
       await createUser(email, password, fullName);
-      navigate("/");
     } catch (err) {
-      setFormError(error || "Failed to create account.");
+      setFormError(err.message || "Failed to create account.");
     }
   };
+
+  useEffect(() => {
+    if (currentUser) {
+      navigate("/items");
+    }
+  }, [currentUser, navigate]);
 
   return (
     <section className="create-account">
