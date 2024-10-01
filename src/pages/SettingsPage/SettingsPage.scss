@@ -33,10 +33,10 @@
 
     &__logo {
         position: absolute;
-        width: 140px;
-        height: 140px;
-        left: -40px;
-        top: -50px;
+        width: 160px;
+        height: 160px;
+        left: -48px;
+        top: -55px;
     }
 
     &__menu {
@@ -90,12 +90,13 @@
         border: 3px solid $darkBlue;
         border-radius: 2.5rem;
         color: $darkBlue;
-        transition: background-color 0.3s, color 0.3s, filter 0.3s;
+        transition: background-color 0.3s, color 0.3s, filter 0.3s, box-shadow 0.3s;
 
         &:hover {
             color: $lightCream;
             background-color: $darkBlue;
             cursor: pointer;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.6);
 
             .settings__icon {
                 filter: $icon-color-hover;

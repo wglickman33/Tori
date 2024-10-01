@@ -105,6 +105,7 @@
       border: 2px solid $darkBlue;
       background-color: $lightCream;
       color: $darkBlue;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
 
       &::placeholder {
         color: $darkBlue;
@@ -131,11 +132,12 @@
       background-color: $powderBlue;
       color: $darkBlue;
       border-radius: 2.5rem;
-      transition: background-color 0.3s, color 0.3s;
+      transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
 
       &:hover {
         background-color: $darkBlue;
         color: $lightCream;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.6);
       }
     }
   }
@@ -171,10 +173,10 @@
 
   &__logo {
     position: absolute;
-    width: 140px;
-    height: 140px;
-    left: -45px;
-    top: -25px;
+    width: 160px;
+    height: 160px;
+    left: -57px;
+    top: -33px;
   }
 
   &__header {

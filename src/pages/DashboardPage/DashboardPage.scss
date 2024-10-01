@@ -34,11 +34,11 @@
 
     &__logo {
         position: absolute;
-        width: 140px;
-        height: 140px;
-        left: -40px;
-        top: -50px;
-    }
+        width: 160px;
+        height: 160px;
+        left: -50px;
+        top: -55px;
+      }
 
     &__menu {
         padding-right: 1.25rem;
@@ -81,6 +81,12 @@
         justify-content: center;
         align-items: center;
         gap: 1.5rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+        &:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
+        }
     }
 
     &__icon-container {
@@ -94,15 +100,16 @@
         }
 
         &--hoverable {
-            transition: background-color 0.3s, filter 0.3s;
+            transition: background-color 0.3s, filter 0.3s, box-shadow 0.3s;
             &:hover {
                 cursor: pointer;
                 background-color: $darkBlue;
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.6);
           
                 .inventory__icon {
                   filter: $icon-color-hover;
                 }
-              }
+            }
         }
     }
 
