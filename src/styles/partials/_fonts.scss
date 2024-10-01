@@ -2,7 +2,7 @@
 
 @font-face {
     font-family: $base-font;
-    src: url("../../assets/fonts/Myfont-Regular.otf") format("opentype"),
-    url("../../assets/fonts/Myfont-Regular.ttf") format("truetype");
+    src: url("../../assets/fonts/myfont-regular-webfont.woff2") format("woff2"),
+         url("../../assets/fonts/myfont-regular-webfont.woff") format("woff");
     font-weight: 400;
 }
