@@ -174,7 +174,9 @@ const AddItemModal = ({ isOpen, onClose, onItemAdded, userId }) => {
           </div>
           <div className="additem-modal__row">
             <div className="additem-modal__group">
-              <label className="additem-modal__label">Expiration Date</label>
+              <label className="additem-modal__label">
+                Expiration Date (optional)
+              </label>
               <input
                 className="additem-modal__input"
                 type="date"
@@ -183,7 +185,9 @@ const AddItemModal = ({ isOpen, onClose, onItemAdded, userId }) => {
               />
             </div>
             <div className="additem-modal__group">
-              <label className="additem-modal__label">Custom Tag</label>
+              <label className="additem-modal__label">
+                Custom Tag (optional)
+              </label>
               <input
                 className="additem-modal__input"
                 type="text"
