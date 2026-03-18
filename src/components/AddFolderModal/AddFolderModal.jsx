@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Button from "../Button/Button";
-import { createFolder } from "../../services/firebaseService";
+import { createFolder } from "../../services/api.js";
+import NotificationTab from "../NotificationTab/NotificationTab.jsx";
 import "./AddFolderModal.scss";
 
 const AddFolderModal = ({ isOpen, onClose, userId }) => {
@@ -8,8 +9,7 @@ const AddFolderModal = ({ isOpen, onClose, userId }) => {
   const [type, setType] = useState("");
   const [creationDate, setCreationDate] = useState("");
   const [customTag, setCustomTag] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [notification, setNotification] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const resetForm = () => {
@@ -25,8 +25,7 @@ const AddFolderModal = ({ isOpen, onClose, userId }) => {
     if (loading) return;
 
     if (!name || !type) {
-      setErrorMessage("Please fill out all required fields.");
-      setSuccessMessage("");
+      setNotification({ type: "error", message: "Please fill out all required fields." });
       return;
     }
 
@@ -43,19 +42,17 @@ const AddFolderModal = ({ isOpen, onClose, userId }) => {
       const newFolder = await createFolder(userId, newFolderData);
 
       if (newFolder) {
-        setSuccessMessage("Folder successfully created!");
-        setErrorMessage("");
+        setNotification({ type: "success", message: "Folder successfully created!" });
         resetForm();
 
         setTimeout(() => {
-          setSuccessMessage("");
+          setNotification(null);
           onClose();
         }, 2000);
       }
     } catch (error) {
       console.error("Error adding folder: ", error);
-      setErrorMessage("Error adding folder. Please try again.");
-      setSuccessMessage("");
+      setNotification({ type: "error", message: "Error adding folder. Please try again." });
     } finally {
       setLoading(false);
     }
@@ -145,16 +142,11 @@ const AddFolderModal = ({ isOpen, onClose, userId }) => {
               />
             </div>
           </div>
-          {successMessage && (
-            <p className="addfolder-modal__message addfolder-modal__message--success">
-              {successMessage}
-            </p>
-          )}
-          {errorMessage && (
-            <p className="addfolder-modal__message addfolder-modal__message--error">
-              {errorMessage}
-            </p>
-          )}
+          <NotificationTab
+            type={notification?.type}
+            message={notification?.message}
+            onDismiss={() => setNotification(null)}
+          />
 
           <Button
             className="addfolder-modal__submit button--addfolder"

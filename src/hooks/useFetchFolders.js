@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { ref, onValue } from "firebase/database";
-import { database } from "../services/firebaseConfig.js";
+import { fetchFolders } from "../services/api.js";
+
+const POLL_INTERVAL_MS = 3000;
 
 const useFetchFolders = (userId) => {
   const [folders, setFolders] = useState([]);
@@ -8,32 +9,30 @@ const useFetchFolders = (userId) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!userId) return;
+    if (!userId) {
+      setLoading(false);
+      return;
+    }
 
-    const folderRef = ref(database, `users/${userId}/folders`);
+    let cancelled = false;
 
-    const unsubscribe = onValue(
-      folderRef,
-      (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-          const fetchedFolders = Object.keys(data).map((key) => ({
-            id: key,
-            ...data[key],
-          }));
-          setFolders(fetchedFolders);
-        } else {
-          setFolders([]);
-        }
-        setLoading(false);
-      },
-      (error) => {
-        setError(error.message);
-        setLoading(false);
+    const poll = async () => {
+      try {
+        const list = await fetchFolders(userId);
+        if (!cancelled) setFolders(Array.isArray(list) ? list : []);
+      } catch (err) {
+        if (!cancelled) setError(err.message);
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-    );
+    };
 
-    return () => unsubscribe();
+    poll();
+    const interval = setInterval(poll, POLL_INTERVAL_MS);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
   }, [userId]);
 
   return { folders, loading, error };

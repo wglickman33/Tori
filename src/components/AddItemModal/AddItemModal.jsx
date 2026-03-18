@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { createItem } from "../../services/firebaseService.js";
+import { createItem } from "../../services/api.js";
 import Button from "../Button/Button";
 import useFetchFolders from "../../hooks/useFetchFolders.js";
+import NotificationTab from "../NotificationTab/NotificationTab.jsx";
 import "./AddItemModal.scss";
 
 const AddItemModal = ({ isOpen, onClose, onItemAdded, userId }) => {
@@ -12,8 +13,7 @@ const AddItemModal = ({ isOpen, onClose, onItemAdded, userId }) => {
   const [expirationDate, setExpirationDate] = useState("");
   const [customTag, setCustomTag] = useState("");
   const [folderId, setFolderId] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [notification, setNotification] = useState(null);
 
   const { folders, loading: foldersLoading } = useFetchFolders(userId);
 
@@ -31,8 +31,7 @@ const AddItemModal = ({ isOpen, onClose, onItemAdded, userId }) => {
     e.preventDefault();
 
     if (!name) {
-      setErrorMessage("Please enter a name for the item.");
-      setSuccessMessage("");
+      setNotification({ type: "error", message: "Please enter a name for the item." });
       return;
     }
 
@@ -48,16 +47,14 @@ const AddItemModal = ({ isOpen, onClose, onItemAdded, userId }) => {
     try {
       const newItem = await createItem(userId, folderId, newItemData);
       onItemAdded(newItem);
-      setSuccessMessage("Item successfully created!");
-      setErrorMessage("");
+      setNotification({ type: "success", message: "Item successfully created!" });
       resetForm();
       setTimeout(() => {
-        setSuccessMessage("");
+        setNotification(null);
         onClose();
       }, 2000);
     } catch (error) {
-      setErrorMessage("Error adding item. Please try again.");
-      setSuccessMessage("");
+      setNotification({ type: "error", message: "Error adding item. Please try again." });
     }
   };
 
@@ -197,16 +194,11 @@ const AddItemModal = ({ isOpen, onClose, onItemAdded, userId }) => {
               />
             </div>
           </div>
-          {successMessage && (
-            <p className="additem-modal__message additem-modal__message--success">
-              {successMessage}
-            </p>
-          )}
-          {errorMessage && (
-            <p className="additem-modal__message additem-modal__message--error">
-              {errorMessage}
-            </p>
-          )}
+          <NotificationTab
+            type={notification?.type}
+            message={notification?.message}
+            onDismiss={() => setNotification(null)}
+          />
 
           <Button
             className="additem-modal__submit button--additem"

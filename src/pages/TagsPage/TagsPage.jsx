@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Button from "../../components/Button/Button";
 import SlidingMenu from "../../components/SlidingMenu/SlidingMenu";
-import { fetchItems, fetchFolders } from "../../services/firebaseService.js";
+import { fetchItems, fetchFolders } from "../../services/api.js";
 import { useAuth } from "../../context/AuthContext";
 import "./TagsPage.scss";
 
@@ -19,35 +19,19 @@ const TagsPage = () => {
         const fetchedFolders = await fetchFolders(currentUser.uid);
         const fetchedItems = await fetchItems(currentUser.uid);
 
+        const folderList = Array.isArray(fetchedFolders) ? fetchedFolders : [];
+        const itemList = Array.isArray(fetchedItems) ? fetchedItems : [];
         const allTags = [];
 
-        if (fetchedFolders) {
-          Object.values(fetchedFolders).forEach((folder) => {
-            if (folder.items) {
-              Object.values(folder.items).forEach((item) => {
-                if (item.customTag) {
-                  allTags.push({
-                    tagName: item.customTag,
-                    item: item.name,
-                    folder: folder.name,
-                  });
-                }
-              });
-            }
+        itemList.forEach((item) => {
+          if (!item.customTag) return;
+          const folder = folderList.find((f) => f.id === item.folderId);
+          allTags.push({
+            tagName: item.customTag,
+            item: item.name,
+            folder: folder ? folder.name : "Independent Item",
           });
-        }
-
-        if (fetchedItems) {
-          Object.values(fetchedItems).forEach((item) => {
-            if (item.customTag && !item.folderId) {
-              allTags.push({
-                tagName: item.customTag,
-                item: item.name,
-                folder: "Independent Item",
-              });
-            }
-          });
-        }
+        });
 
         setTags(allTags);
       } catch (error) {

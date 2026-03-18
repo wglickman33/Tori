@@ -1,22 +1,33 @@
-import { createItem, fetchItems, updateItem, removeItem } from "../src/services/firebaseService.js";
+/**
+ * Item API tests — run against local API. Usage: node tests/testItems.js
+ */
+import * as api from "../src/services/api.js";
 
 const testItemOperations = async () => {
-  const userId = "testUser123";
+  const email = "test-items@example.com";
+  const password = "testPass123";
+  let uid;
 
-  console.log("Creating item without a folder...");
-  const itemData = { name: "Headphones", barcode: "987654321", location: "Living Room", quantity: 2 };
-  const createdItem = await createItem(userId, null, itemData);
-  console.log("Item created without folder:", createdItem);
+  try {
+    const data = await api.apiRegister(email, password, "Test User");
+    api.setToken(data.token);
+    uid = data.user.uid;
+    await api.createUser(uid, { displayName: "Test User" });
+  } catch (e) {
+    const data = await api.apiLogin(email, password);
+    api.setToken(data.token);
+    uid = data.user.uid;
+  }
 
-  console.log("Fetching items without folder...");
-  const fetchedItems = await fetchItems(userId, null);
-  console.log("Fetched items without folder:", fetchedItems);
-
-  console.log("Updating item without folder...");
-  const updatedItemData = { name: "Noise-Cancelling Headphones", location: "Bedroom" };
-  await updateItem(userId, createdItem.id, null, updatedItemData);
-  const updatedItems = await fetchItems(userId, null);
-  console.log("Updated items without folder:", updatedItems);
+  const created = await api.createItem(uid, null, { name: "Headphones", location: "Living Room", quantity: 2 });
+  const items = await api.fetchItems(uid);
+  await api.updateItem(uid, created.id, null, null, { name: "Noise-Cancelling Headphones" });
+  await api.removeItem(uid, created.id, null);
+  console.log("Done.");
+  api.setToken(null);
 };
 
-testItemOperations().catch((error) => console.error("Error during item operations:", error));
+testItemOperations().catch((err) => {
+  console.error("Error:", err.message);
+  process.exit(1);
+});

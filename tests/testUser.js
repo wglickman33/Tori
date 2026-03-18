@@ -1,29 +1,34 @@
-import { createUser, fetchUser, updateUser } from "../src/services/firebaseService.js";
+/**
+ * User API tests — run against local API with a valid token.
+ * Usage: node tests/testUser.js
+ */
+import * as api from "../src/services/api.js";
 
 const testUserOperations = async () => {
-  const userId = "testUser123";
-  const userData = {
-    username: "William Glickman",
-    email: "willglickman@gmail.com",
-    password: "123qwE",
-  };
+  const email = "test-user@example.com";
+  const password = "testPass123";
+  let uid;
 
   try {
-    const existingUser = await fetchUser(userId);
-    console.log("User already exists:", existingUser);
-  } catch (error) {
-    if (error.message.includes("not found")) {
-      console.log("Creating user...");
-      const createdUser = await createUser(userId, userData);
-      console.log("User created:", createdUser);
-    } else {
-      console.error("Error fetching user:", error);
-    }
+    const data = await api.apiRegister(email, password, "Test User");
+    api.setToken(data.token);
+    uid = data.user.uid;
+  } catch (e) {
+    const data = await api.apiLogin(email, password);
+    api.setToken(data.token);
+    uid = data.user.uid;
   }
 
+  console.log("Creating/updating user profile...");
+  await api.createUser(uid, { displayName: "Test User" });
   console.log("Fetching user...");
-  const fetchedUser = await fetchUser(userId);
-  console.log("Fetched user:", fetchedUser);
+  const user = await api.fetchUser(uid);
+  console.log("Fetched user:", user);
+  api.setToken(null);
+  console.log("Done.");
 };
 
-testUserOperations().catch((error) => console.error("Error during test operations:", error));
+testUserOperations().catch((err) => {
+  console.error("Error:", err.message);
+  process.exit(1);
+});

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth.js";
 import Button from "../../components/Button/Button";
+import NotificationTab from "../NotificationTab/NotificationTab.jsx";
 import loginIcon from "../../assets/icons/login.svg";
 import emailIcon from "../../assets/icons/mail.svg";
 import lockIcon from "../../assets/icons/lock.svg";
@@ -13,7 +14,7 @@ const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [formError, setFormError] = useState("");
+  const [notification, setNotification] = useState(null);
   const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
@@ -25,7 +26,7 @@ const LoginForm = () => {
     try {
       await loginUser(email, password);
     } catch (err) {
-      setFormError(error || "Failed to log in. Please check your credentials.");
+      setNotification({ type: "error", message: error || err?.message || "Failed to log in. Please check your credentials." });
     }
   };
 
@@ -43,7 +44,13 @@ const LoginForm = () => {
         </div>
         <div className="login__form-container">
           <form className="login__form" id="loginForm" onSubmit={handleSubmit}>
-            {formError && <p className="login__error">{formError}</p>}
+            {notification && (
+              <NotificationTab
+                type={notification.type}
+                message={notification.message}
+                onDismiss={() => setNotification(null)}
+              />
+            )}
             <label className="login__form-label" htmlFor="email">
               Enter Email
               <input

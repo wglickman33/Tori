@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { updateItem } from "../../services/firebaseService.js";
+import { updateItem } from "../../services/api.js";
 import Button from "../Button/Button";
 import useFetchFolders from "../../hooks/useFetchFolders.js";
+import NotificationTab from "../NotificationTab/NotificationTab.jsx";
 import "./EditItemModal.scss";
 
 const EditItemModal = ({ isOpen, onClose, item, onItemUpdated, userId }) => {
@@ -13,8 +14,7 @@ const EditItemModal = ({ isOpen, onClose, item, onItemUpdated, userId }) => {
   const [customTag, setCustomTag] = useState("");
   const [folderId, setFolderId] = useState("");
   const [previousFolderId, setPreviousFolderId] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [notification, setNotification] = useState(null);
 
   const {
     folders,
@@ -39,8 +39,7 @@ const EditItemModal = ({ isOpen, onClose, item, onItemUpdated, userId }) => {
     e.preventDefault();
 
     if (!name) {
-      setErrorMessage("Please enter a name for the item.");
-      setSuccessMessage("");
+      setNotification({ type: "error", message: "Please enter a name for the item." });
       return;
     }
 
@@ -67,19 +66,15 @@ const EditItemModal = ({ isOpen, onClose, item, onItemUpdated, userId }) => {
 
       if (result.success) {
         onItemUpdated(updatedItemData);
-
-        setSuccessMessage("Item successfully updated!");
-        setErrorMessage("");
-
+        setNotification({ type: "success", message: "Item successfully updated!" });
         setTimeout(() => {
-          setSuccessMessage("");
+          setNotification(null);
           onClose();
         }, 2000);
       }
     } catch (error) {
       console.error("Error updating item:", error);
-      setErrorMessage("Error updating item. Please try again.");
-      setSuccessMessage("");
+      setNotification({ type: "error", message: "Error updating item. Please try again." });
     }
   };
 
@@ -222,16 +217,11 @@ const EditItemModal = ({ isOpen, onClose, item, onItemUpdated, userId }) => {
             </div>
           </div>
 
-          {successMessage && (
-            <p className="edititem-modal__message edititem-modal__message--success">
-              {successMessage}
-            </p>
-          )}
-          {errorMessage && (
-            <p className="edititem-modal__message edititem-modal__message--error">
-              {errorMessage}
-            </p>
-          )}
+          <NotificationTab
+            type={notification?.type}
+            message={notification?.message}
+            onDismiss={() => setNotification(null)}
+          />
 
           <Button
             className="edititem-modal__submit button--edititem"

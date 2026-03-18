@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchUser } from "../services/firebaseService.js";
+import { fetchUser } from "../services/api.js";
 
 const useFetchUser = (userId) => {
   const [user, setUser] = useState(null);
@@ -8,12 +8,16 @@ const useFetchUser = (userId) => {
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!userId) {
+        setLoading(false);
+        return;
+      }
       try {
         const fetchedUser = await fetchUser(userId);
         setUser(fetchedUser);
-        setLoading(false);
       } catch (err) {
         setError(err.message);
+      } finally {
         setLoading(false);
       }
     };

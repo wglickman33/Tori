@@ -1,12 +1,12 @@
 import Button from "../Button/Button";
 import { useState } from "react";
-import { removeItem } from "../../services/firebaseService.js";
+import { removeItem } from "../../services/api.js";
+import NotificationTab from "../NotificationTab/NotificationTab.jsx";
 import "./DeleteItemModal.scss";
 
 const DeleteItemModal = ({ isOpen, onClose, item, onItemDeleted, userId }) => {
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+  const [notification, setNotification] = useState(null);
 
   const handleDelete = async () => {
     if (loading) return;
@@ -17,20 +17,18 @@ const DeleteItemModal = ({ isOpen, onClose, item, onItemDeleted, userId }) => {
 
       if (result.success) {
         onItemDeleted(item.id);
-        setSuccessMessage("Item successfully deleted!");
-        setErrorMessage("");
-
+        setNotification({ type: "success", message: "Item successfully deleted!" });
         setTimeout(() => {
           setLoading(false);
-          setSuccessMessage("");
+          setNotification(null);
           onClose();
         }, 1000);
       } else {
-        setErrorMessage("Failed to delete item. Please try again.");
+        setNotification({ type: "error", message: "Failed to delete item. Please try again." });
         setLoading(false);
       }
     } catch (error) {
-      setErrorMessage("Error deleting item. Please try again.");
+      setNotification({ type: "error", message: "Error deleting item. Please try again." });
       setLoading(false);
     }
   };
@@ -82,16 +80,11 @@ const DeleteItemModal = ({ isOpen, onClose, item, onItemDeleted, userId }) => {
             {loading ? "Deleting..." : "Delete"}
           </Button>
         </div>
-        {errorMessage && (
-          <p className="deleteitem-modal__message deleteitem-modal__message--error">
-            {errorMessage}
-          </p>
-        )}
-        {successMessage && (
-          <p className="deleteitem-modal__message deleteitem-modal__message--success">
-            {successMessage}
-          </p>
-        )}
+        <NotificationTab
+          type={notification?.type}
+          message={notification?.message}
+          onDismiss={() => setNotification(null)}
+        />
       </div>
     </div>
   );

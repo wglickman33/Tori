@@ -1,46 +1,85 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { auth } from "../services/firebaseConfig.js";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-} from "firebase/auth";
+import * as api from "../services/api.js";
 
 const AuthContext = createContext();
 
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
+export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const createUser = (email, password) => {
-    return createUserWithEmailAndPassword(auth, email, password);
-  };
-
-  const loginUser = (email, password) => {
-    return signInWithEmailAndPassword(auth, email, password);
-  };
-
-  const logoutUser = () => {
-    return signOut(auth);
+  const loadSession = async () => {
+    const token = api.getToken();
+    if (!token) {
+      setCurrentUser(null);
+      setLoading(false);
+      return;
+    }
+    try {
+      const user = await api.apiMe();
+      setCurrentUser({ uid: user.uid, email: user.email, displayName: user.displayName });
+    } catch {
+      api.setToken(null);
+      setCurrentUser(null);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setCurrentUser(user);
-      setLoading(false);
-    });
-    return unsubscribe;
+    loadSession();
   }, []);
+
+  const createUser = async (email, password, fullName) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await api.apiRegister(email, password, fullName);
+      api.setToken(data.token);
+      const user = data.user;
+      setCurrentUser({ uid: user.uid, email: user.email, displayName: user.displayName });
+      await api.createUser(user.uid, { displayName: user.displayName });
+      setLoading(false);
+      return { uid: user.uid, email: user.email, displayName: user.displayName };
+    } catch (err) {
+      setError(err.message || "Failed to create account");
+      setLoading(false);
+      throw err;
+    }
+  };
+
+  const loginUser = async (email, password) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await api.apiLogin(email, password);
+      api.setToken(data.token);
+      const user = data.user;
+      setCurrentUser({ uid: user.uid, email: user.email, displayName: user.displayName });
+      setLoading(false);
+    } catch (err) {
+      setError(err.message || "Failed to log in");
+      setLoading(false);
+      throw err;
+    }
+  };
+
+  const logoutUser = () => {
+    api.setToken(null);
+    setCurrentUser(null);
+    setError(null);
+  };
 
   const value = {
     currentUser,
+    loading,
+    error,
     createUser,
     loginUser,
     logoutUser,
+    logOutUser: logoutUser,
   };
 
   return (

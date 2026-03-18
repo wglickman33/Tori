@@ -1,25 +1,39 @@
-import { signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { auth } from "../src/services/firebaseConfig.js";
+/**
+ * Auth tests — run against local API (server must be running).
+ * Usage: node tests/testAuth.js
+ */
+import * as api from "../src/services/api.js";
 
 const testAuthOperations = async () => {
-  const email = "willglickman@gmail.com";
-  const password = "123qwE";
+  const email = "test-auth@example.com";
+  const password = "testPass123";
 
-  console.log("Logging in user...");
+  console.log("Registering user...");
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    console.log("User logged in successfully:", userCredential.user);
+    const data = await api.apiRegister(email, password, "Test User");
+    console.log("User registered:", data.user);
+    api.setToken(data.token);
   } catch (error) {
-    console.error("Error logging in user:", error.message);
+    if (error.message.includes("already in use")) {
+      console.log("User exists, logging in...");
+      const data = await api.apiLogin(email, password);
+      api.setToken(data.token);
+      console.log("User logged in:", data.user);
+    } else {
+      throw error;
+    }
   }
 
-  console.log("Logging out user...");
-  try {
-    await signOut(auth);
-    console.log("User logged out successfully.");
-  } catch (error) {
-    console.error("Error logging out user:", error.message);
-  }
+  console.log("Getting /me...");
+  const me = await api.apiMe();
+  console.log("Current user:", me);
+
+  console.log("Clearing token (logout)...");
+  api.setToken(null);
+  console.log("Done.");
 };
 
-testAuthOperations().catch((error) => console.error("Error during auth operations:", error));
+testAuthOperations().catch((err) => {
+  console.error("Error:", err.message);
+  process.exit(1);
+});

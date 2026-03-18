@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Button from "../../components/Button/Button";
 import SlidingMenu from "../../components/SlidingMenu/SlidingMenu";
-import { fetchItems, fetchFolders } from "../../services/firebaseService.js";
+import { fetchItems, fetchFolders } from "../../services/api.js";
 import { useAuth } from "../../context/AuthContext";
 import "./SearchPage.scss";
 
@@ -29,29 +29,14 @@ const SearchPage = () => {
         const fetchedFolders = await fetchFolders(currentUser.uid);
         const fetchedItems = await fetchItems(currentUser.uid);
 
-        setFolders(Object.values(fetchedFolders || {}));
-        setItems(Object.values(fetchedItems || {}));
+        const folderList = Array.isArray(fetchedFolders) ? fetchedFolders : [];
+        const itemList = Array.isArray(fetchedItems) ? fetchedItems : [];
+        setFolders(folderList);
+        setItems(itemList);
 
-        const allTags = [];
-        if (fetchedFolders) {
-          Object.values(fetchedFolders).forEach((folder) => {
-            if (folder.items) {
-              Object.values(folder.items).forEach((item) => {
-                if (item.customTag) {
-                  allTags.push(item.customTag);
-                }
-              });
-            }
-          });
-        }
-        if (fetchedItems) {
-          Object.values(fetchedItems).forEach((item) => {
-            if (item.customTag) {
-              allTags.push(item.customTag);
-            }
-          });
-        }
-
+        const allTags = itemList
+          .map((item) => item.customTag)
+          .filter(Boolean);
         setTags([...new Set(allTags)]);
       } catch (error) {
         console.error("Error fetching data:", error);

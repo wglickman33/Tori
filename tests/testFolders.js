@@ -1,22 +1,38 @@
-import { createFolder, fetchFolders, updateFolder, removeFolder } from "../src/services/firebaseService.js";
+/**
+ * Folder API tests — run against local API. Usage: node tests/testFolders.js
+ */
+import * as api from "../src/services/api.js";
 
 const testFolderOperations = async () => {
-  const userId = "testUser123";
+  const email = "test-folders@example.com";
+  const password = "testPass123";
+  let uid;
+
+  try {
+    const data = await api.apiRegister(email, password, "Test User");
+    api.setToken(data.token);
+    uid = data.user.uid;
+    await api.createUser(uid, { displayName: "Test User" });
+  } catch (e) {
+    const data = await api.apiLogin(email, password);
+    api.setToken(data.token);
+    uid = data.user.uid;
+  }
 
   console.log("Creating folder...");
-  const folderData = { name: "Personal Documents" };
-  const createdFolder = await createFolder(userId, folderData);
-  console.log("Folder created:", createdFolder);
+  const folder = await api.createFolder(uid, { name: "Personal Documents", type: "Other (Add New)" });
+  console.log("Folder created:", folder.id);
 
-  console.log("Fetching folders...");
-  const fetchedFolders = await fetchFolders(userId);
-  console.log("Fetched folders:", fetchedFolders);
+  const list = await api.fetchFolders(uid);
+  console.log("Fetched folders:", list.length);
 
-  console.log("Updating folder...");
-  const updatedFolderData = { name: "Work Documents" };
-  await updateFolder(userId, createdFolder.id, updatedFolderData);
-  const updatedFolders = await fetchFolders(userId);
-  console.log("Updated folders:", updatedFolders);
+  await api.updateFolder(uid, folder.id, { name: "Work Documents" });
+  await api.removeFolder(uid, folder.id);
+  console.log("Done.");
+  api.setToken(null);
 };
 
-testFolderOperations().catch((error) => console.error("Error during folder operations:", error));
+testFolderOperations().catch((err) => {
+  console.error("Error:", err.message);
+  process.exit(1);
+});

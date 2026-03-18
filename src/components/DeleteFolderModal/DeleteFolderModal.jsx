@@ -1,6 +1,7 @@
 import Button from "../Button/Button";
 import { useState } from "react";
-import { removeFolder } from "../../services/firebaseService.js";
+import { removeFolder } from "../../services/api.js";
+import NotificationTab from "../NotificationTab/NotificationTab.jsx";
 import "./DeleteFolderModal.scss";
 
 const DeleteFolderModal = ({
@@ -11,8 +12,7 @@ const DeleteFolderModal = ({
   userId,
 }) => {
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+  const [notification, setNotification] = useState(null);
 
   const handleDelete = async () => {
     if (loading) return;
@@ -23,20 +23,18 @@ const DeleteFolderModal = ({
 
       if (result.success) {
         onFolderDeleted(folder.id);
-        setSuccessMessage("Folder successfully deleted!");
-        setErrorMessage("");
-
+        setNotification({ type: "success", message: "Folder successfully deleted!" });
         setTimeout(() => {
           setLoading(false);
-          setSuccessMessage("");
+          setNotification(null);
           onClose();
         }, 1000);
       } else {
-        setErrorMessage("Failed to delete folder. Please try again.");
+        setNotification({ type: "error", message: "Failed to delete folder. Please try again." });
         setLoading(false);
       }
     } catch (error) {
-      setErrorMessage("Error deleting folder. Please try again.");
+      setNotification({ type: "error", message: "Error deleting folder. Please try again." });
       setLoading(false);
     }
   };
@@ -88,16 +86,11 @@ const DeleteFolderModal = ({
             {loading ? "Deleting..." : "Delete"}
           </Button>
         </div>
-        {errorMessage && (
-          <p className="deletefolder-modal__message deletefolder-modal__message--error">
-            {errorMessage}
-          </p>
-        )}
-        {successMessage && (
-          <p className="deletefolder-modal__message deletefolder-modal__message--success">
-            {successMessage}
-          </p>
-        )}
+        <NotificationTab
+          type={notification?.type}
+          message={notification?.message}
+          onDismiss={() => setNotification(null)}
+        />
       </div>
     </div>
   );

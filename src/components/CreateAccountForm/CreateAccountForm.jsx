@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth.js";
 import Button from "../../components/Button/Button";
+import NotificationTab from "../NotificationTab/NotificationTab.jsx";
 import emailIcon from "../../assets/icons/mail.svg";
 import lockIcon from "../../assets/icons/lock.svg";
 import unlockIcon from "../../assets/icons/unlock.svg";
@@ -14,7 +15,7 @@ const CreateAccountForm = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [formError, setFormError] = useState("");
+  const [notification, setNotification] = useState(null);
 
   const navigate = useNavigate();
 
@@ -24,16 +25,17 @@ const CreateAccountForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setFormError("");
+    setNotification(null);
 
     if (password !== confirmPassword) {
-      return setFormError("Passwords do not match.");
+      setNotification({ type: "error", message: "Passwords do not match." });
+      return;
     }
 
     try {
       await createUser(email, password, fullName);
     } catch (err) {
-      setFormError(err.message || "Failed to create account.");
+      setNotification({ type: "error", message: err?.message || error || "Failed to create account." });
     }
   };
 
@@ -55,7 +57,13 @@ const CreateAccountForm = () => {
             id="createAccountForm"
             onSubmit={handleSubmit}
           >
-            {formError && <p className="create-account__error">{formError}</p>}
+            {notification && (
+              <NotificationTab
+                type={notification.type}
+                message={notification.message}
+                onDismiss={() => setNotification(null)}
+              />
+            )}
             <label className="create-account__form-label" htmlFor="fullName">
               Full Name
               <input

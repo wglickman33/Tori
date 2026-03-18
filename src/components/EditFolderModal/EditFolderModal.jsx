@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { updateFolder } from "../../services/firebaseService.js";
+import { updateFolder } from "../../services/api.js";
 import Button from "../Button/Button";
+import NotificationTab from "../NotificationTab/NotificationTab.jsx";
 import "./EditFolderModal.scss";
 
 const EditFolderModal = ({
@@ -14,8 +15,7 @@ const EditFolderModal = ({
   const [type, setType] = useState("");
   const [creationDate, setCreationDate] = useState("");
   const [customTag, setCustomTag] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     if (folder) {
@@ -30,8 +30,7 @@ const EditFolderModal = ({
     e.preventDefault();
 
     if (!name || !type) {
-      setErrorMessage("Please fill out all required fields.");
-      setSuccessMessage("");
+      setNotification({ type: "error", message: "Please fill out all required fields." });
       return;
     }
 
@@ -48,18 +47,15 @@ const EditFolderModal = ({
 
       if (result.success) {
         onFolderUpdated(updatedFolderData);
-        setSuccessMessage("Folder successfully updated!");
-        setErrorMessage("");
-
+        setNotification({ type: "success", message: "Folder successfully updated!" });
         setTimeout(() => {
-          setSuccessMessage("");
+          setNotification(null);
           onClose();
         }, 2000);
       }
     } catch (error) {
       console.error("Error updating folder:", error);
-      setErrorMessage("Error updating folder. Please try again.");
-      setSuccessMessage("");
+      setNotification({ type: "error", message: "Error updating folder. Please try again." });
     }
   };
 
@@ -151,16 +147,11 @@ const EditFolderModal = ({
             </div>
           </div>
 
-          {successMessage && (
-            <p className="editfolder-modal__message editfolder-modal__message--success">
-              {successMessage}
-            </p>
-          )}
-          {errorMessage && (
-            <p className="editfolder-modal__message editfolder-modal__message--error">
-              {errorMessage}
-            </p>
-          )}
+          <NotificationTab
+            type={notification?.type}
+            message={notification?.message}
+            onDismiss={() => setNotification(null)}
+          />
 
           <Button
             className="editfolder-modal__submit button--editfolder"
