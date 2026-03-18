@@ -32,8 +32,8 @@ Make sure you have the following installed on your machine:
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/wglickman33/william-capstone.git
-cd william-capstone
+git clone https://github.com/wglickman33/Tori.git
+cd Tori
 ```
 
 ### Install Dependencies
