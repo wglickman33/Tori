@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
+import { useAuthStore } from "../../store/authStore";
 import { useHouseholdStore } from "../../store/householdStore";
 import { Banner } from "../ui/Banner";
 import { Button } from "../ui/Button";
@@ -11,8 +12,21 @@ const schema = z.object({
   name: z.string().trim().min(1, "Household name is required").max(80),
 });
 
+function householdNamePlaceholder(displayName?: string | null): string {
+  const trimmed = displayName?.trim();
+  if (!trimmed) return "My household";
+
+  const parts = trimmed.split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) {
+    return `${parts[parts.length - 1]} household`;
+  }
+
+  return `${parts[0]}'s household`;
+}
+
 export function HouseholdCreateCard() {
   const navigate = useNavigate();
+  const displayName = useAuthStore((s) => s.user?.displayName);
   const create = useHouseholdStore((s) => s.create);
   const [name, setName] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -41,20 +55,26 @@ export function HouseholdCreateCard() {
 
   return (
     <form className="household-create-card" onSubmit={onSubmit} noValidate>
-      <h2 className="household-create-card__title">Create a household</h2>
-      <p className="household-create-card__copy">
-        You’ll be the owner and can invite others with a code.
-      </p>
-      {error ? <Banner>{error}</Banner> : null}
-      <TextField
-        label="Household name"
-        name="householdName"
-        placeholder="The Glickmans"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        error={fieldError}
-      />
-      <Button type="submit" disabled={loading}>
+      <div className="household-create-card__intro">
+        <p className="household-create-card__eyebrow">Start fresh</p>
+        <h2 className="household-create-card__title">Create a household</h2>
+        <p className="household-create-card__copy">
+          You’ll be the owner and can invite others with a code.
+        </p>
+      </div>
+      <div className="household-create-card__fields">
+        {error ? <Banner>{error}</Banner> : null}
+        <TextField
+          label="Household name"
+          name="householdName"
+          placeholder={householdNamePlaceholder(displayName)}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          error={fieldError}
+          autoComplete="organization"
+        />
+      </div>
+      <Button type="submit" className="household-create-card__submit" disabled={loading}>
         {loading ? "Creating…" : "Create household"}
       </Button>
     </form>

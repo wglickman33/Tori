@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import logo from "../../assets/logos/tori-logo.svg";
+import logo from "../../assets/logos/website-logo.png";
 import { useAuthStore } from "../../store/authStore";
 import { useHouseholdStore } from "../../store/householdStore";
 import { useInventoryStore } from "../../store/inventoryStore";

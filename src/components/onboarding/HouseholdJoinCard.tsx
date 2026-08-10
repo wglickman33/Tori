@@ -41,20 +41,32 @@ export function HouseholdJoinCard() {
 
   return (
     <form className="household-join-card" onSubmit={onSubmit} noValidate>
-      <h2 className="household-join-card__title">Join a household</h2>
-      <p className="household-join-card__copy">
-        Enter the invite code from someone who already set up Tori.
-      </p>
-      {error ? <Banner>{error}</Banner> : null}
-      <TextField
-        label="Invite code"
-        name="inviteCode"
-        value={inviteCode}
-        onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
-        error={fieldError}
-        autoCapitalize="characters"
-      />
-      <Button type="submit" variant="secondary" disabled={loading}>
+      <div className="household-join-card__intro">
+        <p className="household-join-card__eyebrow">Have a code?</p>
+        <h2 className="household-join-card__title">Join a household</h2>
+        <p className="household-join-card__copy">
+          Enter the invite code from someone who already set up Tori.
+        </p>
+      </div>
+      <div className="household-join-card__fields">
+        {error ? <Banner>{error}</Banner> : null}
+        <TextField
+          label="Invite code"
+          name="inviteCode"
+          placeholder="ABCD1234"
+          value={inviteCode}
+          onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
+          error={fieldError}
+          autoCapitalize="characters"
+          spellCheck={false}
+        />
+      </div>
+      <Button
+        type="submit"
+        variant="secondary"
+        className="household-join-card__submit"
+        disabled={loading}
+      >
         {loading ? "Joining…" : "Join household"}
       </Button>
     </form>

@@ -5,17 +5,37 @@
   flex-direction: column;
   gap: $space-3;
 
+  &__header {
+    text-align: center;
+    margin-bottom: $space-1;
+  }
+
   &__title {
+    font-family: $font-ui;
     font-size: 1.75rem;
+    color: $darkBlue;
   }
 
   &__subtitle {
-    color: #454567;
-    margin-bottom: $space-1;
+    margin-top: $space-2;
+    color: $text-muted;
   }
 
   &__footer {
     text-align: center;
-    color: #454567;
+    color: $text-muted;
+
+    a {
+      color: $darkBlue;
+      font-weight: 600;
+      text-decoration: underline;
+      text-decoration-color: transparent;
+      transition: $transition-ui;
+
+      &:hover {
+        color: $powderBlue;
+        text-decoration-color: $powderBlue;
+      }
+    }
   }
 }

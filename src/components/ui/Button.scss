@@ -12,7 +12,7 @@
   cursor: pointer;
   font-family: $font-ui;
   font-weight: 600;
-  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+  transition: $transition-ui;
 
   &:disabled {
     opacity: 0.55;
@@ -20,26 +20,74 @@
   }
 
   &--primary {
-    background: $darkBlue;
-    color: $lightCream;
-    border-color: $darkBlue;
+    background: $powderBlue;
+    color: $darkBlue;
+    border-color: $powderBlue;
 
     &:hover:not(:disabled) {
-      filter: brightness(1.08);
+      background: $darkBlue;
+      color: $lightCream;
+      border-color: $darkBlue;
     }
   }
 
   &--secondary {
     background: $paleBlue;
     color: $darkBlue;
+    border-color: $powderBlue;
 
     &:hover:not(:disabled) {
       background: $powderBlue;
+      border-color: $darkBlue;
     }
   }
 
   &--ghost {
     background: transparent;
     color: $darkBlue;
+    border-color: transparent;
+
+    &:hover:not(:disabled) {
+      background: $paleBlue;
+      border-color: $paleBlue;
+    }
   }
 }
+
+html[data-theme="dark"] {
+  .tori-button {
+    &--primary {
+      background: $powderBlue;
+      color: #12121f;
+      border-color: $powderBlue;
+
+      &:hover:not(:disabled) {
+        background: $paleBlue;
+        color: #12121f;
+        border-color: $paleBlue;
+      }
+    }
+
+    &--secondary {
+      background: transparent;
+      color: $paleBlue;
+      border-color: rgba(169, 169, 255, 0.45);
+
+      &:hover:not(:disabled) {
+        background: rgba(169, 169, 255, 0.16);
+        border-color: $powderBlue;
+        color: #fff;
+      }
+    }
+
+    &--ghost {
+      color: $paleBlue;
+
+      &:hover:not(:disabled) {
+        background: rgba(169, 169, 255, 0.14);
+        border-color: transparent;
+      }
+    }
+  }
+}
+

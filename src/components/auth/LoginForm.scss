@@ -5,29 +5,20 @@
   flex-direction: column;
   gap: $space-3;
 
-  &__title {
-    font-size: 1.75rem;
-  }
-
-  &__subtitle {
-    color: #454567;
+  &__header {
+    text-align: center;
     margin-bottom: $space-1;
   }
 
-  &__password-row {
-    position: relative;
+  &__title {
+    font-family: $font-ui;
+    font-size: 1.75rem;
+    color: $darkBlue;
   }
 
-  &__toggle {
-    position: absolute;
-    right: $space-3;
-    top: 34px;
-    border: none;
-    background: transparent;
-    color: $darkBlue;
-    font-family: $font-ui;
-    font-weight: 600;
-    cursor: pointer;
+  &__subtitle {
+    margin-top: $space-2;
+    color: $text-muted;
   }
 
   &__forgot {
@@ -39,11 +30,32 @@
       font-family: $font-ui;
       font-weight: 600;
       font-size: 0.875rem;
+      text-decoration: underline;
+      text-decoration-color: transparent;
+      transition: $transition-ui;
+
+      &:hover {
+        color: $powderBlue;
+        text-decoration-color: $powderBlue;
+      }
     }
   }
 
   &__footer {
     text-align: center;
     color: $text-muted;
+
+    a {
+      color: $darkBlue;
+      font-weight: 600;
+      text-decoration: underline;
+      text-decoration-color: transparent;
+      transition: $transition-ui;
+
+      &:hover {
+        color: $powderBlue;
+        text-decoration-color: $powderBlue;
+      }
+    }
   }
 }

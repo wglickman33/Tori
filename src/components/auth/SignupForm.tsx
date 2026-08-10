@@ -5,6 +5,7 @@ import { authApi } from "../../api/client";
 import { useAuthStore } from "../../store/authStore";
 import { Banner } from "../ui/Banner";
 import { Button } from "../ui/Button";
+import { PasswordField } from "../ui/PasswordField";
 import { TextField } from "../ui/TextField";
 import "./SignupForm.scss";
 
@@ -63,8 +64,10 @@ export function SignupForm() {
 
   return (
     <form className="signup-form" onSubmit={onSubmit} noValidate>
-      <h1 className="signup-form__title">Create account</h1>
-      <p className="signup-form__subtitle">Start organizing your home inventory.</p>
+      <header className="signup-form__header">
+        <h1 className="signup-form__title">Create account</h1>
+        <p className="signup-form__subtitle">Start organizing your home inventory.</p>
+      </header>
       {apiError ? <Banner>{apiError}</Banner> : null}
       <TextField
         label="Display name"
@@ -82,19 +85,17 @@ export function SignupForm() {
         onChange={(e) => setEmail(e.target.value)}
         error={errors.email}
       />
-      <TextField
+      <PasswordField
         label="Password"
         name="password"
-        type="password"
         autoComplete="new-password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         error={errors.password}
       />
-      <TextField
+      <PasswordField
         label="Confirm password"
         name="confirmPassword"
-        type="password"
         autoComplete="new-password"
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}

@@ -34,6 +34,7 @@ function publicUser(user: User) {
     id: user.id,
     email: user.email,
     displayName: user.displayName,
+    theme: user.theme ?? "auto",
   };
 }
 
@@ -116,7 +117,7 @@ authRouter.patch("/me", authMiddleware, async (req: AuthedRequest, res) => {
     return;
   }
 
-  const { displayName, email, currentPassword, newPassword } = parsed.data;
+  const { displayName, email, currentPassword, newPassword, theme } = parsed.data;
 
   if (newPassword) {
     const ok = await bcrypt.compare(currentPassword!, user.passwordHash);
@@ -137,6 +138,7 @@ authRouter.patch("/me", authMiddleware, async (req: AuthedRequest, res) => {
   }
 
   if (displayName) user.displayName = displayName;
+  if (theme) user.theme = theme;
   await user.save();
   res.json(publicUser(user));
 });

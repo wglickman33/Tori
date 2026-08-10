@@ -52,6 +52,7 @@ export const updateProfileSchema = z
     email: z.string().trim().email().optional(),
     currentPassword: z.string().min(1).optional(),
     newPassword: z.string().min(8, "Password must be at least 8 characters").optional(),
+    theme: z.enum(["light", "dark", "auto"]).optional(),
   })
   .strict()
   .refine((v) => Object.keys(v).length > 0, { message: "No updates provided" })

@@ -63,6 +63,7 @@ export interface AuthUser {
   id: string;
   email: string;
   displayName: string;
+  theme?: "light" | "dark" | "auto";
 }
 
 export interface AuthSession {
@@ -128,6 +129,7 @@ export type ProfileUpdate = {
   email?: string;
   currentPassword?: string;
   newPassword?: string;
+  theme?: "light" | "dark" | "auto";
 };
 
 export interface HouseholdMemberRow {

@@ -6,6 +6,7 @@ import { useAuthStore } from "../../store/authStore";
 import { useHouseholdStore } from "../../store/householdStore";
 import { Banner } from "../ui/Banner";
 import { Button } from "../ui/Button";
+import { PasswordField } from "../ui/PasswordField";
 import { TextField } from "../ui/TextField";
 import "./LoginForm.scss";
 
@@ -21,7 +22,6 @@ export function LoginForm() {
   const fetchMine = useHouseholdStore((s) => s.fetchMine);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [apiError, setApiError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -57,8 +57,10 @@ export function LoginForm() {
 
   return (
     <form className="login-form" onSubmit={onSubmit} noValidate>
-      <h1 className="login-form__title">Log in</h1>
-      <p className="login-form__subtitle">Welcome back to Tori.</p>
+      <header className="login-form__header">
+        <h1 className="login-form__title">Log in</h1>
+        <p className="login-form__subtitle">Welcome back to Tori.</p>
+      </header>
       {resetNotice ? (
         <Banner tone="success">Password updated. Log in with your new password.</Banner>
       ) : null}
@@ -72,24 +74,14 @@ export function LoginForm() {
         onChange={(e) => setEmail(e.target.value)}
         error={errors.email}
       />
-      <div className="login-form__password-row">
-        <TextField
-          label="Password"
-          name="password"
-          type={showPassword ? "text" : "password"}
-          autoComplete="current-password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          error={errors.password}
-        />
-        <button
-          type="button"
-          className="login-form__toggle"
-          onClick={() => setShowPassword((v) => !v)}
-        >
-          {showPassword ? "Hide" : "Show"}
-        </button>
-      </div>
+      <PasswordField
+        label="Password"
+        name="password"
+        autoComplete="current-password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        error={errors.password}
+      />
       <p className="login-form__forgot">
         <Link to="/forgot-password">Forgot password?</Link>
       </p>

@@ -25,8 +25,14 @@
   }
 
   &__logo {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
+    display: block;
+  }
+
+  &__nav-link,
+  &__meta-link {
+    transition: $transition-ui;
   }
 
   &__title {

@@ -51,10 +51,51 @@
     font-size: 0.875rem;
   }
 
-  &__theme {
+  &__field {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: $space-2;
+  }
+
+  &__label {
+    font-family: $font-ui;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $darkBlue;
+  }
+
+  &__segmented {
+    display: flex;
+    gap: 2px;
+    padding: 3px;
+    border: $border-subtle;
+    border-radius: $radius-sm;
+    background: rgba(252, 252, 252, 0.85);
+  }
+
+  &__segment {
+    flex: 1;
+    min-height: 40px;
+    padding: 0 $space-3;
+    border: none;
+    border-radius: calc(#{$radius-sm} - 2px);
+    background: transparent;
+    color: $text-muted;
+    font-family: $font-ui;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: $transition-ui;
+
+    &:hover:not(&--active) {
+      color: $text-secondary;
+      background: rgba(169, 169, 255, 0.18);
+    }
+
+    &--active {
+      background: $powderBlue;
+      color: $darkBlue;
+    }
   }
 
   &__link {
@@ -62,5 +103,49 @@
     font-weight: 600;
     color: $darkBlue;
     width: fit-content;
+  }
+}
+
+html[data-theme="dark"] {
+  .settings-page {
+    &__header h1,
+    &__card h2,
+    &__label,
+    &__link {
+      color: $paleBlue;
+    }
+
+    &__header p,
+    &__hint {
+      color: #a8a8c4;
+    }
+
+    &__card {
+      background: rgba(28, 28, 46, 0.92);
+      border-color: rgba(169, 169, 255, 0.22);
+
+      &--danger {
+        background: rgba(210, 45, 45, 0.12);
+      }
+    }
+
+    &__segmented {
+      background: #161625;
+      border-color: rgba(169, 169, 255, 0.28);
+    }
+
+    &__segment {
+      color: #a8a8c4;
+
+      &:hover:not(&--active) {
+        color: #ececf5;
+        background: rgba(169, 169, 255, 0.14);
+      }
+
+      &--active {
+        background: $powderBlue;
+        color: #12121f;
+      }
+    }
   }
 }

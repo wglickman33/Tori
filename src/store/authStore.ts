@@ -8,6 +8,7 @@ import {
   type AuthUser,
   type ProfileUpdate,
 } from "../api/client";
+import { syncThemeFromUser } from "../services/themeSync";
 
 const USER_CACHE_KEY = "tori_user_cache";
 
@@ -49,6 +50,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     setTokens(accessToken, refreshToken);
     cacheUser(user);
     set({ user, isSignedIn: true, isLoading: false });
+    void syncThemeFromUser(user.theme);
   },
 
   signOut: async () => {
@@ -74,6 +76,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       const user = await authApi.me();
       cacheUser(user);
       set({ user, isSignedIn: true, isLoading: false });
+      await syncThemeFromUser(user.theme);
     } catch {
       clearTokens();
       localStorage.removeItem(USER_CACHE_KEY);

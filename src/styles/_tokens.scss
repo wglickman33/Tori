@@ -21,9 +21,13 @@ $font-body: "Inter", system-ui, sans-serif;
 
 $shadow-card: 0 8px 24px rgba(0, 0, 171, 0.08);
 $border-subtle: 1px solid rgba(0, 0, 171, 0.12);
+$border-strong: 1px solid $powderBlue;
 
 $text-muted: #55557a;
 $text-secondary: #3a3a5c;
+
+$transition-ui: color 0.4s ease, background-color 0.4s ease, border-color 0.4s ease,
+  box-shadow 0.4s ease;
 
 $bp-mobile: 768px;
 $bp-desktop: 1024px;

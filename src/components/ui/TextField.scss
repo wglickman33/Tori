@@ -10,7 +10,7 @@
     font-family: $font-ui;
     font-size: 0.875rem;
     font-weight: 600;
-    color: #1c1c3a;
+    color: $darkBlue;
   }
 
   &__input {
@@ -19,11 +19,19 @@
     border-radius: $radius-sm;
     border: $border-subtle;
     background: $lightCream;
+    color: $text-secondary;
     outline: none;
+    transition: $transition-ui;
+
+    &:hover {
+      border-color: $powderBlue;
+      background: rgba(219, 219, 255, 0.35);
+    }
 
     &:focus {
       border-color: $darkBlue;
-      box-shadow: 0 0 0 3px rgba(0, 0, 171, 0.12);
+      background: $lightCream;
+      box-shadow: 0 0 0 3px rgba(169, 169, 255, 0.45);
     }
   }
 
@@ -32,3 +40,33 @@
     font-size: 0.8125rem;
   }
 }
+
+html[data-theme="dark"] {
+  .text-field {
+    &__label {
+      color: $powderBlue;
+    }
+
+    &__input {
+      background: #161625;
+      border-color: rgba(169, 169, 255, 0.28);
+      color: #ececf5;
+
+      &::placeholder {
+        color: #7e7e9a;
+      }
+
+      &:hover {
+        border-color: rgba(169, 169, 255, 0.45);
+        background: #1a1a2c;
+      }
+
+      &:focus {
+        border-color: $powderBlue;
+        background: #161625;
+        box-shadow: 0 0 0 3px rgba(169, 169, 255, 0.28);
+      }
+    }
+  }
+}
+

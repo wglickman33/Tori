@@ -8,8 +8,14 @@ import { TextField } from "../components/ui/TextField";
 import { useAuthStore } from "../store/authStore";
 import { useHouseholdStore } from "../store/householdStore";
 import { useInventoryStore } from "../store/inventoryStore";
-import { readTheme, writeTheme, type ThemePreference } from "../utils/theme";
+import { useSettingsStore, type Theme } from "../store/settingsStore";
 import "./SettingsPage.scss";
+
+const THEME_OPTIONS: { value: Theme; label: string }[] = [
+  { value: "light", label: "Light" },
+  { value: "dark", label: "Dark" },
+  { value: "auto", label: "Auto" },
+];
 
 export default function SettingsPage() {
   const navigate = useNavigate();
@@ -19,15 +25,18 @@ export default function SettingsPage() {
   const clearHousehold = useHouseholdStore((s) => s.clear);
   const clearInventory = useInventoryStore((s) => s.clear);
   const household = useHouseholdStore((s) => s.household);
+  const theme = useSettingsStore((s) => s.theme);
+  const setTheme = useSettingsStore((s) => s.setTheme);
+  const savePreferences = useSettingsStore((s) => s.savePreferences);
 
   const [displayName, setDisplayName] = useState(user?.displayName ?? "");
   const [email, setEmail] = useState(user?.email ?? "");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [theme, setTheme] = useState<ThemePreference>(() => readTheme());
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [savingTheme, setSavingTheme] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
   useEffect(() => {
@@ -65,9 +74,18 @@ export default function SettingsPage() {
     }
   };
 
-  const onTheme = (next: ThemePreference) => {
-    setTheme(next);
-    writeTheme(next);
+  const onSaveAppearance = async () => {
+    setError(null);
+    setMessage(null);
+    setSavingTheme(true);
+    try {
+      await savePreferences();
+      setMessage("Appearance saved to your account.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not save appearance");
+    } finally {
+      setSavingTheme(false);
+    }
   };
 
   return (
@@ -120,23 +138,31 @@ export default function SettingsPage() {
 
         <section className="settings-page__card">
           <h2>Appearance</h2>
-          <p className="settings-page__hint">Stored on this device only.</p>
-          <div className="settings-page__theme">
-            <Button
-              type="button"
-              variant={theme === "light" ? "primary" : "secondary"}
-              onClick={() => onTheme("light")}
-            >
-              Light
-            </Button>
-            <Button
-              type="button"
-              variant={theme === "dark" ? "primary" : "secondary"}
-              onClick={() => onTheme("dark")}
-            >
-              Dark
-            </Button>
+          <p className="settings-page__hint">
+            Changes apply immediately on this device. Save to sync across devices.
+          </p>
+          <div className="settings-page__field">
+            <span className="settings-page__label">Theme</span>
+            <div className="settings-page__segmented" role="group" aria-label="Theme">
+              {THEME_OPTIONS.map(({ value, label }) => (
+                <button
+                  key={value}
+                  type="button"
+                  className={`settings-page__segment${theme === value ? " settings-page__segment--active" : ""}`}
+                  aria-pressed={theme === value}
+                  onClick={() => setTheme(value)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <p className="settings-page__hint">
+              Auto follows your device&apos;s light or dark setting.
+            </p>
           </div>
+          <Button type="button" onClick={onSaveAppearance} disabled={savingTheme}>
+            {savingTheme ? "Saving…" : "Save appearance"}
+          </Button>
         </section>
 
         <section className="settings-page__card">
