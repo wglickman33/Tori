@@ -7,8 +7,7 @@ Household-shared inventory app. Sibling to [Whisk](https://trywhisk.netlify.app)
 ## Stack
 
 - Frontend: React + TypeScript + Vite + Zustand + SCSS → **Netlify**
-- Backend: Express + TypeScript + Sequelize → **Heroku** (same as Whisk)
-- Database: PostgreSQL → **Supabase** (Postgres host only)
+- Backend + Postgres: Express + Sequelize → **Heroku** + **Heroku Postgres**
 
 ## Local setup
 
@@ -32,53 +31,55 @@ npm test
 cd backend && npm test
 ```
 
-## Deploy (Netlify + Heroku + Supabase)
+## Deploy (Netlify + Heroku + Heroku Postgres)
 
-You need all three. Netlify alone cannot run the Express API.
+Netlify = site. Heroku = API + database. No Supabase.
 
-### 1. Supabase (database)
-
-1. Create a free project
-2. Copy the Postgres URI → use as `DATABASE_URL` on Heroku
-
-### 2. Heroku (API)
-
-From a machine with Heroku CLI logged in:
+### 1. Heroku app + Postgres
 
 ```bash
 cd backend
+heroku login
 heroku create YOUR-APP-NAME
+heroku addons:create heroku-postgresql:essential-0
+# DATABASE_URL is set automatically by the addon
+```
+
+(`essential-0` is the current small paid plan name — use whatever Mini/Essential plan Heroku shows if that slug differs.)
+
+### 2. Heroku config vars
+
+```bash
 heroku config:set NODE_ENV=production
 heroku config:set FRONTEND_URL=https://torihome.netlify.app
 heroku config:set JWT_SECRET='paste-from-local-backend-.env'
 heroku config:set JWT_REFRESH_SECRET='paste-from-local-backend-.env'
-heroku config:set DATABASE_URL='paste-supabase-uri'
 heroku config:set EMAILJS_SERVICE_ID='…'
 heroku config:set EMAILJS_TEMPLATE_ID_RESET='…'
 heroku config:set EMAILJS_PUBLIC_KEY='…'
 heroku config:set EMAILJS_PRIVATE_KEY='…'
-git push heroku main:main
 ```
 
-If the Git repo root is the monorepo (not `backend/`), deploy with:
+Do **not** set `DATABASE_URL` yourself — the Postgres addon already did.
+
+### 3. Deploy API
+
+From **repo root** (monorepo):
 
 ```bash
-# from repo root
 heroku git:remote -a YOUR-APP-NAME
 git subtree push --prefix backend heroku main
 ```
 
-API URL will be: `https://YOUR-APP-NAME.herokuapp.com`  
-Check: `https://YOUR-APP-NAME.herokuapp.com/api/health` → `{"ok":true}`
+Check: `https://YOUR-APP-NAME.herokuapp.com/api/health` → `{"ok":true}`  
+(Tables are created on boot via Sequelize sync.)
 
-### 3. Netlify (frontend)
+### 4. Netlify
 
-Build settings: branch `main`, base empty, `npm run build`, publish `dist`.
-
-Env var:
+Build: `main`, empty base, `npm run build`, publish `dist`.
 
 | Key | Value |
 |-----|--------|
 | `VITE_API_URL` | `https://YOUR-APP-NAME.herokuapp.com` |
 
-Then deploy / redeploy.
+Deploy / redeploy.
