@@ -241,10 +241,10 @@ authRouter.post(
         used: false,
       });
 
-      const frontendUrl = (process.env.FRONTEND_URL ?? "http://localhost:5173").replace(
-        /\/$/,
-        ""
-      );
+      const frontendUrl = (process.env.FRONTEND_URL ?? "http://localhost:5173")
+        .split(",")[0]
+        .trim()
+        .replace(/\/$/, "");
       const resetLink = `${frontendUrl}/reset-password?token=${encodeURIComponent(rawToken)}`;
 
       try {

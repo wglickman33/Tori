@@ -2,14 +2,14 @@
   command = "npm run build"
   publish = "dist"
 
-# Site URL: https://torihome.netlify.app
+[build.environment]
+  VITE_WHISK_URL = "https://trywhisk.netlify.app"
+
+# Site: https://torihome.netlify.app
 #
-# Required Netlify env var (Site settings → Environment variables):
-#   VITE_API_URL = https://YOUR-RENDER-SERVICE.onrender.com   (no trailing slash)
-#
-# Optional:
-#   VITE_WHISK_URL = https://trywhisk.netlify.app
-#   (defaults in code if unset)
+# REQUIRED in Netlify UI → Site configuration → Environment variables:
+#   VITE_API_URL = https://<your-render-service>.onrender.com
+#   (no trailing slash; set after Render is live, then trigger a redeploy)
 
 [[redirects]]
   from = "/*"
