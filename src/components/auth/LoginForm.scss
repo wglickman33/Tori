@@ -1,0 +1,49 @@
+@use "../../styles/tokens" as *;
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+
+  &__title {
+    font-size: 1.75rem;
+  }
+
+  &__subtitle {
+    color: #454567;
+    margin-bottom: $space-1;
+  }
+
+  &__password-row {
+    position: relative;
+  }
+
+  &__toggle {
+    position: absolute;
+    right: $space-3;
+    top: 34px;
+    border: none;
+    background: transparent;
+    color: $darkBlue;
+    font-family: $font-ui;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  &__forgot {
+    margin: -$space-1 0 0;
+    text-align: right;
+
+    a {
+      color: $darkBlue;
+      font-family: $font-ui;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+  }
+
+  &__footer {
+    text-align: center;
+    color: $text-muted;
+  }
+}

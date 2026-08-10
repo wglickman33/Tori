@@ -1,0 +1,21 @@
+@use "../../styles/tokens" as *;
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+
+  &__title {
+    font-size: 1.75rem;
+  }
+
+  &__subtitle {
+    color: #454567;
+    margin-bottom: $space-1;
+  }
+
+  &__footer {
+    text-align: center;
+    color: #454567;
+  }
+}

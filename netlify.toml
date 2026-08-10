@@ -1,0 +1,12 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Set these in the Netlify UI (Site settings → Environment variables).
+# VITE_API_URL must point at the deployed Render API (https://…).
+# VITE_WHISK_URL defaults in code to https://trywhisk.netlify.app if unset.
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

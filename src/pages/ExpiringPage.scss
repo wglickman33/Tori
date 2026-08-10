@@ -1,0 +1,111 @@
+@use "../styles/tokens" as *;
+
+.expiring-page {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: $space-4;
+
+    @include tablet-up {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    h1 {
+      color: $darkBlue;
+      font-size: 1.75rem;
+    }
+
+    p {
+      color: $text-muted;
+      margin-top: $space-1;
+    }
+  }
+
+  &__threshold {
+    width: min(100%, 280px);
+  }
+
+  &__hint {
+    margin-top: $space-2;
+    font-size: 0.8125rem;
+    color: $text-muted;
+  }
+
+  &__status {
+    color: $text-muted;
+  }
+
+  &__empty {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $space-3;
+    padding: $space-4;
+    border: $border-subtle;
+    border-radius: $radius-md;
+    background: $paleBlue;
+    color: $text-secondary;
+  }
+
+  &__empty-link {
+    font-family: $font-ui;
+    font-weight: 600;
+    color: $darkBlue;
+  }
+
+  &__table-wrap {
+    overflow-x: auto;
+    border: $border-subtle;
+    border-radius: $radius-md;
+    background: $lightCream;
+    box-shadow: $shadow-card;
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th,
+    td {
+      text-align: left;
+      padding: $space-3;
+      border-bottom: $border-subtle;
+    }
+
+    th {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: $text-muted;
+    }
+
+    a {
+      color: $darkBlue;
+      font-weight: 600;
+    }
+  }
+
+  &__badge {
+    display: inline-flex;
+    padding: $space-1 $space-3;
+    border-radius: $radius-pill;
+    font-size: 0.8125rem;
+    font-weight: 600;
+
+    &.is-overdue {
+      background: rgba(210, 45, 45, 0.12);
+      color: $errorRed;
+    }
+
+    &.is-soon {
+      background: rgba(235, 235, 57, 0.35);
+      color: #5a5a00;
+    }
+  }
+}

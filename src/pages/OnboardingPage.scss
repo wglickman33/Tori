@@ -1,0 +1,47 @@
+@use "../styles/tokens" as *;
+
+.onboarding-page {
+  min-height: 100vh;
+  padding: $space-5 $space-4;
+  background:
+    radial-gradient(circle at top left, rgba(219, 219, 255, 0.8), transparent 45%),
+    $lightCream;
+
+  &__header {
+    max-width: 720px;
+    margin: 0 auto $space-5;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $space-3;
+  }
+
+  &__logo {
+    width: 56px;
+    height: 56px;
+  }
+
+  &__title {
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
+    color: $darkBlue;
+  }
+
+  &__subtitle {
+    color: #454567;
+    max-width: 36ch;
+    line-height: 1.5;
+  }
+
+  &__grid {
+    max-width: 880px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $space-4;
+
+    @include tablet-up {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+}

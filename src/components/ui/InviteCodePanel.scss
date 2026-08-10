@@ -1,0 +1,36 @@
+@use "../../styles/tokens" as *;
+
+.invite-code-panel {
+  width: min(100%, 420px);
+  padding: $space-4;
+  border: $border-subtle;
+  border-radius: $radius-md;
+  background: $paleBlue;
+  box-shadow: $shadow-card;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+
+  &__title {
+    font-size: 1.125rem;
+  }
+
+  &__copy {
+    color: #3a3a5c;
+    line-height: 1.45;
+  }
+
+  &__code {
+    font-family: $font-ui;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: $darkBlue;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2;
+  }
+}

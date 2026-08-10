@@ -1,0 +1,122 @@
+@use "../styles/tokens" as *;
+
+.dashboard-page {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+
+    @include tablet-up {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    h1 {
+      color: $darkBlue;
+      font-size: 1.75rem;
+    }
+
+    p {
+      color: $text-muted;
+      margin-top: $space-1;
+    }
+  }
+
+  &__status {
+    color: $text-muted;
+  }
+
+  &__empty {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $space-3;
+    padding: $space-4;
+    border: $border-subtle;
+    border-radius: $radius-md;
+    background: $paleBlue;
+    color: $text-secondary;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  &__empty-link {
+    font-family: $font-ui;
+    font-weight: 600;
+    color: $darkBlue;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $space-3;
+
+    @include tablet-up {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @include desktop {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+}
+
+.dashboard-card {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  padding: $space-4;
+  border: $border-subtle;
+  border-radius: $radius-md;
+  background: $paleBlue;
+  box-shadow: $shadow-card;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 160ms ease, background-color 160ms ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    background: $powderBlue;
+  }
+
+  &--static {
+    cursor: default;
+
+    &:hover {
+      transform: none;
+      background: $paleBlue;
+    }
+  }
+
+  &__label {
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: $text-muted;
+    font-weight: 600;
+  }
+
+  &__value {
+    font-family: $font-ui;
+    font-size: 2rem;
+    font-weight: 700;
+    color: $darkBlue;
+
+    &--text {
+      font-size: 1.15rem;
+      line-height: 1.35;
+    }
+  }
+
+  &__hint {
+    color: $text-secondary;
+    font-size: 0.875rem;
+  }
+}

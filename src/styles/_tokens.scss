@@ -1,0 +1,47 @@
+$darkBlue: #0000ab;
+$powderBlue: #a9a9ff;
+$paleBlue: #dbdbff;
+$lightCream: #fcfcfc;
+$errorRed: #d22d2d;
+$successGreen: #2e9e5b;
+$expiringYellow: #ebeb39;
+
+$space-1: 4px;
+$space-2: 8px;
+$space-3: 16px;
+$space-4: 24px;
+$space-5: 32px;
+
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-pill: 999px;
+
+$font-ui: "Plus Jakarta Sans", system-ui, sans-serif;
+$font-body: "Inter", system-ui, sans-serif;
+
+$shadow-card: 0 8px 24px rgba(0, 0, 171, 0.08);
+$border-subtle: 1px solid rgba(0, 0, 171, 0.12);
+
+$text-muted: #55557a;
+$text-secondary: #3a3a5c;
+
+$bp-mobile: 768px;
+$bp-desktop: 1024px;
+
+@mixin mobile {
+  @media (max-width: #{$bp-mobile - 1px}) {
+    @content;
+  }
+}
+
+@mixin tablet-up {
+  @media (min-width: $bp-mobile) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: $bp-desktop) {
+    @content;
+  }
+}

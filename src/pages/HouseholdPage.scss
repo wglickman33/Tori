@@ -1,0 +1,95 @@
+@use "../styles/tokens" as *;
+
+.household-page {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  max-width: 720px;
+
+  &__header {
+    h1 {
+      color: $darkBlue;
+      font-size: 1.75rem;
+    }
+
+    p {
+      margin-top: $space-1;
+      color: $text-muted;
+    }
+  }
+
+  &__card {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+    padding: $space-4;
+    border: $border-subtle;
+    border-radius: $radius-md;
+    background: $paleBlue;
+    box-shadow: $shadow-card;
+
+    h2 {
+      margin: 0;
+      color: $darkBlue;
+      font-size: 1.125rem;
+    }
+
+    &--danger {
+      background: rgba(210, 45, 45, 0.06);
+    }
+  }
+
+  &__rename {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: $space-3;
+  }
+
+  &__muted {
+    margin: 0;
+    color: $text-muted;
+  }
+
+  &__members {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+
+    li {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: $space-2;
+      padding: $space-3;
+      border-radius: $radius-sm;
+      background: $lightCream;
+      border: $border-subtle;
+
+      div {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      strong {
+        color: $text-secondary;
+      }
+
+      span,
+      em {
+        font-size: 0.875rem;
+        color: $text-muted;
+        font-style: normal;
+      }
+
+      em {
+        text-transform: capitalize;
+      }
+    }
+  }
+}

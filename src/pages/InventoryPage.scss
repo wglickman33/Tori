@@ -1,0 +1,258 @@
+@use "../styles/tokens" as *;
+
+.inventory-page {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-4;
+  min-height: calc(100vh - 120px);
+
+  @include tablet-up {
+    grid-template-columns: minmax(280px, 38%) 1fr;
+    gap: $space-5;
+  }
+
+  &--detail {
+    @include mobile {
+      .inventory-page__list {
+        display: none;
+      }
+
+      .inventory-page__detail {
+        display: block;
+      }
+    }
+  }
+
+  &__list,
+  &__detail {
+    border: $border-subtle;
+    border-radius: $radius-md;
+    background: $lightCream;
+    box-shadow: $shadow-card;
+    padding: $space-4;
+  }
+
+  &__detail {
+    @include mobile {
+      display: none;
+    }
+  }
+
+  &__toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+    margin-bottom: $space-4;
+
+    @include tablet-up {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+  }
+
+  &__title {
+    font-size: 1.75rem;
+    color: $darkBlue;
+  }
+
+  &__subtitle {
+    color: #55557a;
+    margin-top: $space-1;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2;
+  }
+
+  &__invite {
+    margin-bottom: $space-4;
+  }
+
+  &__error {
+    color: $errorRed;
+  }
+
+  &__status,
+  &__empty,
+  &__detail-empty {
+    color: #454567;
+  }
+
+  &__empty,
+  &__detail-empty {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+    align-items: flex-start;
+    padding: $space-4 0;
+  }
+
+  &__sections {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+  }
+}
+
+.inventory-folder {
+  border: $border-subtle;
+  border-radius: $radius-sm;
+  background: rgba(219, 219, 255, 0.35);
+
+  &__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-2;
+    padding: $space-2 $space-3;
+  }
+
+  &__toggle {
+    border: none;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    text-align: left;
+    cursor: pointer;
+    flex: 1;
+    min-width: 0;
+    font: inherit;
+
+    &--static {
+      cursor: default;
+    }
+  }
+
+  &__name {
+    font-family: $font-ui;
+    font-weight: 600;
+    color: $darkBlue;
+  }
+
+  &__meta {
+    color: #5a5a7a;
+    font-size: 0.8125rem;
+    white-space: nowrap;
+  }
+
+  &__controls {
+    display: flex;
+    gap: $space-2;
+
+    button {
+      border: none;
+      background: transparent;
+      color: $darkBlue;
+      font-family: $font-ui;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  }
+}
+
+.inventory-item-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 $space-2 $space-2;
+
+  &__empty {
+    padding: $space-2 $space-3;
+    color: #6a6a88;
+    font-size: 0.875rem;
+  }
+}
+
+.inventory-item {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: $space-3;
+  border: none;
+  background: $lightCream;
+  border-radius: $radius-sm;
+  padding: $space-2 $space-3;
+  margin-top: $space-1;
+  cursor: pointer;
+  font: inherit;
+
+  &.is-active,
+  &:hover {
+    background: $powderBlue;
+  }
+}
+
+.item-detail {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+
+  &__top {
+    display: flex;
+    justify-content: space-between;
+    gap: $space-3;
+    align-items: center;
+  }
+
+  &__back {
+    @include tablet-up {
+      visibility: hidden;
+    }
+  }
+
+  &__controls {
+    display: flex;
+    gap: $space-2;
+  }
+
+  &__name {
+    font-size: 2rem;
+    color: $darkBlue;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $space-3;
+    margin: 0;
+
+    dt {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #6a6a88;
+    }
+
+    dd {
+      margin: $space-1 0 0;
+      font-weight: 600;
+    }
+  }
+
+  &__tags {
+    h3 {
+      margin-bottom: $space-2;
+    }
+
+    ul {
+      display: flex;
+      flex-wrap: wrap;
+      gap: $space-2;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      background: $paleBlue;
+      color: $darkBlue;
+      border-radius: $radius-pill;
+      padding: $space-1 $space-3;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+  }
+}

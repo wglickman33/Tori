@@ -1,0 +1,140 @@
+@use "../styles/tokens" as *;
+
+.search-page {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+
+    @include tablet-up {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    h1 {
+      color: $darkBlue;
+      font-size: 1.75rem;
+    }
+
+    p {
+      color: #55557a;
+      margin-top: $space-1;
+      max-width: 48ch;
+    }
+  }
+
+  &__header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $space-4;
+
+    @include tablet-up {
+      grid-template-columns: minmax(240px, 30%) 1fr;
+    }
+  }
+
+  &__filters,
+  &__results {
+    border: $border-subtle;
+    border-radius: $radius-md;
+    background: $lightCream;
+    box-shadow: $shadow-card;
+    padding: $space-4;
+  }
+
+  &__filters {
+    display: flex;
+    flex-direction: column;
+    gap: $space-4;
+    background: rgba(219, 219, 255, 0.35);
+
+    h2 {
+      font-size: 1rem;
+      margin-bottom: $space-2;
+      color: $darkBlue;
+    }
+  }
+
+  &__check {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    margin-bottom: $space-1;
+    font-size: 0.9375rem;
+  }
+
+  &__price-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $space-2;
+  }
+
+  &__muted {
+    color: #6a6a88;
+    font-size: 0.875rem;
+  }
+
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $space-3;
+  }
+
+  &__cta {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 $space-4;
+    border-radius: $radius-md;
+    background: $paleBlue;
+    color: $darkBlue;
+    font-family: $font-ui;
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+      background: $powderBlue;
+    }
+  }
+
+  &__table-wrap {
+    overflow-x: auto;
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th,
+    td {
+      text-align: left;
+      padding: $space-2 $space-3;
+      border-bottom: $border-subtle;
+      vertical-align: top;
+    }
+
+    th {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #6a6a88;
+    }
+
+    a {
+      color: $darkBlue;
+      font-weight: 600;
+    }
+  }
+}

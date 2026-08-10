@@ -1,0 +1,45 @@
+@use "../../styles/tokens" as *;
+
+.tori-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  min-height: 44px;
+  padding: 0 $space-4;
+  border-radius: $radius-md;
+  border: $border-subtle;
+  cursor: pointer;
+  font-family: $font-ui;
+  font-weight: 600;
+  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  &--primary {
+    background: $darkBlue;
+    color: $lightCream;
+    border-color: $darkBlue;
+
+    &:hover:not(:disabled) {
+      filter: brightness(1.08);
+    }
+  }
+
+  &--secondary {
+    background: $paleBlue;
+    color: $darkBlue;
+
+    &:hover:not(:disabled) {
+      background: $powderBlue;
+    }
+  }
+
+  &--ghost {
+    background: transparent;
+    color: $darkBlue;
+  }
+}

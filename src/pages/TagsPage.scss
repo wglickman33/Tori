@@ -1,0 +1,88 @@
+@use "../styles/tokens" as *;
+
+.tags-page {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+
+  &__header {
+    h1 {
+      color: $darkBlue;
+      font-size: 1.75rem;
+    }
+
+    p {
+      color: #55557a;
+      margin-top: $space-1;
+    }
+  }
+
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+    align-items: flex-start;
+    padding: $space-4;
+    border: $border-subtle;
+    border-radius: $radius-md;
+    background: $paleBlue;
+  }
+
+  &__link {
+    color: $darkBlue;
+    font-weight: 600;
+  }
+
+  &__table-wrap {
+    overflow-x: auto;
+    border: $border-subtle;
+    border-radius: $radius-md;
+    background: $lightCream;
+    box-shadow: $shadow-card;
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th,
+    td {
+      text-align: left;
+      padding: $space-3;
+      border-bottom: $border-subtle;
+    }
+
+    th {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #6a6a88;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: $space-3;
+
+    button {
+      border: none;
+      background: transparent;
+      color: $darkBlue;
+      font-family: $font-ui;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  }
+
+  &__modal {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+  }
+
+  &__modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: $space-2;
+  }
+}

@@ -1,0 +1,21 @@
+@use "../../styles/tokens" as *;
+
+.household-create-card {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  padding: $space-4;
+  border: $border-subtle;
+  border-radius: $radius-md;
+  background: $lightCream;
+  box-shadow: $shadow-card;
+
+  &__title {
+    font-size: 1.25rem;
+  }
+
+  &__copy {
+    color: #454567;
+    line-height: 1.45;
+  }
+}
