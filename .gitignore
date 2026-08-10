@@ -15,13 +15,20 @@ backend/node_modules
 dist
 dist-ssr
 backend/dist
-backend/uploads
+backend/uploads/*
 !backend/uploads/.gitkeep
 
-# Local environment and configuration files
-*.local
+# Secrets / local env — never commit real credentials
 .env
+.env.*
+!.env.example
 backend/.env
+backend/.env.*
+!backend/.env.example
+*.pem
+*.key
+credentials.json
+service-account*.json
 
 # Local-only ideation / handoff notes (not for deploy)
 TORI_HANDOFF.md
