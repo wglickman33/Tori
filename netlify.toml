@@ -7,9 +7,9 @@
 
 # Site: https://torihome.netlify.app
 #
-# REQUIRED in Netlify UI → Site configuration → Environment variables:
-#   VITE_API_URL = https://<your-render-service>.onrender.com
-#   (no trailing slash; set after Render is live, then trigger a redeploy)
+# REQUIRED in Netlify UI → Environment variables (after Heroku API is live):
+#   VITE_API_URL = https://YOUR-APP-NAME.herokuapp.com
+#   (no trailing slash)
 
 [[redirects]]
   from = "/*"
