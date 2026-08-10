@@ -12,11 +12,14 @@ import { itemImagesRouter } from "./routes/itemImages.js";
 import { UPLOADS_DIR } from "./utils/imageStorage.js";
 import "./models/index.js";
 
+const PRODUCTION_FRONTEND = "https://torihome.netlify.app";
+
 const defaultOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
   "http://127.0.0.1:5173",
   "http://127.0.0.1:5174",
+  PRODUCTION_FRONTEND,
 ];
 
 function isAllowedOrigin(origin: string, allowedOrigins: string[]): boolean {
@@ -24,16 +27,18 @@ function isAllowedOrigin(origin: string, allowedOrigins: string[]): boolean {
   if (process.env.NODE_ENV !== "production" && /^https?:\/\/localhost(:\d+)?$/.test(origin)) {
     return true;
   }
-  if (/^https:\/\/[\w-]+--[\w-]+\.netlify\.app$/.test(origin)) return true;
+  // Netlify production + deploy previews
+  if (/^https:\/\/[\w-]+(--[\w-]+)?\.netlify\.app$/.test(origin)) return true;
   return false;
 }
 
 export function createApp() {
   const app = express();
 
-  const allowedOrigins = process.env.FRONTEND_URL
+  const fromEnv = process.env.FRONTEND_URL
     ? process.env.FRONTEND_URL.split(",").map((u) => u.trim()).filter(Boolean)
-    : defaultOrigins;
+    : [];
+  const allowedOrigins = [...new Set([...defaultOrigins, ...fromEnv])];
 
   app.set("trust proxy", 1);
   app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));

@@ -32,6 +32,8 @@ cd backend && npm test
 
 ## Deploy
 
+Production frontend: [https://torihome.netlify.app](https://torihome.netlify.app)
+
 1. **Supabase** — Postgres only → `DATABASE_URL` on the API
-2. **Render** — Web Service from `backend/` (`npm run build` / `npm start`); set JWT secrets, `FRONTEND_URL`, EmailJS + Cloudinary as needed; run `npm run db:sync` once
-3. **Netlify** — this repo root (`netlify.toml`); set `VITE_API_URL` to the Render origin (no trailing slash) and redeploy when it changes
+2. **Render** — Web Service from `backend/` (`npm run build` / `npm start`); set JWT secrets, `FRONTEND_URL=https://torihome.netlify.app`, EmailJS + Cloudinary as needed; run `npm run db:sync` once
+3. **Netlify** — this repo root (`netlify.toml`); set **`VITE_API_URL`** to the Render origin (no trailing slash) and redeploy when it changes. Optional: `VITE_WHISK_URL`
