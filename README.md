@@ -86,6 +86,6 @@ Build: `main`, empty base, `npm run build`, publish `dist`.
 
 | Key | Value |
 |-----|--------|
-| `VITE_API_URL` | `https://YOUR-APP-NAME.herokuapp.com` |
+| `VITE_API_URL` | `https://torihome-api-2fd8d7635904.herokuapp.com` (also set in `netlify.toml`) |
 
 Deploy / redeploy.

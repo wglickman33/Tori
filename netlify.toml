@@ -4,12 +4,13 @@
 
 [build.environment]
   VITE_WHISK_URL = "https://trywhisk.netlify.app"
+  # Public Heroku API host (app name torihome-api uses the hashed herokuapp URL).
+  VITE_API_URL = "https://torihome-api-2fd8d7635904.herokuapp.com"
 
 # Site: https://torihome.netlify.app
 #
-# REQUIRED in Netlify UI → Environment variables (after Heroku API is live):
-#   VITE_API_URL = https://YOUR-APP-NAME.herokuapp.com
-#   (no trailing slash)
+# VITE_API_URL is set above for production builds. You can still override it in the
+# Netlify UI if the Heroku host changes.
 
 [[redirects]]
   from = "/*"
