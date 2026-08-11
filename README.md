@@ -64,15 +64,21 @@ Do **not** set `DATABASE_URL` yourself; the Postgres addon already did.
 
 ### 3. Deploy API
 
-From **repo root** (monorepo):
+From **repo root** (monorepo). Do **not** run `git push heroku main` — that pushes the whole repo and Heroku will reject it (non-fast-forward). Always push only the backend tree:
 
 ```bash
 heroku git:remote -a YOUR-APP-NAME
 git subtree push --prefix backend heroku main
 ```
 
+If subtree push is rejected after a bad full-repo push, force the backend split once:
+
+```bash
+git push heroku "$(git subtree split --prefix backend)":main --force
+```
+
 Check: `https://YOUR-APP-NAME.herokuapp.com/api/health` → `{"ok":true}`  
-(Tables are created on boot via Sequelize sync.)
+Schema sync runs on each deploy via the Heroku `release` phase (`node dist/db/sync.js`).
 
 ### 4. Netlify
 
