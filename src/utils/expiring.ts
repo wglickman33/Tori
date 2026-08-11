@@ -26,7 +26,7 @@ export function filterExpiringItems(items: Item[], thresholdDays: number, today 
 
 export function expirationLabel(expirationDate: string | null, today = new Date()): string {
   const days = daysUntilExpiration(expirationDate, today);
-  if (days === null) return "—";
+  if (days === null) return "-";
   if (days < 0) return "Overdue";
   if (days === 0) return "Today";
   if (days === 1) return "1 day";

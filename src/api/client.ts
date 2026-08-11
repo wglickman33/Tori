@@ -79,6 +79,8 @@ export interface HouseholdSummary {
   role: "owner" | "member";
   ownerId: string;
   memberCount: number;
+  /** Household-managed item-form locations; seeded from defaults. */
+  locationPresets?: string[];
 }
 
 export interface Folder {
@@ -176,7 +178,10 @@ export const authApi = {
 };
 
 export const householdsApi = {
-  mine: () => api<{ household: HouseholdSummary | null }>("/api/households/mine"),
+  mine: () =>
+    api<{ households: HouseholdSummary[]; household: HouseholdSummary | null }>(
+      "/api/households/mine"
+    ),
   create: (name: string) =>
     api<{ household: HouseholdSummary }>("/api/households", {
       method: "POST",
@@ -192,6 +197,11 @@ export const householdsApi = {
     api<{ household: HouseholdSummary }>(`/api/households/${id}`, {
       method: "PATCH",
       body: JSON.stringify({ name }),
+    }),
+  updateLocationPresets: (id: string, locationPresets: string[]) =>
+    api<{ household: HouseholdSummary }>(`/api/households/${id}/location-presets`, {
+      method: "PUT",
+      body: JSON.stringify({ locationPresets }),
     }),
   listMembers: (id: string) =>
     api<{ members: HouseholdMemberRow[] }>(`/api/households/${id}/members`),

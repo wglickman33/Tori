@@ -1,4 +1,5 @@
 import type { Folder, Item } from "../api/client";
+import { DEFAULT_LOCATION_PRESETS } from "../constants/inventory";
 
 export type SearchFilters = {
   folderIds: string[]; // includes "__independent__"
@@ -79,12 +80,105 @@ export function buildTagRows(items: Item[]): TagRow[] {
     .sort((a, b) => a.tag.localeCompare(b.tag));
 }
 
+export type LocationRow = {
+  location: string;
+  itemCount: number;
+  itemIds: string[];
+};
+
+export function buildLocationRows(items: Item[]): LocationRow[] {
+  const map = new Map<string, string[]>();
+  for (const item of items) {
+    const location = item.location?.trim();
+    if (!location) continue;
+    const list = map.get(location) ?? [];
+    list.push(item.id);
+    map.set(location, list);
+  }
+  return [...map.entries()]
+    .map(([location, itemIds]) => ({ location, itemCount: itemIds.length, itemIds }))
+    .sort((a, b) => a.location.localeCompare(b.location));
+}
+
+/**
+ * Household presets ∪ used locations not already listed, with Custom last.
+ * Falls back to DEFAULT_LOCATION_PRESETS when presets are unset (null/undefined).
+ */
+export function buildLocationSelectOptions(
+  presets: string[] | null | undefined,
+  usedLocations: string[] = []
+): string[] {
+  const ordered =
+    presets == null
+      ? [...DEFAULT_LOCATION_PRESETS]
+      : presets
+          .map((loc) => loc.trim())
+          .filter((loc) => loc && loc !== "Custom")
+          .filter((loc, i, arr) => arr.findIndex((x) => x.toLowerCase() === loc.toLowerCase()) === i);
+  const presetSet = new Set(ordered.map((loc) => loc.toLowerCase()));
+  const extras = uniqueSorted(
+    usedLocations
+      .map((loc) => loc.trim())
+      .filter((loc) => loc && loc !== "Custom" && !presetSet.has(loc.toLowerCase()))
+  );
+  return [...ordered, ...extras, "Custom"];
+}
+
+export type ManagedLocationRow = {
+  location: string;
+  itemCount: number;
+  itemIds: string[];
+  /** True when present on items but not in household presets. */
+  orphan: boolean;
+};
+
+/** Presets (household order) plus orphan in-use locations. */
+export function buildManagedLocationRows(
+  presets: string[] | null | undefined,
+  items: Item[]
+): ManagedLocationRow[] {
+  const usage = buildLocationRows(items);
+  const usageMap = new Map(usage.map((row) => [row.location.toLowerCase(), row]));
+  const orderedPresets =
+    presets == null
+      ? [...DEFAULT_LOCATION_PRESETS]
+      : presets
+          .map((loc) => loc.trim())
+          .filter(Boolean)
+          .filter((loc, i, arr) => arr.findIndex((x) => x.toLowerCase() === loc.toLowerCase()) === i);
+
+  const rows: ManagedLocationRow[] = orderedPresets.map((location) => {
+    const hit = usageMap.get(location.toLowerCase());
+    return {
+      location,
+      itemCount: hit?.itemCount ?? 0,
+      itemIds: hit?.itemIds ?? [],
+      orphan: false,
+    };
+  });
+
+  const presetKeys = new Set(orderedPresets.map((loc) => loc.toLowerCase()));
+  for (const row of usage) {
+    if (presetKeys.has(row.location.toLowerCase())) continue;
+    rows.push({
+      location: row.location,
+      itemCount: row.itemCount,
+      itemIds: row.itemIds,
+      orphan: true,
+    });
+  }
+  return rows;
+}
+
 export type DashboardStats = {
   folderCount: number;
   itemCount: number;
   totalQuantity: number;
+  /** Sum of (price × quantity) for priced items only. */
   totalValue: number;
   itemsMissingPrice: number;
+  itemsWithPrice: number;
+  pricedShare: number;
   expiringSoonCount: number;
 };
 
@@ -96,24 +190,32 @@ export function computeDashboardStats(
   let totalQuantity = 0;
   let totalValue = 0;
   let itemsMissingPrice = 0;
+  let itemsWithPrice = 0;
   let expiringSoonCount = 0;
 
   for (const item of items) {
-    totalQuantity += item.quantity || 0;
+    const qty = Number.isFinite(item.quantity) && item.quantity > 0 ? item.quantity : 0;
+    totalQuantity += qty;
     const price = parsePrice(item.price);
     if (price === null) itemsMissingPrice += 1;
-    else totalValue += price;
+    else {
+      itemsWithPrice += 1;
+      totalValue += price * qty;
+    }
 
     const days = daysUntilExpiration(item.expirationDate, today);
     if (days !== null && days <= EXPIRING_SOON_DAYS) expiringSoonCount += 1;
   }
 
+  const itemCount = items.length;
   return {
     folderCount: folders.length,
-    itemCount: items.length,
+    itemCount,
     totalQuantity,
     totalValue,
     itemsMissingPrice,
+    itemsWithPrice,
+    pricedShare: itemCount > 0 ? itemsWithPrice / itemCount : 0,
     expiringSoonCount,
   };
 }

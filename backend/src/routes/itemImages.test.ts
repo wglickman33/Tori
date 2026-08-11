@@ -46,7 +46,7 @@ describe("item image upload", () => {
       .attach("image", PNG, { filename: "dot.png", contentType: "image/png" });
 
     expect(uploaded.status).toBe(200);
-    expect(uploaded.body.item.imageUrl).toMatch(/^\/uploads\//);
+    expect(uploaded.body.item.imageUrl).toMatch(/^(\/uploads\/|https?:\/\/)/);
 
     const oversized = await request(app)
       .post(`/api/households/${householdId}/items/${itemId}/image`)

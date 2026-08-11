@@ -67,6 +67,14 @@ export const updateHouseholdSchema = z
   })
   .strict();
 
+export const updateLocationPresetsSchema = z
+  .object({
+    locationPresets: z
+      .array(z.string().trim().min(1, "Location name is required").max(80))
+      .max(80),
+  })
+  .strict();
+
 const optionalDate = z
   .union([z.string().regex(/^\d{4}-\d{2}-\d{2}$/), z.literal(""), z.null()])
   .optional()

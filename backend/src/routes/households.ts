@@ -7,7 +7,9 @@ import {
   formatZodError,
   joinHouseholdSchema,
   updateHouseholdSchema,
+  updateLocationPresetsSchema,
 } from "../utils/validation.js";
+import { DEFAULT_LOCATION_PRESETS, normalizeLocationPresets } from "../constants/locations.js";
 import { generateInviteCode, normalizeInviteCode } from "../utils/inviteCode.js";
 import { closeUserHouseholdStreams, publishHouseholdEvent } from "../utils/householdEvents.js";
 import { destroyHouseholdData } from "../utils/householdCleanup.js";
@@ -16,14 +18,22 @@ export const householdsRouter = Router();
 
 householdsRouter.use(authMiddleware);
 
-async function serializeMembership(userId: string) {
-  const membership = await HouseholdMember.findOne({ where: { userId } });
+async function serializeHouseholdForUser(userId: string, householdId: string) {
+  const membership = await HouseholdMember.findOne({ where: { householdId, userId } });
   if (!membership) return null;
 
-  const household = await Household.findByPk(membership.householdId);
+  const household = await Household.findByPk(householdId);
   if (!household) return null;
 
   const memberCount = await HouseholdMember.count({ where: { householdId: household.id } });
+
+  // Backfill legacy rows that predate locationPresets.
+  let locationPresets = normalizeLocationPresets(household.locationPresets);
+  if (!Array.isArray(household.locationPresets) || household.locationPresets.length === 0) {
+    locationPresets = [...DEFAULT_LOCATION_PRESETS];
+    household.locationPresets = locationPresets;
+    await household.save();
+  }
 
   return {
     id: household.id,
@@ -32,24 +42,35 @@ async function serializeMembership(userId: string) {
     role: membership.role,
     ownerId: household.ownerId,
     memberCount,
+    locationPresets,
   };
 }
 
+async function listHouseholdsForUser(userId: string) {
+  const memberships = await HouseholdMember.findAll({
+    where: { userId },
+    order: [["joinedAt", "ASC"]],
+  });
+  const households = [];
+  for (const membership of memberships) {
+    const row = await serializeHouseholdForUser(userId, membership.householdId);
+    if (row) households.push(row);
+  }
+  return households;
+}
+
 householdsRouter.get("/mine", async (req: AuthedRequest, res) => {
-  const data = await serializeMembership(req.userId!);
-  res.json({ household: data });
+  const households = await listHouseholdsForUser(req.userId!);
+  res.json({
+    households,
+    household: households[0] ?? null,
+  });
 });
 
 householdsRouter.post("/", async (req: AuthedRequest, res) => {
   const parsed = createHouseholdSchema.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: formatZodError(parsed.error) });
-    return;
-  }
-
-  const existing = await HouseholdMember.findOne({ where: { userId: req.userId } });
-  if (existing) {
-    res.status(400).json({ error: "You already belong to a household" });
     return;
   }
 
@@ -64,6 +85,7 @@ householdsRouter.post("/", async (req: AuthedRequest, res) => {
     name: parsed.data.name,
     inviteCode,
     ownerId: req.userId!,
+    locationPresets: [...DEFAULT_LOCATION_PRESETS],
   });
 
   await HouseholdMember.create({
@@ -72,28 +94,14 @@ householdsRouter.post("/", async (req: AuthedRequest, res) => {
     role: "owner",
   });
 
-  res.status(201).json({
-    household: {
-      id: household.id,
-      name: household.name,
-      inviteCode: household.inviteCode,
-      role: "owner" as const,
-      ownerId: household.ownerId,
-      memberCount: 1,
-    },
-  });
+  const data = await serializeHouseholdForUser(req.userId!, household.id);
+  res.status(201).json({ household: data });
 });
 
 householdsRouter.post("/join", async (req: AuthedRequest, res) => {
   const parsed = joinHouseholdSchema.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: formatZodError(parsed.error) });
-    return;
-  }
-
-  const existing = await HouseholdMember.findOne({ where: { userId: req.userId } });
-  if (existing) {
-    res.status(400).json({ error: "You already belong to a household" });
     return;
   }
 
@@ -104,35 +112,30 @@ householdsRouter.post("/join", async (req: AuthedRequest, res) => {
     return;
   }
 
+  const existing = await HouseholdMember.findOne({
+    where: { householdId: household.id, userId: req.userId },
+  });
+  if (existing) {
+    res.status(400).json({ error: "You already belong to this household" });
+    return;
+  }
+
   await HouseholdMember.create({
     householdId: household.id,
     userId: req.userId!,
     role: "member",
   });
 
-  const memberCount = await HouseholdMember.count({ where: { householdId: household.id } });
-
-  res.status(201).json({
-    household: {
-      id: household.id,
-      name: household.name,
-      inviteCode: null,
-      role: "member" as const,
-      ownerId: household.ownerId,
-      memberCount,
-    },
-  });
+  const data = await serializeHouseholdForUser(req.userId!, household.id);
+  res.status(201).json({ household: data });
 });
 
 householdsRouter.get("/:id", async (req: AuthedRequest, res) => {
-  const membership = await HouseholdMember.findOne({
-    where: { householdId: req.params.id, userId: req.userId },
-  });
-  if (!membership) {
+  const data = await serializeHouseholdForUser(req.userId!, req.params.id!);
+  if (!data) {
     res.status(403).json({ error: "Forbidden" });
     return;
   }
-  const data = await serializeMembership(req.userId!);
   res.json({ household: data });
 });
 
@@ -159,7 +162,43 @@ householdsRouter.patch("/:id", async (req: AuthedRequest, res) => {
 
   household.name = parsed.data.name;
   await household.save();
-  const data = await serializeMembership(req.userId!);
+  const data = await serializeHouseholdForUser(req.userId!, household.id);
+  res.json({ household: data });
+});
+
+householdsRouter.put("/:id/location-presets", async (req: AuthedRequest, res) => {
+  const parsed = updateLocationPresetsSchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: formatZodError(parsed.error) });
+    return;
+  }
+
+  const membership = await HouseholdMember.findOne({
+    where: { householdId: req.params.id, userId: req.userId },
+  });
+  if (!membership) {
+    res.status(403).json({ error: "Forbidden" });
+    return;
+  }
+
+  const household = await Household.findByPk(req.params.id);
+  if (!household) {
+    res.status(404).json({ error: "Household not found" });
+    return;
+  }
+
+  const locationPresets = normalizeLocationPresets(parsed.data.locationPresets);
+  household.locationPresets = locationPresets;
+  await household.save();
+
+  publishHouseholdEvent({
+    type: "household.updated",
+    householdId: household.id,
+    actorUserId: req.userId!,
+    locationPresets,
+  });
+
+  const data = await serializeHouseholdForUser(req.userId!, household.id);
   res.json({ household: data });
 });
 

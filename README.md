@@ -1,4 +1,4 @@
-# Tori — Home Inventory
+# Tori: Home Inventory
 
 Household-shared inventory app. Sibling to [Whisk](https://trywhisk.netlify.app).
 
@@ -45,7 +45,7 @@ heroku addons:create heroku-postgresql:essential-0
 # DATABASE_URL is set automatically by the addon
 ```
 
-(`essential-0` is the current small paid plan name — use whatever Mini/Essential plan Heroku shows if that slug differs.)
+(`essential-0` is the current small paid plan name; use whatever Mini/Essential plan Heroku shows if that slug differs.)
 
 ### 2. Heroku config vars
 
@@ -60,7 +60,7 @@ heroku config:set EMAILJS_PUBLIC_KEY='…'
 heroku config:set EMAILJS_PRIVATE_KEY='…'
 ```
 
-Do **not** set `DATABASE_URL` yourself — the Postgres addon already did.
+Do **not** set `DATABASE_URL` yourself; the Postgres addon already did.
 
 ### 3. Deploy API
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Banner } from "../ui/Banner";
 import { Button } from "../ui/Button";
 import { Modal } from "../ui/Modal";
@@ -24,6 +24,12 @@ export function ConfirmDeleteModal({
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    setError(null);
+    setLoading(false);
+  }, [isOpen]);
+
   const handleConfirm = async () => {
     setError(null);
     setLoading(true);
@@ -40,13 +46,13 @@ export function ConfirmDeleteModal({
   return (
     <Modal title={title} isOpen={isOpen} onClose={onClose}>
       <div className="inventory-form">
-        <p>{message}</p>
+        <p className="inventory-form__intro">{message}</p>
         {error ? <Banner>{error}</Banner> : null}
         <div className="inventory-form__actions">
           <Button type="button" variant="ghost" onClick={onClose}>
             Cancel
           </Button>
-          <Button type="button" onClick={handleConfirm} disabled={loading}>
+          <Button type="button" variant="danger" onClick={handleConfirm} disabled={loading}>
             {loading ? "Working…" : confirmLabel}
           </Button>
         </div>

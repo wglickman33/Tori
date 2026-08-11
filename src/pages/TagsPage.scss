@@ -4,17 +4,57 @@
   display: flex;
   flex-direction: column;
   gap: $space-4;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
 
   &__header {
+    width: 100%;
+  }
+
+  &__heading {
+    min-width: 0;
+
     h1 {
+      margin: 0;
       color: $darkBlue;
-      font-size: 1.75rem;
+      font-family: $font-ui;
+      font-size: clamp(1.5rem, 3vw, 1.85rem);
+      font-weight: 700;
+      line-height: 1.15;
     }
 
     p {
-      color: #55557a;
-      margin-top: $space-1;
+      margin: $space-2 0 0;
+      color: $text-muted;
+      font-size: 0.9375rem;
+      line-height: 1.45;
+      max-width: 48rem;
     }
+  }
+
+  &__muted {
+    margin: 0;
+    color: $text-muted;
+  }
+
+  &__sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 
   &__empty {
@@ -25,53 +65,370 @@
     padding: $space-4;
     border: $border-subtle;
     border-radius: $radius-md;
-    background: $paleBlue;
+    background: rgba(219, 219, 255, 0.28);
+    color: $text-secondary;
+    width: 100%;
   }
 
   &__link {
     color: $darkBlue;
-    font-weight: 600;
-  }
+    font-weight: 700;
+    text-decoration: none;
 
-  &__table-wrap {
-    overflow-x: auto;
-    border: $border-subtle;
-    border-radius: $radius-md;
-    background: $lightCream;
-    box-shadow: $shadow-card;
-  }
-
-  &__table {
-    width: 100%;
-    border-collapse: collapse;
-
-    th,
-    td {
-      text-align: left;
-      padding: $space-3;
-      border-bottom: $border-subtle;
-    }
-
-    th {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: #6a6a88;
+    &:hover {
+      color: #3333c4;
     }
   }
 
-  &__actions {
+  &__toolbar {
     display: flex;
-    gap: $space-3;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $space-2 $space-3;
+    width: 100%;
+  }
+
+  &__filter {
+    flex: 1 1 12rem;
+    min-width: 0;
+
+    input {
+      width: 100%;
+      min-height: 40px;
+      border-radius: $radius-sm;
+      border: $border-subtle;
+      background: $lightCream;
+      color: $text-secondary;
+      padding: 0 $space-3;
+      font: inherit;
+      font-size: 1rem;
+      transition: $transition-ui;
+
+      &:hover {
+        border-color: $powderBlue;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: $darkBlue;
+        box-shadow: 0 0 0 3px rgba(169, 169, 255, 0.45);
+      }
+    }
+  }
+
+  &__sort {
+    display: inline-flex;
+    flex: 0 0 auto;
+    margin-left: auto;
+    border: $border-subtle;
+    border-radius: $radius-pill;
+    overflow: hidden;
+    background: rgba(219, 219, 255, 0.25);
 
     button {
+      min-height: 40px;
+      padding: 0 $space-3;
       border: none;
+      background: transparent;
+      color: $text-muted;
+      font-family: $font-ui;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: $transition-ui;
+
+      &.is-on {
+        background: $powderBlue;
+        color: $darkBlue;
+      }
+
+      &:hover:not(.is-on) {
+        color: $darkBlue;
+        background: rgba(169, 169, 255, 0.22);
+      }
+    }
+  }
+
+  &__suggest {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+    width: 100%;
+    padding: $space-3;
+    border: $border-subtle;
+    border-radius: $radius-md;
+    background: rgba(235, 235, 57, 0.12);
+
+    @include tablet-up {
+      padding: $space-4;
+    }
+  }
+
+  &__suggest-head {
+    h2 {
+      margin: 0;
+      font-family: $font-ui;
+      font-size: 1rem;
+      font-weight: 700;
+      color: $darkBlue;
+    }
+
+    p {
+      margin: $space-1 0 0;
+      font-size: 0.8125rem;
+      color: $text-muted;
+      line-height: 1.4;
+    }
+  }
+
+  &__suggest-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+
+    @include tablet-up {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: $space-3;
+    }
+  }
+
+  &__suggest-card {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+    padding: $space-3;
+    border: $border-subtle;
+    border-radius: $radius-md;
+    background: rgba(252, 252, 252, 0.96);
+    min-width: 0;
+  }
+
+  &__suggest-pair {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $space-2;
+    font-size: 0.9375rem;
+
+    strong {
+      color: $darkBlue;
+      font-weight: 700;
+    }
+
+    em {
+      margin-left: 6px;
+      font-style: normal;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: $text-muted;
+      background: rgba(219, 219, 255, 0.55);
+      border-radius: $radius-pill;
+      padding: 2px 8px;
+    }
+  }
+
+  &__suggest-amp {
+    color: $text-muted;
+    font-weight: 700;
+  }
+
+  &__suggest-keep {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $space-2;
+  }
+
+  &__suggest-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: $text-muted;
+  }
+
+  &__suggest-keep button {
+    min-height: 32px;
+    padding: 0 $space-3;
+    border-radius: $radius-pill;
+    border: $border-subtle;
+    background: rgba(219, 219, 255, 0.3);
+    color: $darkBlue;
+    font-family: $font-ui;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: $transition-ui;
+
+    &.is-on {
+      background: $darkBlue;
+      border-color: $darkBlue;
+      color: #fff;
+    }
+
+    &:hover:not(.is-on) {
+      border-color: $powderBlue;
+      background: rgba(169, 169, 255, 0.4);
+    }
+  }
+
+  &__suggest-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2;
+
+    .tori-button {
+      flex: 1 1 auto;
+
+      @include tablet-up {
+        flex: 0 0 auto;
+      }
+    }
+  }
+
+  &__cloud {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2;
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  &__chip {
+    display: inline-flex;
+    align-items: stretch;
+    max-width: min(100%, 100vw - 3rem);
+    border: $border-subtle;
+    border-radius: $radius-sm $radius-pill $radius-pill $radius-sm;
+    background: rgba(219, 219, 255, 0.35);
+    box-shadow: $shadow-card;
+    overflow: hidden;
+    transition:
+      background-color 0.4s ease,
+      border-color 0.4s ease,
+      box-shadow 0.4s ease;
+
+    &:hover,
+    &:focus-within {
+      background: rgba(169, 169, 255, 0.4);
+      border-color: $powderBlue;
+      box-shadow: 0 10px 24px rgba(0, 0, 171, 0.12);
+
+      .tags-page__chip-actions {
+        opacity: 1;
+        max-width: 9rem;
+      }
+    }
+
+    &--tier-1 {
+      font-size: 0.875rem;
+    }
+
+    &--tier-2 {
+      font-size: 0.9375rem;
+    }
+
+    &--tier-3 {
+      font-size: 1.05rem;
+
+      .tags-page__chip-name {
+        font-weight: 800;
+      }
+    }
+  }
+
+  &__chip-main {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    min-height: 40px;
+    padding: 0 $space-3;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  &__chip-hash {
+    color: $powderBlue;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  &__chip-name {
+    font-family: $font-ui;
+    font-weight: 700;
+    color: $darkBlue;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__chip-count {
+    flex-shrink: 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: $darkBlue;
+    background: rgba(252, 252, 252, 0.85);
+    border-radius: $radius-pill;
+    padding: 2px 8px;
+  }
+
+  &__chip-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding-right: $space-2;
+    opacity: 0;
+    max-width: 0;
+    overflow: hidden;
+    transition:
+      opacity 0.4s ease,
+      max-width 0.4s ease;
+
+    @media (hover: none) {
+      opacity: 1;
+      max-width: 9rem;
+    }
+
+    button {
+      min-height: 32px;
+      padding: 0 $space-2;
+      border: none;
+      border-radius: $radius-pill;
       background: transparent;
       color: $darkBlue;
       font-family: $font-ui;
-      font-weight: 600;
+      font-size: 0.75rem;
+      font-weight: 700;
       cursor: pointer;
+      transition: background-color 0.4s ease, color 0.4s ease;
+
+      &:hover {
+        background: rgba(18, 18, 31, 0.08);
+      }
+
+      &:last-child:hover {
+        color: #9b1c1c;
+        background: rgba(239, 90, 90, 0.14);
+      }
     }
+  }
+
+  &__inline-error {
+    margin: 0;
+    color: $errorRed;
+    font-weight: 600;
   }
 
   &__modal {
@@ -80,9 +437,180 @@
     gap: $space-3;
   }
 
+  &__merge-hint {
+    margin: 0;
+    font-size: 0.875rem;
+    color: $text-muted;
+    line-height: 1.4;
+  }
+
   &__modal-actions {
     display: flex;
+    flex-wrap: wrap;
     justify-content: flex-end;
     gap: $space-2;
+
+    .tori-button {
+      flex: 1 1 auto;
+
+      @include tablet-up {
+        flex: 0 0 auto;
+      }
+    }
+  }
+}
+
+html[data-theme="dark"] {
+  .tags-page {
+    &__heading {
+      h1 {
+        color: $paleBlue;
+      }
+
+      p {
+        color: #a8a8c4;
+      }
+    }
+
+    &__muted {
+      color: #a8a8c4;
+    }
+
+    &__empty {
+      background: rgba(28, 28, 46, 0.92);
+      border-color: rgba(169, 169, 255, 0.22);
+      color: #c8c8e0;
+    }
+
+    &__link {
+      color: $paleBlue;
+
+      &:hover {
+        color: #ececf5;
+      }
+    }
+
+    &__filter input {
+      background: #161625;
+      border-color: rgba(169, 169, 255, 0.28);
+      color: #ececf5;
+
+      &:hover {
+        border-color: rgba(169, 169, 255, 0.45);
+      }
+
+      &:focus {
+        border-color: $powderBlue;
+        box-shadow: 0 0 0 3px rgba(169, 169, 255, 0.28);
+      }
+    }
+
+    &__sort {
+      background: rgba(169, 169, 255, 0.1);
+      border-color: rgba(169, 169, 255, 0.28);
+
+      button {
+        color: #a8a8c4;
+
+        &.is-on {
+          background: rgba(169, 169, 255, 0.28);
+          color: #ececf5;
+        }
+
+        &:hover:not(.is-on) {
+          color: #ececf5;
+          background: rgba(169, 169, 255, 0.16);
+        }
+      }
+    }
+
+    &__suggest {
+      background: rgba(235, 235, 57, 0.08);
+      border-color: rgba(235, 235, 57, 0.28);
+    }
+
+    &__suggest-head {
+      h2 {
+        color: #ececf5;
+      }
+
+      p {
+        color: #a8a8c4;
+      }
+    }
+
+    &__suggest-card {
+      background: rgba(28, 28, 46, 0.96);
+      border-color: rgba(169, 169, 255, 0.22);
+    }
+
+    &__suggest-pair {
+      strong {
+        color: #ececf5;
+      }
+
+      em {
+        color: #a8a8c4;
+        background: rgba(169, 169, 255, 0.16);
+      }
+    }
+
+    &__suggest-keep button {
+      color: #ececf5;
+      background: rgba(169, 169, 255, 0.12);
+      border-color: rgba(169, 169, 255, 0.28);
+
+      &.is-on {
+        background: #f2f2fa;
+        border-color: #f2f2fa;
+        color: #12121f;
+      }
+
+      &:hover:not(.is-on) {
+        background: rgba(169, 169, 255, 0.22);
+      }
+    }
+
+    &__chip {
+      background: rgba(169, 169, 255, 0.14);
+      border-color: rgba(169, 169, 255, 0.28);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+
+      &:hover,
+      &:focus-within {
+        background: rgba(236, 236, 245, 0.12);
+        border-color: rgba(236, 236, 245, 0.35);
+      }
+    }
+
+    &__chip-hash {
+      color: $powderBlue;
+    }
+
+    &__chip-name {
+      color: #ececf5;
+    }
+
+    &__chip-count {
+      color: #12121f;
+      background: rgba(242, 242, 250, 0.9);
+    }
+
+    &__chip-actions button {
+      color: #ececf5;
+
+      &:hover {
+        background: rgba(236, 236, 245, 0.12);
+      }
+
+      &:last-child:hover {
+        color: #ffb4b4;
+        background: rgba(239, 90, 90, 0.18);
+      }
+    }
+
+    &__merge-hint {
+      color: #a8a8c4;
+    }
   }
 }

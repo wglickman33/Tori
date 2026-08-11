@@ -1,4 +1,5 @@
 import { DataTypes, Model, type InferAttributes, type InferCreationAttributes, type CreationOptional } from "sequelize";
+import { DEFAULT_LOCATION_PRESETS } from "../constants/locations.js";
 import { sequelize } from "../db/sequelize.js";
 
 export class Household extends Model<InferAttributes<Household>, InferCreationAttributes<Household>> {
@@ -6,6 +7,7 @@ export class Household extends Model<InferAttributes<Household>, InferCreationAt
   declare name: string;
   declare inviteCode: string;
   declare ownerId: string;
+  declare locationPresets: CreationOptional<string[]>;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 }
@@ -29,6 +31,11 @@ Household.init(
     ownerId: {
       type: DataTypes.UUID,
       allowNull: false,
+    },
+    locationPresets: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      allowNull: false,
+      defaultValue: [...DEFAULT_LOCATION_PRESETS],
     },
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,

@@ -1,0 +1,148 @@
+@use "../../styles/tokens" as *;
+
+// Whisk brand palette (from recipeApp / Whisk)
+$whisk-accent: #c96b3a;
+$whisk-accent-hover: #b85c2e;
+$whisk-surface: #ebe4d8;
+$whisk-text: #2c251f;
+$whisk-muted: #5c5045;
+$whisk-border: #d4c9bb;
+
+.whisk-widget {
+  position: fixed;
+  left: max(
+    calc(var(--sidebar-width, 0px) + #{$space-3}),
+    calc(env(safe-area-inset-left, 0px) + #{$space-3})
+  );
+  bottom: max(#{$space-3}, env(safe-area-inset-bottom, 0px));
+  z-index: 35;
+  width: min(280px, calc(100vw - 24px - var(--sidebar-width, 0px)));
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  padding: $space-3;
+  border: 1px solid $whisk-border;
+  border-radius: $radius-md;
+  background: $whisk-surface;
+  color: $whisk-text;
+  box-shadow: 0 12px 32px rgba(46, 38, 32, 0.18);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, left 0.25s ease;
+
+  @include tablet-up {
+    left: max(
+      calc(var(--sidebar-width, 0px) + #{$space-4}),
+      calc(env(safe-area-inset-left, 0px) + #{$space-4})
+    );
+    bottom: max(#{$space-4}, env(safe-area-inset-bottom, 0px));
+  }
+
+  &--minimized {
+    width: 56px;
+    height: 56px;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 2px solid $whisk-accent;
+    background: $whisk-surface;
+    cursor: pointer;
+    box-shadow: 0 10px 28px rgba(201, 107, 58, 0.35);
+
+    &:hover {
+      background: #f3ebe1;
+      box-shadow: 0 14px 32px rgba(201, 107, 58, 0.42);
+    }
+  }
+
+  &__mark {
+    width: 22px;
+    height: auto;
+    display: block;
+  }
+
+  &__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: $space-2;
+  }
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    min-width: 0;
+  }
+
+  &__logo {
+    width: 28px;
+    height: auto;
+    flex-shrink: 0;
+  }
+
+  &__eyebrow {
+    margin: 0;
+    font-family: $font-ui;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: $whisk-muted;
+  }
+
+  &__title {
+    margin: 0;
+    font-family: $font-ui;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: $whisk-text;
+  }
+
+  &__minimize {
+    width: 32px;
+    height: 32px;
+    border: 1px solid $whisk-border;
+    border-radius: $radius-sm;
+    background: transparent;
+    color: $whisk-muted;
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+    flex-shrink: 0;
+
+    &:hover {
+      background: rgba(201, 107, 58, 0.12);
+      color: $whisk-accent;
+      border-color: $whisk-accent;
+    }
+  }
+
+  &__body {
+    margin: 0;
+    font-family: $font-body;
+    font-size: 0.875rem;
+    line-height: 1.45;
+    color: $whisk-muted;
+  }
+
+  &__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 0 $space-3;
+    border-radius: $radius-sm;
+    background: $whisk-accent;
+    color: #fff8f2;
+    text-decoration: none;
+    font-family: $font-ui;
+    font-weight: 700;
+    font-size: 0.875rem;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background: $whisk-accent-hover;
+    }
+  }
+}

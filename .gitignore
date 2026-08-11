@@ -18,7 +18,7 @@ backend/dist
 backend/uploads/*
 !backend/uploads/.gitkeep
 
-# Secrets / local env — never commit real credentials
+# Secrets / local env: never commit real credentials
 .env
 .env.*
 !.env.example

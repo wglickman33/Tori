@@ -10,9 +10,16 @@ interface ItemImageControlsProps {
   imageUrl: string | null;
   onUpload: (file: File) => Promise<void>;
   onRemove: () => Promise<void>;
+  /** When true, show that photo changes save right away. */
+  immediate?: boolean;
 }
 
-export function ItemImageControls({ imageUrl, onUpload, onRemove }: ItemImageControlsProps) {
+export function ItemImageControls({
+  imageUrl,
+  onUpload,
+  onRemove,
+  immediate = false,
+}: ItemImageControlsProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -61,8 +68,11 @@ export function ItemImageControls({ imageUrl, onUpload, onRemove }: ItemImageCon
       {preview ? (
         <img src={preview} alt="Item" className="item-image-controls__preview" />
       ) : (
-        <p className="item-image-controls__empty">Add a photo so you’ll recognize this item.</p>
+        <p className="item-image-controls__empty">Add a photo so you'll recognize this item.</p>
       )}
+      {immediate ? (
+        <p className="item-image-controls__hint">Photo changes save immediately.</p>
+      ) : null}
       <div className="item-image-controls__actions">
         <Button type="button" variant="secondary" onClick={pick} disabled={busy}>
           {preview ? "Replace photo" : "Add photo"}

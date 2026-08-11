@@ -7,7 +7,13 @@ export type HouseholdStreamEvent =
   | { type: "item.created"; householdId: string; actorUserId: string; item: Record<string, unknown> }
   | { type: "item.updated"; householdId: string; actorUserId: string; item: Record<string, unknown> }
   | { type: "item.deleted"; householdId: string; actorUserId: string; itemId: string }
-  | { type: "membership.revoked"; householdId: string; actorUserId: string };
+  | { type: "membership.revoked"; householdId: string; actorUserId: string }
+  | {
+      type: "household.updated";
+      householdId: string;
+      actorUserId: string;
+      locationPresets: string[];
+    };
 
 interface StreamClient {
   res: Response;

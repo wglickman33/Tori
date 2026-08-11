@@ -31,7 +31,7 @@ export function WhiskCrossLink({ variant = "card" }: WhiskCrossLinkProps) {
         <div className="whisk-cross-link__copy">
           <h2 className="whisk-cross-link__title">Explore Whisk</h2>
           <p className="whisk-cross-link__body">
-            Recipes and shopping lists for the same household — separate app, no shared login.
+            Recipes and shopping lists for the same household. Separate app, no shared login.
           </p>
         </div>
       </div>

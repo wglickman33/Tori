@@ -5,9 +5,15 @@ import "./InviteCodePanel.scss";
 interface InviteCodePanelProps {
   inviteCode: string;
   onRegenerate: () => Promise<void>;
+  /** When true, omit outer card chrome (parent section already provides it). */
+  embedded?: boolean;
 }
 
-export function InviteCodePanel({ inviteCode, onRegenerate }: InviteCodePanelProps) {
+export function InviteCodePanel({
+  inviteCode,
+  onRegenerate,
+  embedded = false,
+}: InviteCodePanelProps) {
   const [copied, setCopied] = useState(false);
   const [busy, setBusy] = useState(false);
 
@@ -27,18 +33,20 @@ export function InviteCodePanel({ inviteCode, onRegenerate }: InviteCodePanelPro
   };
 
   return (
-    <section className="invite-code-panel">
-      <h2 className="invite-code-panel__title">Household invite code</h2>
+    <div className={`invite-code-panel${embedded ? " invite-code-panel--embedded" : ""}`.trim()}>
+      {!embedded ? <h2 className="invite-code-panel__title">Household invite code</h2> : null}
       <p className="invite-code-panel__copy">Share this code so someone can join your household.</p>
-      <div className="invite-code-panel__code">{inviteCode}</div>
+      <div className="invite-code-panel__code" aria-label="Invite code">
+        {inviteCode}
+      </div>
       <div className="invite-code-panel__actions">
         <Button type="button" variant="secondary" onClick={copy}>
           {copied ? "Copied" : "Copy code"}
         </Button>
         <Button type="button" variant="ghost" onClick={regenerate} disabled={busy}>
-          Regenerate
+          {busy ? "Regenerating…" : "Regenerate"}
         </Button>
       </div>
-    </section>
+    </div>
   );
 }

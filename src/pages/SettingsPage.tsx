@@ -4,6 +4,7 @@ import { AppShell } from "../components/layout/AppShell";
 import { ConfirmDeleteModal } from "../components/inventory/ConfirmDeleteModal";
 import { Banner } from "../components/ui/Banner";
 import { Button } from "../components/ui/Button";
+import { PasswordField } from "../components/ui/PasswordField";
 import { TextField } from "../components/ui/TextField";
 import { useAuthStore } from "../store/authStore";
 import { useHouseholdStore } from "../store/householdStore";
@@ -44,10 +45,16 @@ export default function SettingsPage() {
     setEmail(user?.email ?? "");
   }, [user]);
 
+  const passwordChangeIncomplete = Boolean(newPassword) && !currentPassword;
+
   const onSaveProfile = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
     setMessage(null);
+    if (passwordChangeIncomplete) {
+      setError("Current password is required to set a new password.");
+      return;
+    }
     setSaving(true);
     try {
       const body: {
@@ -115,22 +122,22 @@ export default function SettingsPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-            <TextField
+            <PasswordField
               label="Current password"
-              type="password"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
               autoComplete="current-password"
             />
-            <TextField
+            <PasswordField
               label="New password"
-              type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               autoComplete="new-password"
             />
-            <p className="settings-page__hint">Leave password fields blank to keep your current password.</p>
-            <Button type="submit" disabled={saving}>
+            <p className="settings-page__hint">
+              Leave password fields blank to keep your current password.
+            </p>
+            <Button type="submit" disabled={saving || !displayName.trim() || !email.trim()}>
               {saving ? "Saving…" : "Save profile"}
             </Button>
           </form>
@@ -156,9 +163,7 @@ export default function SettingsPage() {
                 </button>
               ))}
             </div>
-            <p className="settings-page__hint">
-              Auto follows your device&apos;s light or dark setting.
-            </p>
+            <p className="settings-page__hint">Auto follows your device&apos;s light or dark setting.</p>
           </div>
           <Button type="button" onClick={onSaveAppearance} disabled={savingTheme}>
             {savingTheme ? "Saving…" : "Save appearance"}
@@ -169,7 +174,9 @@ export default function SettingsPage() {
           <h2>Household</h2>
           <p className="settings-page__hint">
             {household
-              ? `${household.name} · ${household.role} · ${household.memberCount} member${household.memberCount === 1 ? "" : "s"}`
+              ? `${household.name} · ${household.role === "owner" ? "Owner" : "Member"} · ${household.memberCount} member${
+                  household.memberCount === 1 ? "" : "s"
+                }`
               : "No household yet."}
           </p>
           <Link to={household ? "/household" : "/onboarding"} className="settings-page__link">
@@ -180,9 +187,10 @@ export default function SettingsPage() {
         <section className="settings-page__card settings-page__card--danger">
           <h2>Delete account</h2>
           <p className="settings-page__hint">
-            Permanently deletes your login. If you own a household with other members, remove them first.
+            Permanently deletes your login. If you own a household with other members, remove them
+            first.
           </p>
-          <Button type="button" onClick={() => setDeleteOpen(true)}>
+          <Button type="button" variant="danger" onClick={() => setDeleteOpen(true)}>
             Delete account
           </Button>
         </section>
@@ -191,6 +199,7 @@ export default function SettingsPage() {
       <ConfirmDeleteModal
         isOpen={deleteOpen}
         title="Delete account"
+        confirmLabel="Delete"
         message="This cannot be undone. Your credentials and membership will be removed."
         onClose={() => setDeleteOpen(false)}
         onConfirm={async () => {

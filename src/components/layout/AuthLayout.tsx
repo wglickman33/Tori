@@ -1,10 +1,12 @@
 import type { ReactNode } from "react";
 import logo from "../../assets/logos/website-logo.png";
+import { ThemeToggle } from "../ui/ThemeToggle";
 import "./AuthLayout.scss";
 
 export function AuthLayout({ children }: { children: ReactNode }) {
   return (
     <div className="auth-layout">
+      <ThemeToggle />
       <aside className="auth-layout__brand">
         <div className="auth-layout__logo-wrap">
           <img src={logo} alt="" className="auth-layout__logo" />

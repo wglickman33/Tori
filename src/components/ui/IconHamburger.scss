@@ -1,0 +1,46 @@
+@use "../../styles/tokens" as *;
+
+.icon-hamburger {
+  position: relative;
+  display: inline-block;
+  width: 20px;
+  height: 14px;
+
+  &__bar {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    border-radius: 1px;
+    background: currentColor;
+    transition: transform 0.25s ease, opacity 0.2s ease, top 0.25s ease;
+
+    &:nth-child(1) {
+      top: 0;
+    }
+
+    &:nth-child(2) {
+      top: 6px;
+    }
+
+    &:nth-child(3) {
+      top: 12px;
+    }
+  }
+
+  &.is-open {
+    .icon-hamburger__bar:nth-child(1) {
+      top: 6px;
+      transform: rotate(45deg);
+    }
+
+    .icon-hamburger__bar:nth-child(2) {
+      opacity: 0;
+    }
+
+    .icon-hamburger__bar:nth-child(3) {
+      top: 6px;
+      transform: rotate(-45deg);
+    }
+  }
+}

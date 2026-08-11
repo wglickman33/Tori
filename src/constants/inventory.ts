@@ -11,7 +11,20 @@ export const FOLDER_CATEGORIES = [
   "Custom",
 ] as const;
 
-export const ITEM_LOCATIONS = [
+/** Folder categories where an expiration date is expected. */
+export const FOOD_FOLDER_CATEGORIES = [
+  "Frozen Food",
+  "Refrigerated Food",
+  "Unrefrigerated Food",
+] as const;
+
+export function isFoodFolderCategory(category: string | null | undefined): boolean {
+  if (!category) return false;
+  return (FOOD_FOLDER_CATEGORIES as readonly string[]).includes(category);
+}
+
+/** Default household location presets (also seeded on the API). */
+export const DEFAULT_LOCATION_PRESETS = [
   "Upstairs Fridge",
   "Downstairs Fridge",
   "Closet",
@@ -25,5 +38,7 @@ export const ITEM_LOCATIONS = [
   "Laundry Room",
   "Hallway Closet",
   "Shed",
-  "Custom",
 ] as const;
+
+/** @deprecated Prefer DEFAULT_LOCATION_PRESETS + household.locationPresets */
+export const ITEM_LOCATIONS = [...DEFAULT_LOCATION_PRESETS, "Custom"] as const;

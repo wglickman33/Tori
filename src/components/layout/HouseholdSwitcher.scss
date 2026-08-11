@@ -1,0 +1,202 @@
+@use "../../styles/tokens" as *;
+
+.household-switcher {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+
+  &__pill {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-2;
+    min-height: 36px;
+    padding: 0 $space-3;
+    border-radius: $radius-pill;
+    border: $border-subtle;
+    background: rgba(219, 219, 255, 0.55);
+    color: $darkBlue;
+    font-family: $font-ui;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    cursor: pointer;
+    transition: $transition-ui;
+
+    &:hover,
+    &[aria-expanded="true"] {
+      background: $powderBlue;
+      border-color: $powderBlue;
+    }
+  }
+
+  &__name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__chevron {
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    color: $darkBlue;
+    opacity: 0.9;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+
+    &.is-open {
+      transform: rotate(180deg);
+    }
+  }
+
+  &__chevron-icon {
+    display: block;
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+
+  &__menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: $space-1;
+    border-radius: $radius-md;
+    border: $border-subtle;
+    background: $lightCream;
+    box-shadow: $shadow-card;
+    max-height: 240px;
+    overflow: auto;
+
+    &--collapsed {
+      left: calc(100% + 8px);
+      right: auto;
+      top: 0;
+      width: 200px;
+    }
+  }
+
+  &__option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-2;
+    min-height: 40px;
+    padding: 0 $space-3;
+    border: 0;
+    border-radius: $radius-sm;
+    background: transparent;
+    color: $text-secondary;
+    font-family: $font-ui;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+      background: $paleBlue;
+      color: $darkBlue;
+    }
+
+    &.is-active {
+      background: $powderBlue;
+      color: $darkBlue;
+    }
+
+    &--add {
+      color: $darkBlue;
+      border-top: $border-subtle;
+      margin-top: $space-1;
+      border-radius: 0 0 $radius-sm $radius-sm;
+    }
+  }
+
+  &__role {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: $text-muted;
+  }
+
+  &--collapsed {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  &__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: $border-subtle;
+    background: $paleBlue;
+    color: $darkBlue;
+    font-family: $font-ui;
+    font-weight: 700;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+  }
+}
+
+html[data-theme="dark"] {
+  .household-switcher {
+    &__pill {
+      background: rgba(169, 169, 255, 0.14);
+      border-color: rgba(169, 169, 255, 0.28);
+      color: $paleBlue;
+
+      &:hover,
+      &[aria-expanded="true"] {
+        background: rgba(169, 169, 255, 0.24);
+      }
+    }
+
+    &__menu {
+      background: #1c1c2e;
+      border-color: rgba(169, 169, 255, 0.28);
+    }
+
+    &__option {
+      color: #c8c8e0;
+
+      &:hover {
+        background: rgba(169, 169, 255, 0.14);
+        color: $paleBlue;
+      }
+
+      &.is-active {
+        background: rgba(169, 169, 255, 0.22);
+        color: $paleBlue;
+      }
+
+      &--add {
+        border-top-color: rgba(169, 169, 255, 0.18);
+        color: $powderBlue;
+      }
+    }
+
+    &__role {
+      color: #a8a8c4;
+    }
+
+    &__chevron {
+      color: $paleBlue;
+    }
+
+    &__avatar {
+      background: rgba(169, 169, 255, 0.18);
+      border-color: rgba(169, 169, 255, 0.28);
+      color: $paleBlue;
+    }
+  }
+}

@@ -4,13 +4,21 @@
   display: flex;
   flex-direction: column;
   gap: $space-3;
+  min-width: 0;
+
+  &__intro {
+    margin: 0;
+    color: $text-muted;
+    font-size: 0.9375rem;
+    line-height: 1.45;
+  }
 
   &__row {
     display: grid;
     grid-template-columns: 1fr;
     gap: $space-3;
 
-    @include tablet-up {
+    @media (min-width: 520px) {
       grid-template-columns: 1fr 1fr;
     }
   }
@@ -22,22 +30,75 @@
     font-family: $font-ui;
     font-size: 0.875rem;
     font-weight: 600;
+    color: $darkBlue;
+    min-width: 0;
 
     select {
       min-height: 44px;
+      width: 100%;
       border-radius: $radius-sm;
       border: $border-subtle;
       padding: 0 $space-3;
       background: $lightCream;
+      color: $text-secondary;
       font: inherit;
       font-weight: 400;
+      outline: none;
+      transition: $transition-ui;
+
+      &:hover {
+        border-color: $powderBlue;
+        background: rgba(219, 219, 255, 0.35);
+      }
+
+      &:focus {
+        border-color: $darkBlue;
+        background: $lightCream;
+        box-shadow: 0 0 0 3px rgba(169, 169, 255, 0.45);
+      }
     }
   }
 
   &__hint {
-    color: #5a5a7a;
+    color: $text-muted;
     font-size: 0.8125rem;
-    margin-top: -$space-2;
+    margin: -$space-1 0 0;
+    line-height: 1.4;
+  }
+
+  &__inline-link {
+    color: $darkBlue;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.4s ease;
+
+    &:hover {
+      color: #3333c4;
+    }
+  }
+
+  &__text-btn {
+    display: inline;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: none;
+    color: $darkBlue;
+    font: inherit;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+    transition: color 0.4s ease;
+
+    &:hover:not(:disabled) {
+      color: #3333c4;
+    }
+
+    &:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
   }
 
   &__photo {
@@ -47,6 +108,11 @@
     font-family: $font-ui;
     font-size: 0.875rem;
     font-weight: 600;
+    color: $darkBlue;
+    padding: $space-3;
+    border: $border-subtle;
+    border-radius: $radius-sm;
+    background: rgba(219, 219, 255, 0.22);
   }
 
   &__photo-preview {
@@ -65,8 +131,85 @@
 
   &__actions {
     display: flex;
+    flex-wrap: wrap;
     justify-content: flex-end;
     gap: $space-2;
     margin-top: $space-2;
+    padding-top: $space-3;
+    border-top: $border-subtle;
+
+    .tori-button {
+      flex: 1 1 auto;
+      min-width: min(100%, 8rem);
+
+      @media (min-width: 420px) {
+        flex: 0 0 auto;
+      }
+    }
+  }
+}
+
+html[data-theme="dark"] {
+  .inventory-form {
+    &__intro,
+    &__hint {
+      color: #a8a8c4;
+    }
+
+    &__inline-link {
+      color: $powderBlue;
+
+      &:hover {
+        color: $paleBlue;
+      }
+    }
+
+    &__text-btn {
+      color: $powderBlue;
+
+      &:hover:not(:disabled) {
+        color: $paleBlue;
+      }
+    }
+
+    &__field {
+      color: $powderBlue;
+
+      select {
+        background: #161625;
+        border-color: rgba(169, 169, 255, 0.28);
+        color: #ececf5;
+
+        &:hover {
+          border-color: rgba(169, 169, 255, 0.45);
+          background: #1a1a2c;
+        }
+
+        &:focus {
+          border-color: $powderBlue;
+          background: #161625;
+          box-shadow: 0 0 0 3px rgba(169, 169, 255, 0.28);
+        }
+
+        option {
+          background: #161625;
+          color: #ececf5;
+        }
+      }
+    }
+
+    &__photo {
+      color: $powderBlue;
+      background: rgba(169, 169, 255, 0.08);
+      border-color: rgba(169, 169, 255, 0.22);
+    }
+
+    &__photo-preview {
+      border-color: rgba(169, 169, 255, 0.28);
+    }
+
+    &__actions {
+      border-top-color: rgba(169, 169, 255, 0.18);
+    }
   }
 }

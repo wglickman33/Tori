@@ -7,17 +7,17 @@
     align-items: center;
     justify-content: space-between;
     gap: $space-4;
-    margin-top: $space-4;
+    margin-top: $space-1;
     padding: $space-4;
     border: $border-subtle;
     border-radius: $radius-md;
-    background: $paleBlue;
+    background: rgba(252, 252, 252, 0.96);
     box-shadow: $shadow-card;
-    transition: transform 160ms ease, background-color 160ms ease;
+    transition: $transition-ui;
 
     &:hover {
-      transform: translateY(-2px);
-      background: $powderBlue;
+      background: rgba(219, 219, 255, 0.4);
+      border-color: $powderBlue;
     }
   }
 
@@ -42,7 +42,8 @@
 
   &__title {
     font-family: $font-ui;
-    font-size: 1.25rem;
+    font-size: 1.2rem;
+    font-weight: 700;
     color: $darkBlue;
     margin: 0;
   }
@@ -51,6 +52,8 @@
     margin: $space-2 0 0;
     color: $text-muted;
     max-width: 36rem;
+    font-size: 0.9375rem;
+    line-height: 1.45;
   }
 
   &__cta {
@@ -66,10 +69,11 @@
     text-decoration: none;
     font-family: $font-ui;
     font-weight: 600;
-    transition: background-color 160ms ease, filter 160ms ease;
+    transition: $transition-ui;
 
     &:hover {
-      filter: brightness(1.08);
+      background: #1a1acc;
+      border-color: #1a1acc;
     }
   }
 
@@ -85,10 +89,55 @@
     font-size: 0.875rem;
     text-decoration: none;
     border-radius: $radius-sm;
-    transition: background-color 160ms ease;
+    transition: $transition-ui;
 
     &:hover {
-      background: $paleBlue;
+      background: rgba(219, 219, 255, 0.55);
+      color: $darkBlue;
+    }
+  }
+}
+
+html[data-theme="dark"] {
+  .whisk-cross-link {
+    &--card {
+      background: rgba(28, 28, 46, 0.92);
+      border-color: rgba(169, 169, 255, 0.22);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+
+      &:hover {
+        background: rgba(169, 169, 255, 0.12);
+        border-color: rgba(169, 169, 255, 0.4);
+      }
+    }
+
+    &__title {
+      color: $paleBlue;
+    }
+
+    &__body {
+      color: #a8a8c4;
+    }
+
+    &__cta {
+      background: $powderBlue;
+      border-color: $powderBlue;
+      color: #12121f;
+
+      &:hover {
+        background: $paleBlue;
+        border-color: $paleBlue;
+        color: #12121f;
+      }
+    }
+
+    &--inline {
+      color: $powderBlue;
+
+      &:hover {
+        background: rgba(169, 169, 255, 0.14);
+        color: $paleBlue;
+      }
     }
   }
 }

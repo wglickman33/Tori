@@ -1,77 +1,58 @@
-import type { ReactNode } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import logo from "../../assets/logos/website-logo.png";
-import { useAuthStore } from "../../store/authStore";
-import { useHouseholdStore } from "../../store/householdStore";
-import { useInventoryStore } from "../../store/inventoryStore";
-import { Button } from "../ui/Button";
-import { WhiskCrossLink } from "../ui/WhiskCrossLink";
+import type { CSSProperties, ReactNode } from "react";
+import { BP_DESKTOP, BP_TABLET } from "../../constants/breakpoints";
+import { useWindowWidth } from "../../hooks/useWindowWidth";
+import { useSidebarStore } from "../../store/sidebarStore";
+import { FloatingAppsMenu } from "../ui/FloatingAppsMenu";
+import { NotificationToastContainer } from "../ui/NotificationToast";
+import { IconSidebar } from "./IconSidebar";
+import { MobileHeader } from "./MobileHeader";
+import { Sidebar } from "./Sidebar";
 import "./AppShell.scss";
 
-const NAV = [
-  { to: "/dashboard", label: "Dashboard" },
-  { to: "/inventory", label: "Inventory" },
-  { to: "/search", label: "Search" },
-  { to: "/tags", label: "Tags" },
-  { to: "/expiring", label: "Expiring" },
-  { to: "/household", label: "Household" },
-] as const;
-
 export function AppShell({ children }: { children: ReactNode }) {
-  const navigate = useNavigate();
-  const user = useAuthStore((s) => s.user);
-  const signOut = useAuthStore((s) => s.signOut);
-  const clearHousehold = useHouseholdStore((s) => s.clear);
-  const clearInventory = useInventoryStore((s) => s.clear);
-  const household = useHouseholdStore((s) => s.household);
+  const width = useWindowWidth();
+  const expanded = useSidebarStore((s) => s.expanded);
+  const drawerOpen = useSidebarStore((s) => s.drawerOpen);
+  const closeDrawer = useSidebarStore((s) => s.closeDrawer);
 
-  const onLogout = async () => {
-    clearInventory();
-    clearHousehold();
-    await signOut();
-    navigate("/login");
-  };
+  const isDesktop = width > BP_DESKTOP;
+  const isTablet = width > BP_TABLET && width <= BP_DESKTOP;
+  const isMobile = width <= BP_TABLET;
+
+  let mainMod = "app-shell__main--mobile";
+  let sidebarWidthPx = 0;
+  if (isDesktop) {
+    mainMod = expanded ? "app-shell__main--desktop-expanded" : "app-shell__main--desktop-collapsed";
+    sidebarWidthPx = expanded ? 240 : 60;
+  } else if (isTablet) {
+    mainMod = "app-shell__main--tablet";
+    sidebarWidthPx = 60;
+  }
 
   return (
-    <div className="app-shell">
-      <header className="app-shell__header">
-        <div className="app-shell__brand">
-          <img src={logo} alt="Tori" className="app-shell__logo" />
-          <div>
-            <div className="app-shell__title">Tori</div>
-            <div className="app-shell__household">{household?.name ?? "Household"}</div>
-          </div>
-        </div>
+    <div
+      className="app-shell"
+      style={{ "--sidebar-width": `${sidebarWidthPx}px` } as CSSProperties}
+    >
+      {!isDesktop && drawerOpen ? (
+        <button
+          type="button"
+          className="app-shell__backdrop"
+          aria-label="Close menu"
+          onClick={closeDrawer}
+        />
+      ) : null}
 
-        <nav className="app-shell__nav" aria-label="Primary">
-          {NAV.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={({ isActive }) =>
-                `app-shell__nav-link${isActive ? " is-active" : ""}`
-              }
-            >
-              {item.label}
-            </NavLink>
-          ))}
-        </nav>
+      <Sidebar />
+      <IconSidebar />
 
-        <div className="app-shell__user">
-          <NavLink to="/help" className="app-shell__meta-link">
-            Help
-          </NavLink>
-          <NavLink to="/settings" className="app-shell__meta-link">
-            Settings
-          </NavLink>
-          <WhiskCrossLink variant="inline" />
-          <span className="app-shell__user-name">{user?.displayName}</span>
-          <Button type="button" variant="ghost" onClick={onLogout}>
-            Log out
-          </Button>
-        </div>
-      </header>
-      <main className="app-shell__main">{children}</main>
+      <div className={`app-shell__main ${mainMod}`}>
+        {isMobile ? <MobileHeader /> : null}
+        <div className="app-shell__content">{children}</div>
+      </div>
+
+      <FloatingAppsMenu />
+      <NotificationToastContainer />
     </div>
   );
 }

@@ -1,0 +1,124 @@
+@use "../../styles/tokens" as *;
+
+.inventory-transfer {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  min-width: 0;
+  width: 100%;
+  position: relative;
+  z-index: 30;
+
+  &__controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2;
+    align-items: center;
+  }
+
+  &__export {
+    position: relative;
+    z-index: 40;
+  }
+
+  &__trigger,
+  &__import {
+    min-height: 40px;
+    padding: 0 $space-3;
+    font-size: 0.875rem;
+  }
+
+  &__menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: auto;
+    z-index: 200;
+    min-width: min(15rem, calc(100vw - 2rem));
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: $space-1;
+    border-radius: $radius-md;
+    border: $border-subtle;
+    background: $lightCream;
+    box-shadow: $shadow-card;
+
+    button {
+      display: block;
+      width: 100%;
+      border: 0;
+      border-radius: $radius-sm;
+      background: transparent;
+      color: $text-secondary;
+      font-family: $font-ui;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      text-align: left;
+      padding: 0.55rem 0.75rem;
+      cursor: pointer;
+      transition: background-color 0.4s ease, color 0.4s ease;
+
+      &:hover:not(:disabled) {
+        background: $paleBlue;
+        color: $darkBlue;
+      }
+
+      &:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  &__file {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  &__hint,
+  &__status {
+    margin: 0;
+    font-size: 0.75rem;
+    line-height: 1.4;
+  }
+
+  &__hint {
+    color: $text-muted;
+  }
+
+  &__status {
+    color: $darkBlue;
+    font-weight: 600;
+  }
+}
+
+html[data-theme="dark"] {
+  .inventory-transfer {
+    &__menu {
+      background: #1c1c2e;
+      border-color: rgba(169, 169, 255, 0.28);
+
+      button {
+        color: #c8c8e0;
+
+        &:hover:not(:disabled) {
+          background: rgba(169, 169, 255, 0.14);
+          color: $paleBlue;
+        }
+      }
+    }
+
+    &__hint {
+      color: #a8a8c4;
+    }
+
+    &__status {
+      color: $powderBlue;
+    }
+  }
+}

@@ -1,6 +1,13 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import type { Item } from "../api/client";
-import { expirationLabel, filterExpiringItems } from "./expiring";
+import {
+  DEFAULT_EXPIRING_THRESHOLD,
+  EXPIRING_THRESHOLD_KEY,
+  expirationLabel,
+  filterExpiringItems,
+  readExpiringThreshold,
+  writeExpiringThreshold,
+} from "./expiring";
 
 const item = (overrides: Partial<Item>): Item => ({
   id: "1",
@@ -19,6 +26,19 @@ const item = (overrides: Partial<Item>): Item => ({
 
 describe("expiring utils", () => {
   const today = new Date(2026, 7, 9);
+
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  it("persists and validates the warning threshold", () => {
+    expect(readExpiringThreshold()).toBe(DEFAULT_EXPIRING_THRESHOLD);
+    writeExpiringThreshold(14);
+    expect(localStorage.getItem(EXPIRING_THRESHOLD_KEY)).toBe("14");
+    expect(readExpiringThreshold()).toBe(14);
+    localStorage.setItem(EXPIRING_THRESHOLD_KEY, "nope");
+    expect(readExpiringThreshold()).toBe(DEFAULT_EXPIRING_THRESHOLD);
+  });
 
   it("includes overdue and within threshold, sorted urgent first", () => {
     const items = [

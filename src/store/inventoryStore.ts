@@ -56,6 +56,7 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
   load: async (householdId) => {
     set({ isLoading: true, error: null, householdId });
     try {
+      const prevOpen = get().openFolderIds;
       const [foldersRes, itemsRes] = await Promise.all([
         inventoryApi.listFolders(householdId),
         inventoryApi.listItems(householdId),
@@ -63,6 +64,9 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
       set({
         folders: foldersRes.folders,
         items: itemsRes.items,
+        openFolderIds: Object.fromEntries(
+          foldersRes.folders.map((folder) => [folder.id, prevOpen[folder.id] ?? true])
+        ),
         isLoading: false,
       });
     } catch (err) {
@@ -77,7 +81,10 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
     const householdId = get().householdId;
     if (!householdId) throw new Error("No household");
     const { folder } = await inventoryApi.createFolder(householdId, body);
-    set((s) => ({ folders: upsertById(s.folders, folder) }));
+    set((s) => ({
+      folders: upsertById(s.folders, folder),
+      openFolderIds: { ...s.openFolderIds, [folder.id]: true },
+    }));
     return folder;
   },
 
@@ -149,9 +156,12 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
   },
 
   toggleFolder: (folderId) => {
-    set((s) => ({
-      openFolderIds: { ...s.openFolderIds, [folderId]: !s.openFolderIds[folderId] },
-    }));
+    set((s) => {
+      const currentlyOpen = s.openFolderIds[folderId] !== false;
+      return {
+        openFolderIds: { ...s.openFolderIds, [folderId]: !currentlyOpen },
+      };
+    });
   },
 
   applyEvent: (event) => {

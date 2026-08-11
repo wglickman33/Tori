@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { Button } from "./Button";
 import "./Modal.scss";
 
 interface ModalProps {
@@ -7,6 +6,20 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   children: ReactNode;
+}
+
+function CloseIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden>
+      <path
+        d="M6 6l12 12M18 6L6 18"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
 }
 
 export function Modal({ title, isOpen, onClose, children }: ModalProps) {
@@ -22,9 +35,9 @@ export function Modal({ title, isOpen, onClose, children }: ModalProps) {
       >
         <div className="tori-modal__header">
           <h2 className="tori-modal__title">{title}</h2>
-          <Button type="button" variant="ghost" onClick={onClose} aria-label="Close">
-            Close
-          </Button>
+          <button type="button" className="tori-modal__close" onClick={onClose} aria-label="Close">
+            <CloseIcon />
+          </button>
         </div>
         <div className="tori-modal__body">{children}</div>
       </div>

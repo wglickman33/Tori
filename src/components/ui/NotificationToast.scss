@@ -1,0 +1,220 @@
+@use "../../styles/tokens" as *;
+
+.notification-toast-container {
+  position: fixed;
+  top: max(#{$space-3}, env(safe-area-inset-top, 0px));
+  right: max(#{$space-3}, env(safe-area-inset-right, 0px));
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  max-width: min(400px, calc(100vw - #{$space-3 * 2}));
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+  }
+}
+
+.notification-toast {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-3;
+  border-radius: $radius-md;
+  background: $lightCream;
+  border: $border-subtle;
+  border-left: 4px solid;
+  box-shadow: $shadow-card;
+  min-width: min(260px, 100%);
+  max-width: 100%;
+  font-family: $font-ui;
+  transition: $transition-ui;
+  animation: notification-toast-slide-in 0.3s ease-out;
+
+  &--exit {
+    animation: notification-toast-slide-out 0.3s ease-in forwards;
+  }
+
+  &--success {
+    border-left-color: $successGreen;
+
+    .notification-toast__icon {
+      background: $successGreen;
+      color: $lightCream;
+    }
+  }
+
+  &--error {
+    border-left-color: $errorRed;
+
+    .notification-toast__icon {
+      background: $errorRed;
+      color: $lightCream;
+    }
+  }
+
+  &--warning {
+    border-left-color: #c9a227;
+
+    .notification-toast__icon {
+      background: #c9a227;
+      color: $lightCream;
+    }
+  }
+
+  &--info {
+    border-left-color: $darkBlue;
+
+    .notification-toast__icon {
+      background: $darkBlue;
+      color: $lightCream;
+    }
+  }
+}
+
+.notification-toast__content {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-2;
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-toast__icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  line-height: 1;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+.notification-toast__message {
+  color: $darkBlue;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.35;
+  transition: color 0.4s ease;
+}
+
+.notification-toast__close {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  background: transparent;
+  border: $border-subtle;
+  border-radius: $radius-sm;
+  color: $text-muted;
+  cursor: pointer;
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+
+  svg {
+    width: 12px;
+    height: 12px;
+    display: block;
+  }
+
+  &:hover {
+    background: $paleBlue;
+    color: $darkBlue;
+    border-color: $powderBlue;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $powderBlue;
+    outline-offset: 2px;
+  }
+}
+
+@keyframes notification-toast-slide-in {
+  from {
+    transform: translateX(calc(100% + #{$space-4}));
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes notification-toast-slide-out {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(calc(100% + #{$space-4}));
+    opacity: 0;
+  }
+}
+
+html[data-theme="dark"] {
+  .notification-toast {
+    background: #1c1c2e;
+    border-color: rgba(169, 169, 255, 0.28);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+
+    &--success {
+      border-left-color: #3cbc72;
+
+      .notification-toast__icon {
+        background: #3cbc72;
+        color: #12121f;
+      }
+    }
+
+    &--error {
+      border-left-color: #ef5a5a;
+
+      .notification-toast__icon {
+        background: #ef5a5a;
+        color: #12121f;
+      }
+    }
+
+    &--warning {
+      border-left-color: #e0b84a;
+
+      .notification-toast__icon {
+        background: #e0b84a;
+        color: #12121f;
+      }
+    }
+
+    &--info {
+      border-left-color: $powderBlue;
+
+      .notification-toast__icon {
+        background: $powderBlue;
+        color: #12121f;
+      }
+    }
+  }
+
+  .notification-toast__message {
+    color: $paleBlue;
+  }
+
+  .notification-toast__close {
+    border-color: rgba(169, 169, 255, 0.28);
+    color: #a8a8c4;
+
+    &:hover {
+      background: rgba(169, 169, 255, 0.14);
+      color: $paleBlue;
+      border-color: rgba(169, 169, 255, 0.45);
+    }
+
+    &:focus-visible {
+      outline-color: $powderBlue;
+    }
+  }
+}

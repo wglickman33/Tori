@@ -2,6 +2,9 @@ import { describe, expect, it } from "vitest";
 import type { Item } from "../api/client";
 import {
   INDEPENDENT_FOLDER_KEY,
+  buildLocationRows,
+  buildLocationSelectOptions,
+  buildManagedLocationRows,
   buildTagRows,
   computeDashboardStats,
   daysUntilExpiration,
@@ -83,8 +86,11 @@ describe("inventoryFilters", () => {
     expect(stats.folderCount).toBe(1);
     expect(stats.itemCount).toBe(2);
     expect(stats.totalQuantity).toBe(5);
-    expect(stats.totalValue).toBe(5);
+    // 10 + null price item; qty 2 × $5 = $10
+    expect(stats.totalValue).toBe(10);
     expect(stats.itemsMissingPrice).toBe(1);
+    expect(stats.itemsWithPrice).toBe(1);
+    expect(stats.pricedShare).toBe(0.5);
     expect(stats.expiringSoonCount).toBe(1);
   });
 
@@ -95,5 +101,45 @@ describe("inventoryFilters", () => {
     ]);
     expect(rows.find((r) => r.tag === "a")?.itemCount).toBe(2);
     expect(rows.find((r) => r.tag === "b")?.itemIds).toEqual(["1"]);
+  });
+
+  it("builds location rows across items", () => {
+    const rows = buildLocationRows([
+      baseItem({ id: "1", location: "Desk" }),
+      baseItem({ id: "2", location: "Desk" }),
+      baseItem({ id: "3", location: "  Pantry " }),
+      baseItem({ id: "4", location: null }),
+      baseItem({ id: "5", location: "" }),
+    ]);
+    expect(rows.find((r) => r.location === "Desk")?.itemCount).toBe(2);
+    expect(rows.find((r) => r.location === "Pantry")?.itemIds).toEqual(["3"]);
+    expect(rows.some((r) => !r.location)).toBe(false);
+  });
+
+  it("merges household presets with used custom locations for the item form", () => {
+    const options = buildLocationSelectOptions(["Desk", "Pantry"], ["Desk", "Under Stairs", "Custom"]);
+    expect(options[0]).toBe("Desk");
+    expect(options).toEqual(["Desk", "Pantry", "Under Stairs", "Custom"]);
+  });
+
+  it("falls back to default presets when household presets are unset", () => {
+    const options = buildLocationSelectOptions(null, []);
+    expect(options[0]).toBe("Upstairs Fridge");
+    expect(options.at(-1)).toBe("Custom");
+  });
+
+  it("builds managed location rows with orphans", () => {
+    const rows = buildManagedLocationRows(
+      ["Desk", "Pantry"],
+      [
+        baseItem({ id: "1", location: "Desk" }),
+        baseItem({ id: "2", location: "Shed" }),
+        baseItem({ id: "3", location: null }),
+      ]
+    );
+    expect(rows.map((r) => r.location)).toEqual(["Desk", "Pantry", "Shed"]);
+    expect(rows.find((r) => r.location === "Desk")?.itemCount).toBe(1);
+    expect(rows.find((r) => r.location === "Pantry")?.itemCount).toBe(0);
+    expect(rows.find((r) => r.location === "Shed")?.orphan).toBe(true);
   });
 });

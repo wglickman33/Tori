@@ -45,11 +45,23 @@
   &--ghost {
     background: transparent;
     color: $darkBlue;
-    border-color: transparent;
+    border-color: rgba(0, 0, 171, 0.22);
 
     &:hover:not(:disabled) {
       background: $paleBlue;
-      border-color: $paleBlue;
+      border-color: $powderBlue;
+    }
+  }
+
+  &--danger {
+    background: rgba(210, 45, 45, 0.1);
+    color: $errorRed;
+    border-color: rgba(210, 45, 45, 0.35);
+
+    &:hover:not(:disabled) {
+      background: $errorRed;
+      color: #fff;
+      border-color: $errorRed;
     }
   }
 }
@@ -69,12 +81,12 @@ html[data-theme="dark"] {
     }
 
     &--secondary {
-      background: transparent;
+      background: rgba(169, 169, 255, 0.14);
       color: $paleBlue;
       border-color: rgba(169, 169, 255, 0.45);
 
       &:hover:not(:disabled) {
-        background: rgba(169, 169, 255, 0.16);
+        background: rgba(169, 169, 255, 0.28);
         border-color: $powderBlue;
         color: #fff;
       }
@@ -82,12 +94,24 @@ html[data-theme="dark"] {
 
     &--ghost {
       color: $paleBlue;
+      border-color: rgba(169, 169, 255, 0.35);
 
       &:hover:not(:disabled) {
         background: rgba(169, 169, 255, 0.14);
-        border-color: transparent;
+        border-color: $powderBlue;
+      }
+    }
+
+    &--danger {
+      background: rgba(210, 45, 45, 0.18);
+      color: #ff8f8f;
+      border-color: rgba(210, 45, 45, 0.45);
+
+      &:hover:not(:disabled) {
+        background: $errorRed;
+        color: #fff;
+        border-color: $errorRed;
       }
     }
   }
 }
-

@@ -4,99 +4,335 @@
   display: flex;
   flex-direction: column;
   gap: $space-4;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
 
   &__header {
     display: flex;
     flex-direction: column;
-    gap: $space-4;
+    gap: $space-3;
+    padding-bottom: $space-3;
+    border-bottom: $border-subtle;
 
     @include tablet-up {
       flex-direction: row;
       justify-content: space-between;
-      align-items: flex-start;
+      align-items: flex-end;
+      gap: $space-4;
+    }
+  }
+
+  &__heading {
+    min-width: 0;
+    flex: 0 1 auto;
+
+    @include tablet-up {
+      flex: 1 1 16rem;
     }
 
     h1 {
+      margin: 0;
       color: $darkBlue;
-      font-size: 1.75rem;
+      font-family: $font-ui;
+      font-size: clamp(1.5rem, 3vw, 1.85rem);
+      font-weight: 700;
+      line-height: 1.15;
     }
 
     p {
+      margin: $space-2 0 0;
       color: $text-muted;
-      margin-top: $space-1;
+      font-size: 0.9375rem;
+      line-height: 1.45;
+      max-width: 40rem;
     }
   }
 
-  &__threshold {
-    width: min(100%, 280px);
+  &__remind {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $space-2;
+    min-width: 0;
+    max-width: 100%;
+    padding: $space-2 $space-3;
+    border: $border-subtle;
+    border-radius: $radius-md;
+    background: rgba(252, 252, 252, 0.96);
+    box-shadow: $shadow-card;
+    flex: 0 0 auto;
+
+    @include tablet-up {
+      max-width: 22rem;
+    }
   }
 
-  &__hint {
-    margin-top: $space-2;
-    font-size: 0.8125rem;
+  &__remind-text {
+    font-family: $font-ui;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: $darkBlue;
+    white-space: nowrap;
+  }
+
+  &__remind-input {
+    width: 3.25rem;
+    min-height: 36px;
+    border-radius: $radius-sm;
+    border: $border-subtle;
+    background: $lightCream;
+    color: $text-secondary;
+    font-family: $font-ui;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    text-align: center;
+    padding: 0 $space-1;
+    transition: $transition-ui;
+    -moz-appearance: textfield;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    &:hover {
+      border-color: $powderBlue;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $darkBlue;
+      box-shadow: 0 0 0 3px rgba(169, 169, 255, 0.45);
+    }
+  }
+
+  &__remind-hint {
+    flex: 1 0 100%;
+    margin: 0;
+    font-size: 0.75rem;
+    line-height: 1.35;
     color: $text-muted;
   }
 
-  &__status {
+  &__muted {
+    margin: 0;
+    color: $text-muted;
+  }
+
+  &__summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+    border: $border-subtle;
+    border-radius: $radius-md;
+    background: rgba(252, 252, 252, 0.96);
+    box-shadow: $shadow-card;
+    overflow: hidden;
+  }
+
+  &__metric {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    min-width: 0;
+    padding: $space-3;
+    border: none;
+    border-right: $border-subtle;
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 0.4s ease, box-shadow 0.4s ease;
+
+    &:last-child {
+      border-right: none;
+    }
+
+    &:hover {
+      background: rgba(219, 219, 255, 0.35);
+    }
+
+    &.is-active {
+      background: rgba(219, 219, 255, 0.55);
+      box-shadow: inset 0 -3px 0 $darkBlue;
+    }
+
+    &--overdue .expiring-page__metric-value {
+      color: $errorRed;
+    }
+
+    &--soon .expiring-page__metric-value {
+      color: $darkBlue;
+    }
+
+    @include tablet-up {
+      padding: $space-3 $space-4;
+    }
+  }
+
+  &__metric-value {
+    font-family: $font-ui;
+    font-size: clamp(1.35rem, 2.4vw, 1.7rem);
+    font-weight: 700;
+    color: $darkBlue;
+    line-height: 1.1;
+  }
+
+  &__metric-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
     color: $text-muted;
   }
 
   &__empty {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     gap: $space-3;
     padding: $space-4;
     border: $border-subtle;
     border-radius: $radius-md;
-    background: $paleBlue;
+    background: rgba(219, 219, 255, 0.28);
     color: $text-secondary;
+    width: 100%;
+
+    p {
+      margin: 0;
+      line-height: 1.45;
+    }
   }
 
-  &__empty-link {
-    font-family: $font-ui;
-    font-weight: 600;
+  &__link {
     color: $darkBlue;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.4s ease;
+
+    &:hover,
+    &:focus-visible {
+      color: #3333c4;
+      outline: none;
+    }
   }
 
-  &__table-wrap {
-    overflow-x: auto;
+  &__link-btn {
+    border: none;
+    background: none;
+    padding: 0;
+    color: $darkBlue;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 0.4s ease;
+
+    &:hover,
+    &:focus-visible {
+      color: #3333c4;
+      outline: none;
+    }
+  }
+
+  &__feed {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+    width: 100%;
+    max-width: 100%;
+
+    @include desktop {
+      max-width: 52rem;
+    }
+  }
+
+  &__row {
     border: $border-subtle;
     border-radius: $radius-md;
-    background: $lightCream;
+    background: rgba(252, 252, 252, 0.96);
     box-shadow: $shadow-card;
+    border-left: 3px solid $powderBlue;
+    overflow: hidden;
+    transition:
+      background-color 0.4s ease,
+      border-color 0.4s ease,
+      box-shadow 0.4s ease;
+
+    &.is-overdue {
+      border-left-color: $errorRed;
+    }
+
+    &.is-soon {
+      border-left-color: $powderBlue;
+    }
+
+    &:hover {
+      background: rgba(219, 219, 255, 0.35);
+      border-color: $powderBlue;
+      box-shadow: 0 10px 28px rgba(0, 0, 171, 0.1);
+    }
   }
 
-  &__table {
-    width: 100%;
-    border-collapse: collapse;
+  &__row-main {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-2 $space-3;
+    padding: $space-3 $space-4;
+    text-decoration: none;
+    color: inherit;
+    min-width: 0;
+  }
 
-    th,
-    td {
-      text-align: left;
-      padding: $space-3;
-      border-bottom: $border-subtle;
-    }
+  &__row-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    flex: 1 1 12rem;
+  }
 
-    th {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: $text-muted;
-    }
+  &__name {
+    font-family: $font-ui;
+    font-weight: 700;
+    color: $darkBlue;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
-    a {
-      color: $darkBlue;
-      font-weight: 600;
-    }
+  &__meta {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: $text-muted;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   &__badge {
     display: inline-flex;
-    padding: $space-1 $space-3;
+    align-items: center;
+    min-height: 28px;
+    padding: 0 $space-3;
     border-radius: $radius-pill;
-    font-size: 0.8125rem;
-    font-weight: 600;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
 
     &.is-overdue {
       background: rgba(210, 45, 45, 0.12);
@@ -104,8 +340,146 @@
     }
 
     &.is-soon {
-      background: rgba(235, 235, 57, 0.35);
-      color: #5a5a00;
+      background: rgba(169, 169, 255, 0.35);
+      color: $darkBlue;
+    }
+  }
+}
+
+html[data-theme="dark"] {
+  .expiring-page {
+    &__header {
+      border-bottom-color: rgba(169, 169, 255, 0.18);
+    }
+
+    &__heading {
+      h1 {
+        color: $paleBlue;
+      }
+
+      p {
+        color: #a8a8c4;
+      }
+    }
+
+    &__remind {
+      background: rgba(28, 28, 46, 0.92);
+      border-color: rgba(169, 169, 255, 0.22);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+    }
+
+    &__remind-text {
+      color: #ececf5;
+    }
+
+    &__remind-input {
+      background: #161625;
+      border-color: rgba(169, 169, 255, 0.28);
+      color: #ececf5;
+
+      &:hover {
+        border-color: rgba(169, 169, 255, 0.45);
+      }
+
+      &:focus {
+        border-color: $powderBlue;
+        box-shadow: 0 0 0 3px rgba(169, 169, 255, 0.28);
+      }
+    }
+
+    &__remind-hint,
+    &__muted {
+      color: #a8a8c4;
+    }
+
+    &__summary {
+      background: rgba(28, 28, 46, 0.92);
+      border-color: rgba(169, 169, 255, 0.22);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+    }
+
+    &__metric {
+      border-right-color: rgba(169, 169, 255, 0.16);
+
+      &:hover {
+        background: rgba(169, 169, 255, 0.08);
+      }
+
+      &.is-active {
+        background: rgba(169, 169, 255, 0.14);
+        box-shadow: inset 0 -3px 0 $powderBlue;
+      }
+
+      &--overdue .expiring-page__metric-value {
+        color: #ffb4b4;
+      }
+
+      &--soon .expiring-page__metric-value {
+        color: $paleBlue;
+      }
+    }
+
+    &__metric-value {
+      color: #ececf5;
+    }
+
+    &__metric-label {
+      color: #a8a8c4;
+    }
+
+    &__empty {
+      background: rgba(28, 28, 46, 0.92);
+      border-color: rgba(169, 169, 255, 0.22);
+      color: #c8c8e0;
+    }
+
+    &__link,
+    &__link-btn {
+      color: $powderBlue;
+
+      &:hover,
+      &:focus-visible {
+        color: $paleBlue;
+      }
+    }
+
+    &__row {
+      background: rgba(28, 28, 46, 0.92);
+      border-color: rgba(169, 169, 255, 0.22);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+
+      &.is-overdue {
+        border-left-color: #ef5a5a;
+      }
+
+      &.is-soon {
+        border-left-color: $powderBlue;
+      }
+
+      &:hover {
+        background: rgba(169, 169, 255, 0.1);
+        border-color: rgba(169, 169, 255, 0.4);
+      }
+    }
+
+    &__name {
+      color: #ececf5;
+    }
+
+    &__meta {
+      color: #a8a8c4;
+    }
+
+    &__badge {
+      &.is-overdue {
+        background: rgba(239, 90, 90, 0.22);
+        color: #ffb4b4;
+      }
+
+      &.is-soon {
+        background: rgba(169, 169, 255, 0.22);
+        color: $paleBlue;
+      }
     }
   }
 }

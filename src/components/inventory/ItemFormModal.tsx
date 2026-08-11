@@ -1,6 +1,11 @@
-import { useEffect, useRef, useState, type FormEvent } from "react";
-import { ITEM_LOCATIONS } from "../../constants/inventory";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import { Link } from "react-router-dom";
 import type { Folder, Item, ItemInput } from "../../api/client";
+import { DEFAULT_LOCATION_PRESETS } from "../../constants/inventory";
+import { useHouseholdStore } from "../../store/householdStore";
+import { useInventoryStore } from "../../store/inventoryStore";
+import { buildLocationSelectOptions } from "../../utils/inventoryFilters";
+import { collectLocations } from "../../utils/inventorySearchQuery";
 import { Banner } from "../ui/Banner";
 import { Button } from "../ui/Button";
 import { Modal } from "../ui/Modal";
@@ -14,6 +19,8 @@ interface ItemFormModalProps {
   isOpen: boolean;
   item?: Item | null;
   folders: Folder[];
+  /** Prefills folder when creating a new item. */
+  defaultFolderId?: string | null;
   onClose: () => void;
   onSubmit: (body: ItemInput, pendingImage?: File | null) => Promise<void>;
   onUploadImage?: (file: File) => Promise<void>;
@@ -35,11 +42,19 @@ export function ItemFormModal({
   isOpen,
   item,
   folders,
+  defaultFolderId = null,
   onClose,
   onSubmit,
   onUploadImage,
   onRemoveImage,
 }: ItemFormModalProps) {
+  const items = useInventoryStore((s) => s.items);
+  const locationPresets = useHouseholdStore((s) => s.household?.locationPresets);
+  const updateLocationPresets = useHouseholdStore((s) => s.updateLocationPresets);
+  const locationOptions = useMemo(
+    () => buildLocationSelectOptions(locationPresets, collectLocations(items)),
+    [locationPresets, items]
+  );
   const fileRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
@@ -58,10 +73,11 @@ export function ItemFormModal({
   useEffect(() => {
     if (!isOpen) return;
     setName(item?.name ?? "");
-    const known = ITEM_LOCATIONS.includes(item?.location as (typeof ITEM_LOCATIONS)[number]);
-    setLocation(item?.location ? (known ? item.location : "Custom") : "");
-    setCustomLocation(known ? "" : item?.location ?? "");
-    setFolderId(item?.folderId ?? "");
+    const current = item?.location?.trim() ?? "";
+    const known = Boolean(current && locationOptions.includes(current) && current !== "Custom");
+    setLocation(current ? (known ? current : "Custom") : "");
+    setCustomLocation(known ? "" : current);
+    setFolderId(item?.folderId ?? defaultFolderId ?? "");
     setQuantity(String(item?.quantity ?? 1));
     setPrice(item?.price ?? "");
     setPurchaseDate(item?.purchaseDate ?? "");
@@ -70,7 +86,7 @@ export function ItemFormModal({
     setPendingImage(null);
     setPendingPreview(null);
     setError(null);
-  }, [isOpen, item]);
+  }, [isOpen, item, defaultFolderId, locationOptions]);
 
   useEffect(() => {
     return () => {
@@ -123,6 +139,18 @@ export function ItemFormModal({
         },
         pendingImage
       );
+      // Keep household location list in sync when Custom introduces a new place.
+      if (resolvedLocation) {
+        const current = locationPresets ?? [...DEFAULT_LOCATION_PRESETS];
+        const exists = current.some((loc) => loc.toLowerCase() === resolvedLocation.toLowerCase());
+        if (!exists) {
+          try {
+            await updateLocationPresets([...current, resolvedLocation]);
+          } catch {
+            /* item saved; list sync can retry from Locations */
+          }
+        }
+      }
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not save item");
@@ -141,7 +169,7 @@ export function ItemFormModal({
             <span>Location</span>
             <select value={location} onChange={(e) => setLocation(e.target.value)}>
               <option value="">None</option>
-              {ITEM_LOCATIONS.map((loc) => (
+              {locationOptions.map((loc) => (
                 <option key={loc} value={loc}>
                   {loc}
                 </option>
@@ -160,11 +188,17 @@ export function ItemFormModal({
             </select>
           </label>
         </div>
+        <p className="inventory-form__hint">
+          <Link to="/locations" className="inventory-form__inline-link">
+            Manage locations
+          </Link>
+        </p>
         {location === "Custom" ? (
           <TextField
             label="Custom location"
             value={customLocation}
             onChange={(e) => setCustomLocation(e.target.value)}
+            maxLength={80}
           />
         ) : null}
         <div className="inventory-form__row">
@@ -210,6 +244,7 @@ export function ItemFormModal({
             imageUrl={item.imageUrl}
             onUpload={onUploadImage}
             onRemove={onRemoveImage}
+            immediate
           />
         ) : (
           <div className="inventory-form__photo">

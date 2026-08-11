@@ -4,7 +4,7 @@ import { useAuthStore } from "../store/authStore";
 import { useHouseholdStore } from "../store/householdStore";
 import { useInventoryStore, type HouseholdStreamEvent } from "../store/inventoryStore";
 
-const STREAM_EVENTS: HouseholdStreamEvent["type"][] = [
+const STREAM_EVENTS = [
   "folder.created",
   "folder.updated",
   "folder.deleted",
@@ -12,7 +12,8 @@ const STREAM_EVENTS: HouseholdStreamEvent["type"][] = [
   "item.updated",
   "item.deleted",
   "membership.revoked",
-];
+  "household.updated",
+] as const;
 
 function parseEvent(raw: string): HouseholdStreamEvent | null {
   try {
@@ -26,7 +27,8 @@ export function useHouseholdStream(): void {
   const isSignedIn = useAuthStore((s) => s.isSignedIn);
   const isLoading = useAuthStore((s) => s.isLoading);
   const householdId = useHouseholdStore((s) => s.household?.id);
-  const clearHousehold = useHouseholdStore((s) => s.clear);
+  const fetchMine = useHouseholdStore((s) => s.fetchMine);
+  const applyLocationPresets = useHouseholdStore((s) => s.applyLocationPresets);
   const applyEvent = useInventoryStore((s) => s.applyEvent);
   const clearInventory = useInventoryStore((s) => s.clear);
   const sourceRef = useRef<EventSource | null>(null);
@@ -41,11 +43,27 @@ export function useHouseholdStream(): void {
 
     for (const type of STREAM_EVENTS) {
       source.addEventListener(type, (message) => {
-        const event = parseEvent((message as MessageEvent).data);
+        const data = (message as MessageEvent).data as string;
+        if (type === "household.updated") {
+          try {
+            const payload = JSON.parse(data) as {
+              householdId?: string;
+              locationPresets?: string[];
+            };
+            if (payload.householdId && Array.isArray(payload.locationPresets)) {
+              applyLocationPresets(payload.householdId, payload.locationPresets);
+            }
+          } catch {
+            /* ignore */
+          }
+          return;
+        }
+        const event = parseEvent(data);
         if (!event) return;
         if (event.type === "membership.revoked") {
           clearInventory();
-          clearHousehold();
+          // Refresh memberships instead of wiping every household from the store.
+          void fetchMine();
           return;
         }
         applyEvent(event);
@@ -56,5 +74,5 @@ export function useHouseholdStream(): void {
       source.close();
       sourceRef.current = null;
     };
-  }, [applyEvent, clearHousehold, clearInventory, householdId, isLoading, isSignedIn]);
+  }, [applyEvent, applyLocationPresets, clearInventory, fetchMine, householdId, isLoading, isSignedIn]);
 }

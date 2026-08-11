@@ -4,18 +4,256 @@
   display: flex;
   flex-direction: column;
   gap: $space-4;
-  max-width: 720px;
+  width: 100%;
+  max-width: 42rem;
+  min-width: 0;
+  box-sizing: border-box;
+  padding-bottom: max(#{$space-4}, calc(env(safe-area-inset-bottom, 0px) + 4.5rem));
+
+  @include tablet-up {
+    padding-bottom: $space-4;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
 
   &__header {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+    padding-bottom: $space-3;
+    border-bottom: $border-subtle;
+    min-width: 0;
+
+    @include tablet-up {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: $space-4;
+    }
+  }
+
+  &__heading {
+    min-width: 0;
+    flex: 1 1 auto;
+
     h1 {
+      margin: 0;
       color: $darkBlue;
-      font-size: 1.75rem;
+      font-family: $font-ui;
+      font-size: clamp(1.35rem, 4vw, 1.85rem);
+      font-weight: 700;
+      line-height: 1.15;
     }
 
     p {
-      margin-top: $space-1;
+      margin: $space-2 0 0;
       color: $text-muted;
+      font-size: clamp(0.8125rem, 2.6vw, 0.9375rem);
+      line-height: 1.45;
+      max-width: 40rem;
     }
+  }
+
+  &__filter {
+    position: relative;
+    display: block;
+    width: 100%;
+    min-width: 0;
+
+    @include tablet-up {
+      width: min(100%, 16rem);
+      flex: 0 1 16rem;
+    }
+
+    input {
+      width: 100%;
+      min-height: 40px;
+      border-radius: $radius-sm;
+      border: $border-subtle;
+      background: $lightCream;
+      color: $text-secondary;
+      padding: 0 2.5rem 0 $space-3;
+      font: inherit;
+      font-size: 0.9375rem;
+      transition: $transition-ui;
+
+      &::-webkit-search-decoration,
+      &::-webkit-search-cancel-button {
+        -webkit-appearance: none;
+        appearance: none;
+      }
+
+      &:hover {
+        border-color: $powderBlue;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: $darkBlue;
+        box-shadow: 0 0 0 3px rgba(169, 169, 255, 0.45);
+      }
+    }
+  }
+
+  &__filter-clear {
+    position: absolute;
+    right: $space-2;
+    top: 0;
+    bottom: 0;
+    width: 32px;
+    margin: auto 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    color: $text-muted;
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 1;
+    padding: 0;
+    cursor: pointer;
+    transition: color 0.4s ease;
+
+    &:hover,
+    &:focus-visible {
+      color: $darkBlue;
+      background: transparent;
+      outline: none;
+    }
+  }
+
+  &__sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  &__card {
+    padding: $space-3;
+    border: $border-subtle;
+    border-radius: $radius-md;
+    background: rgba(252, 252, 252, 0.96);
+    box-shadow: $shadow-card;
+    min-width: 0;
+
+    @include tablet-up {
+      padding: $space-4;
+    }
+
+    h2,
+    h3 {
+      margin: 0 0 $space-2;
+      color: $darkBlue;
+      font-family: $font-ui;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    h2 {
+      font-size: clamp(1rem, 2.5vw, 1.05rem);
+    }
+
+    h3 {
+      font-size: 1rem;
+    }
+
+    p {
+      margin: 0 0 $space-3;
+      color: $text-secondary;
+      font-size: 0.9375rem;
+      line-height: 1.45;
+    }
+  }
+
+  &__start {
+    h2 {
+      margin-bottom: $space-3;
+    }
+  }
+
+  &__steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: $space-3;
+      color: $text-secondary;
+      font-size: 0.9375rem;
+      line-height: 1.35;
+      min-width: 0;
+    }
+  }
+
+  &__step-num {
+    flex-shrink: 0;
+    box-sizing: border-box;
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: $radius-pill;
+    background: rgba(219, 219, 255, 0.7);
+    color: $darkBlue;
+    font-family: $font-ui;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    padding: 0;
+  }
+
+  &__step-digit {
+    display: block;
+    line-height: 1;
+    // Plus Jakarta digits sit slightly high in the em box
+    margin-top: 0.08em;
+  }
+
+  &__step-text {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  &__areas {
+    display: flex;
+    flex-direction: column;
+    gap: $space-4;
+    min-width: 0;
+  }
+
+  &__group {
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+    min-width: 0;
+  }
+
+  &__group-title {
+    margin: 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: $text-muted;
   }
 
   &__list {
@@ -25,43 +263,115 @@
     display: flex;
     flex-direction: column;
     gap: $space-3;
+  }
 
-    li {
-      padding: $space-4;
-      border: $border-subtle;
-      border-radius: $radius-md;
-      background: $paleBlue;
-      box-shadow: $shadow-card;
-    }
+  &__link {
+    font-family: $font-ui;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: $darkBlue;
+    text-decoration: none;
+    transition: color 0.4s ease;
 
-    h2 {
-      margin: 0 0 $space-2;
-      color: $darkBlue;
-      font-size: 1.125rem;
-    }
-
-    p {
-      margin: 0 0 $space-3;
-      color: $text-secondary;
-    }
-
-    a {
-      font-family: $font-ui;
-      font-weight: 600;
-      color: $darkBlue;
+    &:hover,
+    &:focus-visible {
+      color: #3333c4;
+      outline: none;
     }
   }
 
-  &__notes {
-    padding: $space-4;
-    border: $border-subtle;
-    border-radius: $radius-md;
-    background: $lightCream;
+  &__empty {
+    margin: 0;
+    color: $text-muted;
+    font-size: 0.875rem;
+  }
 
-    h2 {
-      margin: 0 0 $space-3;
+  &__faq {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+    min-width: 0;
+
+    > h2 {
+      margin: 0;
       color: $darkBlue;
-      font-size: 1.125rem;
+      font-family: $font-ui;
+      font-size: clamp(1rem, 2.5vw, 1.05rem);
+      font-weight: 700;
+    }
+  }
+
+  &__faq-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+  }
+
+  &__faq-item {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    width: 100%;
+    padding: $space-3;
+    overflow: hidden;
+    text-align: left;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+    transition: background-color 0.4s ease, border-color 0.4s ease;
+
+    @include tablet-up {
+      padding: $space-3 $space-4;
+    }
+
+    &:hover,
+    &.is-open {
+      background: rgba(219, 219, 255, 0.35);
+      border-color: $powderBlue;
+    }
+  }
+
+  &__faq-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-3;
+    width: 100%;
+    min-height: 1.5rem;
+  }
+
+  &__faq-question {
+    color: $darkBlue;
+    font-family: $font-ui;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  &__faq-chevron {
+    flex-shrink: 0;
+    color: $text-muted;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  &__faq-answer {
+    display: block;
+    margin: $space-3 0 0;
+    color: $text-secondary;
+    font-size: 0.9375rem;
+    font-weight: 400;
+    line-height: 1.45;
+  }
+
+  &__notes {
+    h2 {
+      margin-bottom: $space-3;
     }
 
     ul {
@@ -71,6 +381,124 @@
       display: flex;
       flex-direction: column;
       gap: $space-2;
+      font-size: 0.9375rem;
+      line-height: 1.45;
+    }
+  }
+}
+
+html[data-theme="dark"] {
+  .help-page {
+    &__header {
+      border-bottom-color: rgba(169, 169, 255, 0.18);
+    }
+
+    &__heading {
+      h1 {
+        color: $paleBlue;
+      }
+
+      p {
+        color: #a8a8c4;
+      }
+    }
+
+    &__filter input {
+      background: #161625;
+      border-color: rgba(169, 169, 255, 0.28);
+      color: #ececf5;
+
+      &::placeholder {
+        color: #7e7e9a;
+      }
+
+      &:hover {
+        border-color: rgba(169, 169, 255, 0.45);
+      }
+
+      &:focus {
+        border-color: $powderBlue;
+        box-shadow: 0 0 0 3px rgba(169, 169, 255, 0.28);
+      }
+    }
+
+    &__filter-clear {
+      color: #a8a8c4;
+
+      &:hover,
+      &:focus-visible {
+        color: $paleBlue;
+        background: transparent;
+      }
+    }
+
+    &__card {
+      background: rgba(28, 28, 46, 0.92);
+      border-color: rgba(169, 169, 255, 0.22);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+
+      h2,
+      h3 {
+        color: $paleBlue;
+      }
+
+      p {
+        color: #c8c8e0;
+      }
+    }
+
+    &__steps li {
+      color: #c8c8e0;
+    }
+
+    &__step-num {
+      background: rgba(169, 169, 255, 0.22);
+      color: $paleBlue;
+    }
+
+    &__group-title {
+      color: #a8a8c4;
+    }
+
+    &__link {
+      color: $powderBlue;
+
+      &:hover,
+      &:focus-visible {
+        color: $paleBlue;
+      }
+    }
+
+    &__empty {
+      color: #a8a8c4;
+    }
+
+    &__faq > h2 {
+      color: $paleBlue;
+    }
+
+    &__faq-item {
+      &:hover,
+      &.is-open {
+        background: rgba(169, 169, 255, 0.1);
+        border-color: rgba(169, 169, 255, 0.4);
+      }
+    }
+
+    &__faq-question {
+      color: #ececf5;
+    }
+
+    &__faq-chevron {
+      color: #a8a8c4;
+    }
+
+    &__faq-answer {
+      color: #c8c8e0;
+    }
+
+    &__notes ul {
+      color: #c8c8e0;
     }
   }
 }

@@ -9,7 +9,9 @@ import InventoryPage from "./pages/InventoryPage";
 import DashboardPage from "./pages/DashboardPage";
 import SearchPage from "./pages/SearchPage";
 import TagsPage from "./pages/TagsPage";
+import LocationsPage from "./pages/LocationsPage";
 import ExpiringPage from "./pages/ExpiringPage";
+import ValuePage from "./pages/ValuePage";
 import HouseholdPage from "./pages/HouseholdPage";
 import SettingsPage from "./pages/SettingsPage";
 import HelpPage from "./pages/HelpPage";
@@ -81,10 +83,26 @@ export default function App() {
           }
         />
         <Route
+          path="/locations"
+          element={
+            <ProtectedRoute requireHousehold>
+              <LocationsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/expiring"
           element={
             <ProtectedRoute requireHousehold>
               <ExpiringPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/value"
+          element={
+            <ProtectedRoute requireHousehold>
+              <ValuePage />
             </ProtectedRoute>
           }
         />

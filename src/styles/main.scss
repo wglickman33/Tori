@@ -24,43 +24,9 @@ html[data-theme="dark"] {
     color: #b8b8d0;
   }
 
-  .app-shell {
-    background: #12121f;
-  }
-
-  .app-shell__header {
-    background: rgba(18, 18, 31, 0.94);
-    border-bottom-color: rgba(169, 169, 255, 0.22);
-  }
-
-  .app-shell__title,
-  .app-shell__nav-link.is-active,
-  .app-shell__meta-link:hover,
-  .app-shell__meta-link.is-active {
-    color: #dbdbff;
-  }
-
-  .app-shell__household,
-  .app-shell__user-name,
-  .app-shell__nav-link,
-  .app-shell__meta-link {
-    color: #c8c8e0;
-  }
-
-  .app-shell__nav-link:hover,
-  .app-shell__nav-link.is-active,
-  .app-shell__meta-link:hover,
-  .app-shell__meta-link.is-active {
-    background: rgba(169, 169, 255, 0.18);
-  }
-
   .tori-modal {
     background: #1c1c2e;
     color: #ececf5;
     border-color: rgba(169, 169, 255, 0.22);
-  }
-
-  .tori-button--ghost {
-    color: #dbdbff;
   }
 }

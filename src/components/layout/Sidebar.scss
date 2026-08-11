@@ -1,0 +1,346 @@
+@use "../../styles/tokens" as *;
+
+.tori-sidebar {
+  display: none;
+  flex-direction: column;
+  background: rgba(252, 252, 252, 0.98);
+  border-right: $border-subtle;
+  transition: width 0.25s ease, transform 0.25s ease, padding 0.25s ease;
+  overflow: visible;
+
+  @media (min-width: 1111px) {
+    display: flex;
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 20;
+  }
+
+  &--expanded {
+    width: 240px;
+    padding: $space-3 $space-2;
+  }
+
+  &--collapsed {
+    width: 60px;
+    padding: $space-2 $space-1;
+
+    .tori-sidebar__header {
+      flex-direction: column-reverse;
+      align-items: center;
+      gap: $space-2;
+    }
+
+    .tori-sidebar__toggle {
+      margin: 0 auto;
+    }
+
+    .tori-sidebar__link {
+      justify-content: center;
+      padding: 0;
+      width: 44px;
+      margin: 0 auto;
+    }
+
+    .tori-sidebar__tools {
+      flex-direction: column;
+    }
+
+    .tori-sidebar__logout {
+      width: 40px;
+      padding: 0;
+      flex: 0;
+    }
+
+    .tori-sidebar__user {
+      justify-content: center;
+    }
+  }
+
+  &--overlay {
+    @media (max-width: 1110px) {
+      display: flex;
+      position: fixed;
+      inset: 0 auto 0 0;
+      width: min(280px, 85vw);
+      z-index: 201;
+      padding: $space-3 $space-2;
+      transform: translateX(-100%);
+      background: $lightCream;
+      box-shadow: none;
+    }
+  }
+
+  &--overlay-open {
+    @media (max-width: 1110px) {
+      transform: translateX(0);
+      box-shadow: 8px 0 28px rgba(0, 0, 171, 0.16);
+    }
+  }
+
+  &__header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-2;
+    margin-bottom: $space-3;
+  }
+
+  &__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-2;
+    min-width: 0;
+    max-width: 100%;
+    width: fit-content;
+    text-decoration: none;
+    color: inherit;
+    border-radius: $radius-sm;
+    padding: $space-1;
+    flex: 0 1 auto;
+
+    &--icon {
+      flex: 0 0 auto;
+      justify-content: center;
+      padding: $space-1;
+      width: 40px;
+      margin: 0 auto;
+    }
+  }
+
+  &__logo-wrap {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: $darkBlue;
+    box-shadow: 0 0 0 2px rgba(169, 169, 255, 0.45);
+    flex-shrink: 0;
+  }
+
+  &__logo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &__brand-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__title {
+    font-family: $font-ui;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: $darkBlue;
+    line-height: 1.15;
+  }
+
+  &__toggle {
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border: $border-subtle;
+    border-radius: $radius-sm;
+    background: $paleBlue;
+    color: $darkBlue;
+    cursor: pointer;
+    flex-shrink: 0;
+    align-self: center;
+
+    &:hover {
+      background: $powderBlue;
+    }
+  }
+
+  &__switcher {
+    margin-bottom: $space-3;
+    min-width: 0;
+  }
+
+  &__nav {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    gap: $space-3;
+    overflow: auto;
+  }
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;
+
+    &--meta {
+      margin-top: auto;
+      padding-top: $space-3;
+      border-top: $border-subtle;
+    }
+  }
+
+  &__link {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    min-height: 44px;
+    padding: 0 $space-3;
+    border-radius: $radius-sm;
+    text-decoration: none;
+    color: $text-secondary;
+    font-family: $font-ui;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    transition: $transition-ui;
+
+    &:hover {
+      background: $paleBlue;
+      color: $darkBlue;
+    }
+
+    &.is-active {
+      background: $powderBlue;
+      color: $darkBlue;
+    }
+  }
+
+  &__link-icon {
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  &__link-label {
+    white-space: nowrap;
+  }
+
+  &__footer {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+    margin-top: $space-3;
+    padding-top: $space-3;
+    border-top: $border-subtle;
+  }
+
+  &__tools {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+  }
+
+  &__logout {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: $space-2;
+    min-height: 40px;
+    padding: 0 $space-3;
+    border-radius: $radius-sm;
+    border: 1px solid rgba(210, 45, 45, 0.35);
+    background: rgba(210, 45, 45, 0.1);
+    color: $errorRed;
+    font-family: $font-ui;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    flex: 1;
+    transition: $transition-ui;
+
+    &:hover {
+      background: $errorRed;
+      color: #fff;
+      border-color: $errorRed;
+    }
+  }
+
+  &__user {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    min-width: 0;
+  }
+
+  &__avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: $paleBlue;
+    color: $darkBlue;
+    flex-shrink: 0;
+  }
+
+  &__user-name {
+    font-size: 0.8125rem;
+    color: $text-secondary;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+html[data-theme="dark"] {
+  .tori-sidebar {
+    background: rgba(18, 18, 31, 0.98);
+    border-right-color: rgba(169, 169, 255, 0.22);
+
+    &--overlay {
+      @media (max-width: 1110px) {
+        background: #161625;
+      }
+    }
+
+    &__title {
+      color: $paleBlue;
+    }
+
+    &__user-name {
+      color: #a8a8c4;
+    }
+
+    &__toggle {
+      background: rgba(169, 169, 255, 0.14);
+      border-color: rgba(169, 169, 255, 0.28);
+      color: $paleBlue;
+
+      &:hover {
+        background: rgba(169, 169, 255, 0.24);
+      }
+    }
+
+    &__link {
+      color: #c8c8e0;
+
+      &:hover {
+        background: rgba(169, 169, 255, 0.14);
+        color: $paleBlue;
+      }
+
+      &.is-active {
+        background: rgba(169, 169, 255, 0.22);
+        color: $paleBlue;
+      }
+    }
+
+    &__list--meta,
+    &__footer {
+      border-top-color: rgba(169, 169, 255, 0.18);
+    }
+
+    &__avatar {
+      background: rgba(169, 169, 255, 0.18);
+      color: $paleBlue;
+    }
+  }
+}

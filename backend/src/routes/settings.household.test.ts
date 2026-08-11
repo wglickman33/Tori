@@ -14,7 +14,7 @@ describe("settings + household management", () => {
     await sequelize.sync();
   });
 
-  it("updates profile, lists/removes members, leaves, blocks owner delete with members", async () => {
+  it("updates profile, lists/removes members, blocks owner delete with members", async () => {
     const ownerReg = await request(app).post("/api/auth/register").send({
       displayName: "Owner",
       email: `set-owner-${suffix}@example.com`,
@@ -36,12 +36,40 @@ describe("settings + household management", () => {
     expect(patched.status).toBe(200);
     expect(patched.body.displayName).toBe("Owner Updated");
 
+    const themePatched = await request(app)
+      .patch("/api/auth/me")
+      .set("Authorization", `Bearer ${ownerToken}`)
+      .send({ theme: "dark" });
+    expect(themePatched.status).toBe(200);
+    expect(themePatched.body.theme).toBe("dark");
+
+    const passwordMissingCurrent = await request(app)
+      .patch("/api/auth/me")
+      .set("Authorization", `Bearer ${ownerToken}`)
+      .send({ newPassword: "password456" });
+    expect(passwordMissingCurrent.status).toBe(400);
+
+    const passwordChanged = await request(app)
+      .patch("/api/auth/me")
+      .set("Authorization", `Bearer ${ownerToken}`)
+      .send({ currentPassword: "password123", newPassword: "password456" });
+    expect(passwordChanged.status).toBe(200);
+
     const renamed = await request(app)
       .patch(`/api/households/${householdId}`)
       .set("Authorization", `Bearer ${ownerToken}`)
       .send({ name: "Renamed House" });
     expect(renamed.status).toBe(200);
     expect(renamed.body.household.name).toBe("Renamed House");
+    expect(Array.isArray(renamed.body.household.locationPresets)).toBe(true);
+    expect(renamed.body.household.locationPresets.length).toBeGreaterThan(0);
+
+    const presetsUpdated = await request(app)
+      .put(`/api/households/${householdId}/location-presets`)
+      .set("Authorization", `Bearer ${ownerToken}`)
+      .send({ locationPresets: ["Pantry", "Garage", "Pantry", "Custom"] });
+    expect(presetsUpdated.status).toBe(200);
+    expect(presetsUpdated.body.household.locationPresets).toEqual(["Pantry", "Garage"]);
 
     const memberReg = await request(app).post("/api/auth/register").send({
       displayName: "Member",
