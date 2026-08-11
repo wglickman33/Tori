@@ -15,6 +15,7 @@ import ValuePage from "./pages/ValuePage";
 import HouseholdPage from "./pages/HouseholdPage";
 import SettingsPage from "./pages/SettingsPage";
 import HelpPage from "./pages/HelpPage";
+import NotFoundPage from "./pages/NotFoundPage";
 import { useAuthStore } from "./store/authStore";
 
 function RootRedirect() {
@@ -130,7 +131,7 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );

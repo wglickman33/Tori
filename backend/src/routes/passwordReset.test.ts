@@ -6,11 +6,18 @@ import { createApp } from "../app.js";
 import { sequelize } from "../db/sequelize.js";
 import { PasswordResetToken, RefreshToken, User } from "../models/index.js";
 import { hashToken, issueRefreshToken } from "../utils/tokens.js";
-import { lastPasswordResetEmail } from "../utils/email.js";
-import "../models/index.js";
+import {
+  lastPasswordResetEmail,
+  type PasswordResetEmailParams,
+} from "../utils/email.js";
 
 const app = createApp();
 const suffix = Date.now();
+
+/** Read via a function so TS does not treat the mutable module field as permanently null. */
+function currentResetEmail(): PasswordResetEmailParams | null {
+  return lastPasswordResetEmail.params;
+}
 
 describe("password reset", () => {
   beforeAll(async () => {
@@ -32,13 +39,18 @@ describe("password reset", () => {
       .send({ email: `missing-${suffix}@example.com` });
     expect(unknown.status).toBe(200);
     expect(unknown.body.message).toMatch(/if an account exists/i);
-    expect(lastPasswordResetEmail.params).toBeNull();
+    expect(currentResetEmail()).toBeNull();
 
     const known = await request(app).post("/api/auth/forgot-password").send({ email });
     expect(known.status).toBe(200);
     expect(known.body.message).toMatch(/if an account exists/i);
-    expect(lastPasswordResetEmail.params?.toEmail).toBe(email);
-    expect(lastPasswordResetEmail.params?.resetLink).toContain("/reset-password?token=");
+
+    const sent = currentResetEmail();
+    if (!sent) {
+      throw new Error("expected password reset email for known user");
+    }
+    expect(sent.toEmail).toBe(email);
+    expect(sent.resetLink).toContain("/reset-password?token=");
 
     const user = await User.findOne({ where: { email } });
     const tokens = await PasswordResetToken.findAll({ where: { userId: user!.id, used: false } });

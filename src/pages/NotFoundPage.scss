@@ -1,0 +1,174 @@
+@use "../styles/tokens" as *;
+
+.not-found-page {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding:
+    max(#{$space-5 + $space-4}, calc(env(safe-area-inset-top, 0px) + 56px))
+    max(#{$space-4}, calc(env(safe-area-inset-right, 0px) + #{$space-3}))
+    max(#{$space-4}, env(safe-area-inset-bottom, 0px))
+    max(#{$space-4}, env(safe-area-inset-left, 0px));
+  background:
+    linear-gradient(160deg, $paleBlue 0%, $lightCream 42%, rgba(169, 169, 255, 0.35) 100%);
+  transition: $transition-ui;
+
+  &__panel {
+    width: min(100%, 26rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: $space-3;
+    padding: $space-5 $space-4;
+    border: $border-strong;
+    border-radius: $radius-md;
+    background: $lightCream;
+    box-shadow: $shadow-card;
+    animation: not-found-enter 0.55s ease both;
+  }
+
+  &__logo-wrap {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: $darkBlue;
+    box-shadow: 0 0 0 5px rgba(169, 169, 255, 0.4);
+    animation: not-found-logo 0.7s ease 0.08s both;
+  }
+
+  &__logo {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+  }
+
+  &__brand {
+    margin: 0;
+    font-family: $font-ui;
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: $darkBlue;
+    line-height: 1;
+  }
+
+  &__code {
+    margin: $space-1 0 0;
+    font-family: $font-ui;
+    font-size: clamp(3.5rem, 14vw, 4.75rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 0.9;
+    color: $powderBlue;
+    animation: not-found-code 0.65s ease 0.12s both;
+  }
+
+  &__title {
+    margin: 0;
+    font-family: $font-ui;
+    font-size: clamp(1.35rem, 4vw, 1.65rem);
+    font-weight: 700;
+    color: $darkBlue;
+    line-height: 1.2;
+  }
+
+  &__copy {
+    margin: 0;
+    max-width: 22rem;
+    font-family: $font-body;
+    font-size: 0.975rem;
+    line-height: 1.5;
+    color: $text-secondary;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: $space-2;
+    margin-top: $space-2;
+    width: 100%;
+
+    .tori-button {
+      text-decoration: none;
+      min-width: 10.5rem;
+    }
+  }
+}
+
+@keyframes not-found-enter {
+  from {
+    opacity: 0;
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes not-found-logo {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes not-found-code {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .not-found-page {
+    &__panel,
+    &__logo-wrap,
+    &__code {
+      animation: none;
+    }
+  }
+}
+
+html[data-theme="dark"] {
+  .not-found-page {
+    background:
+      radial-gradient(ellipse 80% 50% at 8% -8%, rgba(0, 0, 171, 0.45), transparent 55%),
+      radial-gradient(ellipse 65% 40% at 100% 0%, rgba(169, 169, 255, 0.18), transparent 50%),
+      linear-gradient(165deg, #12121f 0%, #171728 50%, #1a1a30 100%);
+
+    &__panel {
+      background: rgba(28, 28, 46, 0.94);
+      border-color: rgba(169, 169, 255, 0.32);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+    }
+
+    &__logo-wrap {
+      box-shadow: 0 0 0 5px rgba(169, 169, 255, 0.28);
+    }
+
+    &__brand,
+    &__title {
+      color: $paleBlue;
+    }
+
+    &__code {
+      color: rgba(169, 169, 255, 0.72);
+    }
+
+    &__copy {
+      color: #a8a8c4;
+    }
+  }
+}
