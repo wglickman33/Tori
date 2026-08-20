@@ -53,6 +53,7 @@ export const updateProfileSchema = z
     currentPassword: z.string().min(1).optional(),
     newPassword: z.string().min(8, "Password must be at least 8 characters").optional(),
     theme: z.enum(["light", "dark", "auto"]).optional(),
+    language: z.enum(["en", "es"]).optional(),
   })
   .strict()
   .refine((v) => Object.keys(v).length > 0, { message: "No updates provided" })
@@ -140,7 +141,7 @@ export function isValidUuid(value: string): boolean {
 
 export function validateToriChatBody(
   body: Record<string, unknown>
-): { error: string } | { householdId: string; messages: ToriChatMessage[] } {
+): { error: string } | { householdId: string; messages: ToriChatMessage[]; locale: "en" | "es" } {
   if (typeof body.householdId !== "string" || !isValidUuid(body.householdId.trim())) {
     return { error: "A household is required." };
   }
@@ -181,5 +182,5 @@ export function validateToriChatBody(
     return { error: "The last message must come from the user." };
   }
 
-  return { householdId, messages };
+  return { householdId, messages, locale: body.locale === "es" ? "es" : "en" };
 }

@@ -1,4 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { speechLocale } from "../i18n/language";
+import { useSettingsStore } from "../store/settingsStore";
+import i18n from "../i18n";
 import {
   createSpeechRecognition,
   isSpeechRecognitionSupported,
@@ -34,12 +37,12 @@ export function useToriVoice({ enabled, onFinal, onInterim, onError }: UseToriVo
     if (!enabled) return;
     const rec = createSpeechRecognition();
     if (!rec) {
-      onErrorRef.current("Voice input isn't available in this browser.");
+      onErrorRef.current(i18n.t("errors.voiceUnavailable"));
       return;
     }
 
     recognitionRef.current?.abort();
-    rec.lang = typeof navigator !== "undefined" ? navigator.language || "en-US" : "en-US";
+    rec.lang = speechLocale(useSettingsStore.getState().language);
     rec.interimResults = true;
     rec.continuous = false;
     rec.onresult = (event) => {
@@ -61,8 +64,8 @@ export function useToriVoice({ enabled, onFinal, onInterim, onError }: UseToriVo
       if (event.error === "aborted" || event.error === "no-speech") return;
       onErrorRef.current(
         event.error === "not-allowed"
-          ? "Microphone access was blocked. Allow it to talk to Tori AI."
-          : "Could not hear that. Try again."
+          ? i18n.t("errors.micBlocked")
+          : i18n.t("errors.voiceHearFailed")
       );
     };
     rec.onend = () => {
@@ -75,7 +78,7 @@ export function useToriVoice({ enabled, onFinal, onInterim, onError }: UseToriVo
       recognitionRef.current = rec;
       setListening(true);
     } catch {
-      onErrorRef.current("Could not start the microphone. Try again.");
+      onErrorRef.current(i18n.t("errors.micStartFailed"));
     }
   }, [enabled]);
 

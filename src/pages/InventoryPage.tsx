@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { resolveMediaUrl, type Folder, type Item } from "../api/client";
 import { AppShell } from "../components/layout/AppShell";
 import { ConfirmDeleteModal } from "../components/inventory/ConfirmDeleteModal";
@@ -9,6 +10,7 @@ import { ItemImageControls } from "../components/inventory/ItemImageControls";
 import { MoveItemModal } from "../components/inventory/MoveItemModal";
 import { InventoryTransferBar } from "../components/inventory/InventoryTransferBar";
 import { Button } from "../components/ui/Button";
+import { translateError } from "../i18n/apiErrors";
 import { useEnsureInventory } from "../hooks/useEnsureInventory";
 import { useHouseholdStore } from "../store/householdStore";
 import { useInventoryStore } from "../store/inventoryStore";
@@ -55,13 +57,11 @@ function InventoryItemRow({
   onSelect: () => void;
   onMove: () => void;
 }) {
+  const { t } = useTranslation();
   const thumb = resolveMediaUrl(item.imageUrl);
   const tone = itemExpiryTone(item.expirationDate);
   const expiry = expirationLabel(item.expirationDate);
-  const metaBits = [
-    item.location || null,
-    `Qty ${item.quantity}`,
-  ].filter(Boolean);
+  const metaBits = [item.location || null, t("common.qty", { count: item.quantity })].filter(Boolean);
 
   return (
     <div className={`inventory-item${selected ? " is-active" : ""}`}>
@@ -74,7 +74,7 @@ function InventoryItemRow({
           <span className="inventory-item__meta">{metaBits.join(" · ")}</span>
           {tone ? (
             <span className={`inventory-item__expiry inventory-item__expiry--${tone}`}>
-              {tone === "overdue" ? "Overdue" : `Expires: ${expiry}`}
+              {tone === "overdue" ? t("inventory.overdue") : t("inventory.expires", { label: expiry })}
             </span>
           ) : null}
         </span>
@@ -83,9 +83,9 @@ function InventoryItemRow({
         type="button"
         className="inventory-item__move"
         onClick={onMove}
-        aria-label={`Move ${item.name}`}
+        aria-label={t("inventory.moveItem", { name: item.name })}
       >
-        Move
+        {t("common.move")}
       </button>
     </div>
   );
@@ -93,6 +93,7 @@ function InventoryItemRow({
 
 export default function InventoryPage() {
   useEnsureInventory();
+  const { t } = useTranslation();
   const { id: selectedId } = useParams();
   const navigate = useNavigate();
   const household = useHouseholdStore((s) => s.household);
@@ -161,22 +162,22 @@ export default function InventoryPage() {
         <section className="inventory-page__list">
           <div className="inventory-page__toolbar">
             <header className="inventory-page__heading">
-              <h1 className="inventory-page__title">Inventory</h1>
+              <h1 className="inventory-page__title">{t("inventory.title")}</h1>
               {household ? (
                 <Link to="/household" className="inventory-page__household-link">
                   {household.name}
                 </Link>
               ) : (
-                <p className="inventory-page__subtitle">No household selected</p>
+                <p className="inventory-page__subtitle">{t("inventory.noHousehold")}</p>
               )}
             </header>
-            <div className="inventory-page__actions" role="group" aria-label="Inventory actions">
+            <div className="inventory-page__actions" role="group" aria-label={t("inventory.actions")}>
               <Button
                 type="button"
                 className="inventory-page__action inventory-page__action--primary"
                 onClick={() => openAddItem(null)}
               >
-                Add item
+                {t("inventory.addItem")}
               </Button>
               <Button
                 type="button"
@@ -187,7 +188,7 @@ export default function InventoryPage() {
                   setFolderModalOpen(true);
                 }}
               >
-                Add folder
+                {t("inventory.addFolder")}
               </Button>
             </div>
             <InventoryTransferBar
@@ -197,13 +198,13 @@ export default function InventoryPage() {
               items={items}
             />
           </div>
-          {error ? <p className="inventory-page__error">{error}</p> : null}
-          {isLoading ? <p className="inventory-page__status">Loading inventory…</p> : null}
+          {error ? <p className="inventory-page__error">{translateError(error, t)}</p> : null}
+          {isLoading ? <p className="inventory-page__status">{t("inventory.loading")}</p> : null}
 
           {!isLoading && isEmpty ? (
             <div className="inventory-page__empty">
-              <h2>Your inventory is empty</h2>
-              <p>Create a folder to group items, or add an independent item to get started.</p>
+              <h2>{t("inventory.emptyTitle")}</h2>
+              <p>{t("inventory.emptyBody")}</p>
               <div className="inventory-page__empty-actions">
                 <Button
                   type="button"
@@ -212,10 +213,10 @@ export default function InventoryPage() {
                     setFolderModalOpen(true);
                   }}
                 >
-                  Create your first folder
+                  {t("inventory.createFirstFolder")}
                 </Button>
                 <Button type="button" variant="secondary" onClick={() => openAddItem(null)}>
-                  Add an item
+                  {t("inventory.addAnItem")}
                 </Button>
               </div>
             </div>
@@ -239,8 +240,8 @@ export default function InventoryPage() {
                         <span className="inventory-folder__text">
                           <span className="inventory-folder__name">{folder.name}</span>
                           <span className="inventory-folder__meta">
-                            {folder.category} · {folderItems.length}{" "}
-                            {folderItems.length === 1 ? "item" : "items"}
+                            {t(`categories.${folder.category}`, { defaultValue: folder.category })} ·{" "}
+                            {t("common.item", { count: folderItems.length })}
                           </span>
                         </span>
                       </button>
@@ -250,7 +251,7 @@ export default function InventoryPage() {
                           className="inventory-folder__control"
                           onClick={() => openAddItem(folder.id)}
                         >
-                          Add
+                          {t("common.add")}
                         </button>
                         <button
                           type="button"
@@ -260,14 +261,14 @@ export default function InventoryPage() {
                             setFolderModalOpen(true);
                           }}
                         >
-                          Edit
+                          {t("common.edit")}
                         </button>
                         <button
                           type="button"
                           className="inventory-folder__control inventory-folder__control--danger"
                           onClick={() => setDeletingFolder(folder)}
                         >
-                          Delete
+                          {t("common.delete")}
                         </button>
                       </div>
                     </div>
@@ -275,9 +276,9 @@ export default function InventoryPage() {
                       <ul className="inventory-item-list">
                         {folderItems.length === 0 ? (
                           <li className="inventory-item-list__empty">
-                            No items yet.{" "}
+                            {t("inventory.noItems")}{" "}
                             <button type="button" onClick={() => openAddItem(folder.id)}>
-                              Add one
+                              {t("inventory.addOne")}
                             </button>
                           </li>
                         ) : (
@@ -302,10 +303,9 @@ export default function InventoryPage() {
                 <div className="inventory-folder__row">
                   <div className="inventory-folder__toggle inventory-folder__toggle--static">
                     <span className="inventory-folder__text">
-                      <span className="inventory-folder__name">Independent items</span>
+                      <span className="inventory-folder__name">{t("inventory.independent")}</span>
                       <span className="inventory-folder__meta">
-                        {independentItems.length}{" "}
-                        {independentItems.length === 1 ? "item" : "items"} outside folders
+                        {t("inventory.outsideFolders", { count: independentItems.length })}
                       </span>
                     </span>
                   </div>
@@ -315,13 +315,13 @@ export default function InventoryPage() {
                       className="inventory-folder__control"
                       onClick={() => openAddItem(null)}
                     >
-                      Add
+                      {t("common.add")}
                     </button>
                   </div>
                 </div>
                 <ul className="inventory-item-list">
                   {independentItems.length === 0 ? (
-                    <li className="inventory-item-list__empty">No independent items</li>
+                    <li className="inventory-item-list__empty">{t("inventory.noIndependent")}</li>
                   ) : (
                     independentItems.map((item) => (
                       <li key={item.id}>
@@ -345,11 +345,11 @@ export default function InventoryPage() {
             <div className="item-detail">
               <div className="item-detail__top">
                 <Link to="/inventory" className="item-detail__back" onClick={clearSelection}>
-                  Back
+                  {t("common.back")}
                 </Link>
                 <div className="item-detail__controls">
                   <Button type="button" variant="ghost" onClick={() => setMovingItem(selectedItem)}>
-                    Move
+                    {t("common.move")}
                   </Button>
                   <Button
                     type="button"
@@ -360,14 +360,14 @@ export default function InventoryPage() {
                       setItemModalOpen(true);
                     }}
                   >
-                    Edit
+                    {t("common.edit")}
                   </Button>
                   <Button
                     type="button"
                     variant="danger"
                     onClick={() => setDeletingItem(selectedItem)}
                   >
-                    Delete
+                    {t("common.delete")}
                   </Button>
                 </div>
               </div>
@@ -380,42 +380,42 @@ export default function InventoryPage() {
               />
               <dl className="item-detail__grid">
                 <div>
-                  <dt>Location</dt>
-                  <dd>{selectedItem.location || "-"}</dd>
+                  <dt>{t("inventory.location")}</dt>
+                  <dd>{selectedItem.location || t("common.dash")}</dd>
                 </div>
                 <div>
-                  <dt>Folder</dt>
+                  <dt>{t("inventory.folder")}</dt>
                   <dd>
                     {selectedItem.folderId
-                      ? folders.find((f) => f.id === selectedItem.folderId)?.name ?? "-"
-                      : "Independent"}
+                      ? folders.find((f) => f.id === selectedItem.folderId)?.name ?? t("common.dash")
+                      : t("inventory.independentLabel")}
                   </dd>
                 </div>
                 <div>
-                  <dt>Quantity</dt>
+                  <dt>{t("common.quantity")}</dt>
                   <dd>{selectedItem.quantity}</dd>
                 </div>
                 <div>
-                  <dt>Price</dt>
-                  <dd>{selectedItem.price ? `$${selectedItem.price}` : "-"}</dd>
+                  <dt>{t("inventory.price")}</dt>
+                  <dd>{selectedItem.price ? `$${selectedItem.price}` : t("common.dash")}</dd>
                 </div>
                 <div>
-                  <dt>Purchase date</dt>
-                  <dd>{selectedItem.purchaseDate || "-"}</dd>
+                  <dt>{t("inventory.purchaseDate")}</dt>
+                  <dd>{selectedItem.purchaseDate || t("common.dash")}</dd>
                 </div>
                 <div>
-                  <dt>Expiration date</dt>
+                  <dt>{t("inventory.expirationDate")}</dt>
                   <dd>
                     {selectedItem.expirationDate
                       ? `${selectedItem.expirationDate} (${expirationLabel(selectedItem.expirationDate)})`
-                      : "-"}
+                      : t("common.dash")}
                   </dd>
                 </div>
               </dl>
               <div className="item-detail__tags">
-                <h3>Tags</h3>
+                <h3>{t("inventory.tags")}</h3>
                 {selectedItem.tags.length === 0 ? (
-                  <p>No tags</p>
+                  <p>{t("inventory.noTags")}</p>
                 ) : (
                   <ul>
                     {selectedItem.tags.map((tag) => (
@@ -427,8 +427,8 @@ export default function InventoryPage() {
             </div>
           ) : (
             <div className="inventory-page__detail-empty">
-              <h2>Select an item</h2>
-              <p>Choose something from the list to see details, edit, move, or delete it.</p>
+              <h2>{t("inventory.selectItem")}</h2>
+              <p>{t("inventory.selectItemBody")}</p>
             </div>
           )}
         </section>
@@ -444,10 +444,10 @@ export default function InventoryPage() {
         onSubmit={async (body) => {
           if (editingFolder) {
             await updateFolder(editingFolder.id, body);
-            toastSuccess(`Folder “${body.name}” updated`);
+            toastSuccess(t("inventory.folderUpdated", { name: body.name }));
           } else {
             await createFolder(body);
-            toastSuccess(`Folder “${body.name}” created`);
+            toastSuccess(t("inventory.folderCreated", { name: body.name }));
           }
         }}
       />
@@ -475,12 +475,12 @@ export default function InventoryPage() {
         onSubmit={async (body, pendingImage) => {
           if (editingItem) {
             await updateItem(editingItem.id, body);
-            toastSuccess(`Item “${body.name}” updated`);
+            toastSuccess(t("inventory.itemUpdated", { name: body.name }));
             return;
           }
           const created = await createItem(body);
           if (pendingImage) await uploadItemImage(created.id, pendingImage);
-          toastSuccess(`Item “${body.name}” created`);
+          toastSuccess(t("inventory.itemCreated", { name: body.name }));
         }}
       />
 
@@ -496,38 +496,38 @@ export default function InventoryPage() {
           await updateItem(movingItem.id, { folderId });
           const dest =
             folderId === null
-              ? "Unfiled"
+              ? t("inventory.unfiled")
               : (useInventoryStore.getState().folders.find((f) => f.id === folderId)?.name ??
-                "another folder");
-          toastSuccess(`Moved “${name}” to ${dest}`);
+                t("inventory.anotherFolder"));
+          toastSuccess(t("inventory.movedTo", { name, dest }));
         }}
       />
 
       <ConfirmDeleteModal
         isOpen={!!deletingFolder}
-        title="Delete folder"
-        message="This permanently deletes the folder and every item inside it."
+        title={t("inventory.deleteFolder")}
+        message={t("inventory.deleteFolderMessage")}
         onClose={() => setDeletingFolder(null)}
         onConfirm={async () => {
           if (!deletingFolder) return;
           const name = deletingFolder.name;
           await deleteFolder(deletingFolder.id);
           if (selectedItem?.folderId === deletingFolder.id) clearSelection();
-          toastSuccess(`Folder “${name}” deleted`);
+          toastSuccess(t("inventory.folderDeleted", { name }));
         }}
       />
 
       <ConfirmDeleteModal
         isOpen={!!deletingItem}
-        title="Delete item"
-        message="This permanently deletes the item from your household inventory."
+        title={t("inventory.deleteItem")}
+        message={t("inventory.deleteItemMessage")}
         onClose={() => setDeletingItem(null)}
         onConfirm={async () => {
           if (!deletingItem) return;
           const name = deletingItem.name;
           await deleteItem(deletingItem.id);
           if (selectedId === deletingItem.id) clearSelection();
-          toastSuccess(`Item “${name}” deleted`);
+          toastSuccess(t("inventory.itemDeletedNamed", { name }));
         }}
       />
     </AppShell>

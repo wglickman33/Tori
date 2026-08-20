@@ -1,4 +1,5 @@
 import { useState, type InputHTMLAttributes } from "react";
+import { useTranslation } from "react-i18next";
 import { EyeIcon } from "./EyeIcon";
 import "./PasswordField.scss";
 
@@ -14,6 +15,7 @@ export function PasswordField({
   className = "",
   ...props
 }: PasswordFieldProps) {
+  const { t } = useTranslation();
   const [visible, setVisible] = useState(false);
   const fieldId = id ?? props.name ?? label.toLowerCase().replace(/\s+/g, "-");
 
@@ -33,7 +35,7 @@ export function PasswordField({
           type="button"
           className="password-field__toggle"
           onClick={() => setVisible((v) => !v)}
-          aria-label={visible ? "Hide password" : "Show password"}
+          aria-label={visible ? t("auth.hidePassword") : t("auth.showPassword")}
           aria-pressed={visible}
         >
           <EyeIcon open={visible} />

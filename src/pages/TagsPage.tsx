@@ -1,11 +1,13 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { AppShell } from "../components/layout/AppShell";
 import { ConfirmDeleteModal } from "../components/inventory/ConfirmDeleteModal";
 import { Banner } from "../components/ui/Banner";
 import { Button } from "../components/ui/Button";
 import { Modal } from "../components/ui/Modal";
 import { TextField } from "../components/ui/TextField";
+import { translateError } from "../i18n/apiErrors";
 import { useEnsureInventory } from "../hooks/useEnsureInventory";
 import { useInventoryStore } from "../store/inventoryStore";
 import { toastSuccess } from "../store/toastStore";
@@ -31,6 +33,7 @@ function searchHrefForTag(tag: string): string {
 
 export default function TagsPage() {
   useEnsureInventory();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const items = useInventoryStore((s) => s.items);
   const updateItem = useInventoryStore((s) => s.updateItem);
@@ -98,11 +101,11 @@ export default function TagsPage() {
     if (!editingTag) return;
     const trimmed = nextName.trim();
     if (!trimmed) {
-      setError("Tag name is required");
+      setError(t("errors.tagNameRequired"));
       return;
     }
     if (trimmed.length > 40) {
-      setError("Tag must be 40 characters or fewer");
+      setError(t("errors.tagMax"));
       return;
     }
     if (trimmed === editingTag) {
@@ -116,12 +119,13 @@ export default function TagsPage() {
       await applyTagReplace([editingTag], trimmed);
       toastSuccess(
         merging
-          ? `Merged “${editingTag}” into “${trimmed}”`
-          : `Tag “${editingTag}” renamed to “${trimmed}”`
+          ? t("tags.merged", { from: editingTag, to: trimmed })
+          : t("tags.renamed", { from: editingTag, to: trimmed })
       );
       setEditingTag(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not rename tag");
+      const raw = err instanceof Error ? err.message : t("errors.couldNotRenameTag");
+      setError(translateError(raw, t));
     } finally {
       setBusy(false);
     }
@@ -138,7 +142,7 @@ export default function TagsPage() {
         })
       )
     );
-    toastSuccess(`Tag “${removed}” deleted`);
+    toastSuccess(t("tags.deleted", { name: removed }));
   };
 
   const dismissSuggestion = (a: string, b: string) => {
@@ -151,9 +155,10 @@ export default function TagsPage() {
     setError(null);
     try {
       await applyTagReplace([a, b], keep);
-      toastSuccess(`Merged “${drop}” into “${keep}”`);
+      toastSuccess(t("tags.merged", { from: drop, to: keep }));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not merge tags");
+      const raw = err instanceof Error ? err.message : t("errors.couldNotMergeTags");
+      setError(translateError(raw, t));
     } finally {
       setBusy(false);
     }
@@ -168,21 +173,18 @@ export default function TagsPage() {
       <div className="tags-page">
         <header className="tags-page__header">
           <div className="tags-page__heading">
-            <h1>Tags</h1>
-            <p>
-              Browse labels used on your items. Click a tag to search. Edit or delete from the chip
-              actions, and merge near-duplicates when suggested.
-            </p>
+            <h1>{t("tags.title")}</h1>
+            <p>{t("tags.subtitle")}</p>
           </div>
         </header>
 
-        {isLoading ? <p className="tags-page__muted">Loading tags…</p> : null}
+        {isLoading ? <p className="tags-page__muted">{t("tags.loading")}</p> : null}
 
         {!isLoading && rows.length === 0 ? (
           <div className="tags-page__empty">
-            <p>No tags yet. Add tags when creating or editing items.</p>
+            <p>{t("tags.empty")}</p>
             <Link className="tags-page__link" to="/inventory">
-              Go to Inventory
+              {t("tags.goInventory")}
             </Link>
           </div>
         ) : null}
@@ -191,28 +193,28 @@ export default function TagsPage() {
           <>
             <div className="tags-page__toolbar">
               <label className="tags-page__filter">
-                <span className="tags-page__sr">Filter tags</span>
+                <span className="tags-page__sr">{t("tags.filter")}</span>
                 <input
                   type="search"
                   value={filter}
                   onChange={(e) => setFilter(e.target.value)}
-                  placeholder="Filter tags…"
+                  placeholder={t("tags.placeholder")}
                 />
               </label>
-              <div className="tags-page__sort" role="group" aria-label="Sort tags">
+              <div className="tags-page__sort" role="group" aria-label={t("tags.sort")}>
                 <button
                   type="button"
                   className={sort === "popular" ? "is-on" : undefined}
                   onClick={() => setSort("popular")}
                 >
-                  Popular
+                  {t("tags.popular")}
                 </button>
                 <button
                   type="button"
                   className={sort === "alpha" ? "is-on" : undefined}
                   onClick={() => setSort("alpha")}
                 >
-                  A-Z
+                  {t("tags.alpha")}
                 </button>
               </div>
             </div>
@@ -220,8 +222,8 @@ export default function TagsPage() {
             {suggestions.length > 0 ? (
               <section className="tags-page__suggest" aria-labelledby="tags-suggest-title">
                 <div className="tags-page__suggest-head">
-                  <h2 id="tags-suggest-title">Suggested merges</h2>
-                  <p>Near-duplicate tags you can combine into one label.</p>
+                  <h2 id="tags-suggest-title">{t("tags.suggested")}</h2>
+                  <p>{t("tags.suggestedCopy")}</p>
                 </div>
                 <ul className="tags-page__suggest-list">
                   {suggestions.map((s) => {
@@ -244,8 +246,8 @@ export default function TagsPage() {
                             <em>{countByTag.get(s.b) ?? 0}</em>
                           </span>
                         </div>
-                        <div className="tags-page__suggest-keep" role="group" aria-label="Keep tag">
-                          <span className="tags-page__suggest-label">Keep</span>
+                        <div className="tags-page__suggest-keep" role="group" aria-label={t("tags.keepTag")}>
+                          <span className="tags-page__suggest-label">{t("tags.keep")}</span>
                           <button
                             type="button"
                             className={activeKeep === s.a ? "is-on" : undefined}
@@ -271,14 +273,14 @@ export default function TagsPage() {
                             onClick={() => void mergeSuggestion(s.a, s.b, activeKeep)}
                             disabled={busy}
                           >
-                            Merge
+                            {t("common.merge")}
                           </Button>
                           <Button
                             type="button"
                             variant="ghost"
                             onClick={() => dismissSuggestion(s.a, s.b)}
                           >
-                            Dismiss
+                            {t("common.dismiss")}
                           </Button>
                         </div>
                       </li>
@@ -289,7 +291,7 @@ export default function TagsPage() {
             ) : null}
 
             {visibleRows.length === 0 ? (
-              <p className="tags-page__muted">No tags match that filter.</p>
+              <p className="tags-page__muted">{t("tags.noMatch")}</p>
             ) : (
               <ul className="tags-page__cloud">
                 {visibleRows.map((row) => (
@@ -319,7 +321,7 @@ export default function TagsPage() {
       </div>
 
       <Modal
-        title="Rename tag"
+        title={t("tags.renameTitle")}
         isOpen={!!editingTag}
         onClose={() => {
           setEditingTag(null);
@@ -329,7 +331,7 @@ export default function TagsPage() {
         <div className="tags-page__modal">
           {error ? <Banner>{error}</Banner> : null}
           <TextField
-            label="Tag name"
+            label={t("tags.tagName")}
             value={nextName}
             onChange={(e) => setNextName(e.target.value)}
             maxLength={40}
@@ -340,15 +342,15 @@ export default function TagsPage() {
           nextName.trim() !== editingTag &&
           rows.some((r) => r.tag === nextName.trim()) ? (
             <p className="tags-page__merge-hint">
-              “{nextName.trim()}” already exists. Saving will merge these tags.
+              {t("tags.mergeHint", { name: nextName.trim() })}
             </p>
           ) : null}
           <div className="tags-page__modal-actions">
             <Button type="button" variant="ghost" onClick={() => setEditingTag(null)}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button type="button" onClick={renameTag} disabled={busy}>
-              {busy ? "Saving…" : "Save"}
+              {busy ? t("common.saving") : t("common.save")}
             </Button>
           </div>
         </div>
@@ -356,9 +358,9 @@ export default function TagsPage() {
 
       <ConfirmDeleteModal
         isOpen={!!deletingTag}
-        title="Delete tag?"
-        message={`Remove “${deletingTag}” from every item that has it? Items themselves stay in your inventory.`}
-        confirmLabel="Delete"
+        title={t("tags.deleteTitle")}
+        message={t("tags.deleteMessage", { name: deletingTag })}
+        confirmLabel={t("common.delete")}
         onClose={() => setDeletingTag(null)}
         onConfirm={removeTag}
       />
@@ -379,6 +381,7 @@ function TagChip({
   onEdit: () => void;
   onDelete: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <li className={`tags-page__chip tags-page__chip--tier-${tier}`}>
       <button type="button" className="tags-page__chip-main" onClick={onOpen}>
@@ -389,11 +392,11 @@ function TagChip({
         <span className="tags-page__chip-count">{row.itemCount}</span>
       </button>
       <div className="tags-page__chip-actions">
-        <button type="button" onClick={onEdit} aria-label={`Edit tag ${row.tag}`}>
-          Edit
+        <button type="button" onClick={onEdit} aria-label={t("tags.editAria", { name: row.tag })}>
+          {t("common.edit")}
         </button>
-        <button type="button" onClick={onDelete} aria-label={`Delete tag ${row.tag}`}>
-          Delete
+        <button type="button" onClick={onDelete} aria-label={t("tags.deleteAria", { name: row.tag })}>
+          {t("common.delete")}
         </button>
       </div>
     </li>

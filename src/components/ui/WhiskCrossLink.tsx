@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import whiskLogo from "../../assets/logos/whiskLogoAmber.svg";
 import { getWhiskUrl } from "../../utils/whiskUrl";
 import "./WhiskCrossLink.scss";
@@ -7,6 +8,7 @@ interface WhiskCrossLinkProps {
 }
 
 export function WhiskCrossLink({ variant = "card" }: WhiskCrossLinkProps) {
+  const { t } = useTranslation();
   const href = getWhiskUrl();
 
   if (variant === "inline") {
@@ -16,7 +18,7 @@ export function WhiskCrossLink({ variant = "card" }: WhiskCrossLinkProps) {
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="Open Whisk"
+        aria-label={t("whisk.aria")}
       >
         <img src={whiskLogo} alt="" className="whisk-cross-link__mark" />
         Whisk
@@ -29,10 +31,8 @@ export function WhiskCrossLink({ variant = "card" }: WhiskCrossLinkProps) {
       <div className="whisk-cross-link__brand">
         <img src={whiskLogo} alt="" className="whisk-cross-link__logo" />
         <div className="whisk-cross-link__copy">
-          <h2 className="whisk-cross-link__title">Explore Whisk</h2>
-          <p className="whisk-cross-link__body">
-            Recipes and shopping lists for the same household. Separate app, no shared login.
-          </p>
+          <h2 className="whisk-cross-link__title">{t("whisk.title")}</h2>
+          <p className="whisk-cross-link__body">{t("whisk.body")}</p>
         </div>
       </div>
       <a
@@ -41,7 +41,7 @@ export function WhiskCrossLink({ variant = "card" }: WhiskCrossLinkProps) {
         target="_blank"
         rel="noopener noreferrer"
       >
-        Open Whisk
+        {t("whisk.open")}
       </a>
     </aside>
   );

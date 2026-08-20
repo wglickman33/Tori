@@ -7,6 +7,7 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
   declare passwordHash: string;
   declare displayName: string;
   declare theme: CreationOptional<"light" | "dark" | "auto">;
+  declare language: CreationOptional<"en" | "es">;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 }
@@ -37,6 +38,14 @@ User.init(
       defaultValue: "auto",
       validate: {
         isIn: [["light", "dark", "auto"]],
+      },
+    },
+    language: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: "en",
+      validate: {
+        isIn: [["en", "es"]],
       },
     },
     createdAt: DataTypes.DATE,

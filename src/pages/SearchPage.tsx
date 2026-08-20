@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { resolveMediaUrl } from "../api/client";
 import { AppShell } from "../components/layout/AppShell";
 import { TextField } from "../components/ui/TextField";
@@ -95,6 +96,7 @@ function toggleValue(list: string[], value: string): string[] {
 
 export default function SearchPage() {
   useEnsureInventory();
+  const { t } = useTranslation();
   const folders = useInventoryStore((s) => s.folders);
   const items = useInventoryStore((s) => s.items);
   const isLoading = useInventoryStore((s) => s.isLoading);
@@ -164,7 +166,7 @@ export default function SearchPage() {
     if (filters.query.trim()) {
       chips.push({
         key: "q",
-        label: `Search: ${filters.query.trim()}`,
+        label: t("search.chipSearch", { query: filters.query.trim() }),
         onRemove: () => {
           setQueryText("");
           setFilters((p) => ({ ...p, query: "" }));
@@ -174,21 +176,28 @@ export default function SearchPage() {
     for (const id of filters.folderIds) {
       chips.push({
         key: `folder-${id}`,
-        label: `Folder: ${describeFolderFilter(folders, id)}`,
+        label: t("search.chipFolder", {
+          name:
+            id === INDEPENDENT_FOLDER_KEY
+              ? t("inventory.independentLabel")
+              : describeFolderFilter(folders, id),
+        }),
         onRemove: () => setFilters((p) => ({ ...p, folderIds: p.folderIds.filter((f) => f !== id) })),
       });
     }
     for (const tag of filters.tags) {
       chips.push({
         key: `tag-${tag}`,
-        label: `Tag: ${tag}`,
-        onRemove: () => setFilters((p) => ({ ...p, tags: p.tags.filter((t) => t !== tag) })),
+        label: t("search.chipTag", { tag }),
+        onRemove: () => setFilters((p) => ({ ...p, tags: p.tags.filter((x) => x !== tag) })),
       });
     }
     for (const cat of filters.categories) {
       chips.push({
         key: `cat-${cat}`,
-        label: `Category: ${cat}`,
+        label: t("search.chipCategory", {
+          name: t(`categories.${cat}`, { defaultValue: cat }),
+        }),
         onRemove: () =>
           setFilters((p) => ({ ...p, categories: p.categories.filter((c) => c !== cat) })),
       });
@@ -196,7 +205,9 @@ export default function SearchPage() {
     for (const loc of filters.locations) {
       chips.push({
         key: `loc-${loc}`,
-        label: `Location: ${loc === NO_LOCATION_KEY ? "No location" : loc}`,
+        label: t("search.chipLocation", {
+          name: loc === NO_LOCATION_KEY ? t("inventory.noLocation") : loc,
+        }),
         onRemove: () =>
           setFilters((p) => ({ ...p, locations: p.locations.filter((l) => l !== loc) })),
       });
@@ -204,7 +215,7 @@ export default function SearchPage() {
     if (filters.minPrice !== null) {
       chips.push({
         key: "min",
-        label: `Min ${formatMoney(filters.minPrice)}`,
+        label: t("search.chipMin", { amount: formatMoney(filters.minPrice) }),
         onRemove: () => {
           setMinText("");
           setFilters((p) => ({ ...p, minPrice: null }));
@@ -214,7 +225,7 @@ export default function SearchPage() {
     if (filters.maxPrice !== null) {
       chips.push({
         key: "max",
-        label: `Max ${formatMoney(filters.maxPrice)}`,
+        label: t("search.chipMax", { amount: formatMoney(filters.maxPrice) }),
         onRemove: () => {
           setMaxText("");
           setFilters((p) => ({ ...p, maxPrice: null }));
@@ -223,11 +234,11 @@ export default function SearchPage() {
     }
     if (filters.expiration !== "any") {
       const labels: Record<ExpirationFilter, string> = {
-        any: "Any",
-        has: "Has expiration",
-        missing: "Missing expiration",
-        expiring: "Expiring soon",
-        overdue: "Overdue",
+        any: t("common.any"),
+        has: t("search.hasExpiration"),
+        missing: t("search.missingExpiration"),
+        expiring: t("search.expiringSoon"),
+        overdue: t("inventory.overdue"),
       };
       chips.push({
         key: "exp",
@@ -238,24 +249,24 @@ export default function SearchPage() {
     if (filters.hasPhoto !== "any") {
       chips.push({
         key: "photo",
-        label: filters.hasPhoto === "yes" ? "Has photo" : "No photo",
+        label: filters.hasPhoto === "yes" ? t("search.hasPhoto") : t("search.noPhoto"),
         onRemove: () => setFilters((p) => ({ ...p, hasPhoto: "any" })),
       });
     }
     return chips;
-  }, [filters, folders]);
+  }, [filters, folders, t]);
 
   const sortOptions: { value: SearchSort; label: string }[] = filters.query.trim()
     ? [
-        { value: "relevance", label: "Relevance" },
-        { value: "name", label: "Name" },
-        { value: "price", label: "Price" },
-        { value: "expiry", label: "Expiration" },
+        { value: "relevance", label: t("search.relevance") },
+        { value: "name", label: t("inventory.name") },
+        { value: "price", label: t("inventory.price") },
+        { value: "expiry", label: t("search.expiration") },
       ]
     : [
-        { value: "name", label: "Name" },
-        { value: "price", label: "Price" },
-        { value: "expiry", label: "Expiration" },
+        { value: "name", label: t("inventory.name") },
+        { value: "price", label: t("inventory.price") },
+        { value: "expiry", label: t("search.expiration") },
       ];
 
   return (
@@ -263,17 +274,14 @@ export default function SearchPage() {
       <div className="search-page">
         <header className="search-page__header">
           <div className="search-page__heading">
-            <h1 className="search-page__title">Search</h1>
-            <p className="search-page__subtitle">
-              Find anything in your inventory. Type to search, then refine with filters. Results update
-              live.
-            </p>
+            <h1 className="search-page__title">{t("search.title")}</h1>
+            <p className="search-page__subtitle">{t("search.subtitle")}</p>
           </div>
         </header>
 
         <div className="search-page__bar">
           <label className="search-page__query">
-            <span className="search-page__query-label">Search</span>
+            <span className="search-page__query-label">{t("common.search")}</span>
             <input
               type="search"
               value={queryText}
@@ -283,7 +291,7 @@ export default function SearchPage() {
                 if (next.trim() && sort === "name") setSort("relevance");
                 if (!next.trim() && sort === "relevance") setSort("name");
               }}
-              placeholder="Search name, tag, location, folder…"
+              placeholder={t("search.placeholder")}
               autoComplete="off"
               spellCheck={false}
             />
@@ -291,7 +299,7 @@ export default function SearchPage() {
               <button
                 type="button"
                 className="search-page__query-clear"
-                aria-label="Clear search"
+                aria-label={t("search.clearSearch")}
                 onClick={() => {
                   setQueryText("");
                   setFilters((p) => ({ ...p, query: "" }));
@@ -305,7 +313,7 @@ export default function SearchPage() {
         </div>
 
         {activeChips.length > 0 ? (
-          <div className="search-page__chips" aria-label="Active filters">
+          <div className="search-page__chips" aria-label={t("search.activeFilters")}>
             {activeChips.map((chip) => (
               <button
                 key={chip.key}
@@ -318,7 +326,7 @@ export default function SearchPage() {
               </button>
             ))}
             <button type="button" className="search-page__chips-clear" onClick={clearAll}>
-              Clear all
+              {t("common.clearAll")}
             </button>
           </div>
         ) : null}
@@ -330,18 +338,23 @@ export default function SearchPage() {
             aria-expanded={filtersOpen}
             onClick={() => setFiltersOpen((v) => !v)}
           >
-            {filtersOpen ? "Hide filters" : "Filters"}
-            {hasActiveInventoryFilters(filters) ? " · on" : ""}
+            {hasActiveInventoryFilters(filters)
+              ? t("search.filtersOn", {
+                  label: filtersOpen ? t("search.hideFilters") : t("common.filters"),
+                })
+              : filtersOpen
+                ? t("search.hideFilters")
+                : t("common.filters")}
           </button>
         </div>
 
         <div className="search-page__grid">
           <aside
             className={`search-page__filters${filtersOpen ? " is-open" : ""}`}
-            aria-label="Filters"
+            aria-label={t("common.filters")}
           >
             <section>
-              <h2>Folders</h2>
+              <h2>{t("search.folders")}</h2>
               <div className="search-page__scroll">
                 <label className="search-page__check">
                   <input
@@ -354,7 +367,7 @@ export default function SearchPage() {
                       }))
                     }
                   />
-                  Independent items
+                  {t("inventory.independent")}
                 </label>
                 {folders.map((folder) => (
                   <label key={folder.id} className="search-page__check">
@@ -372,15 +385,15 @@ export default function SearchPage() {
                   </label>
                 ))}
                 {folders.length === 0 ? (
-                  <p className="search-page__muted">No folders yet</p>
+                  <p className="search-page__muted">{t("search.noFolders")}</p>
                 ) : null}
               </div>
             </section>
 
             <section>
-              <h2>Tags</h2>
+              <h2>{t("search.tags")}</h2>
               {tags.length === 0 ? (
-                <p className="search-page__muted">No tags yet</p>
+                <p className="search-page__muted">{t("search.noTags")}</p>
               ) : (
                 <div className="search-page__tag-chips">
                   {tags.map((tag) => {
@@ -404,10 +417,10 @@ export default function SearchPage() {
             </section>
 
             <section>
-              <h2>Category</h2>
+              <h2>{t("search.category")}</h2>
               <div className="search-page__scroll">
                 {categories.length === 0 ? (
-                  <p className="search-page__muted">No categories yet</p>
+                  <p className="search-page__muted">{t("search.noCategories")}</p>
                 ) : (
                   categories.map((cat) => (
                     <label key={cat} className="search-page__check">
@@ -421,7 +434,7 @@ export default function SearchPage() {
                           }))
                         }
                       />
-                      {cat}
+                      {t(`categories.${cat}`, { defaultValue: cat })}
                     </label>
                   ))
                 )}
@@ -429,7 +442,7 @@ export default function SearchPage() {
             </section>
 
             <section>
-              <h2>Location</h2>
+              <h2>{t("search.location")}</h2>
               <div className="search-page__scroll">
                 <label className="search-page__check">
                   <input
@@ -442,7 +455,7 @@ export default function SearchPage() {
                       }))
                     }
                   />
-                  No location
+                  {t("inventory.noLocation")}
                 </label>
                 {locations.map((loc) => (
                   <label key={loc} className="search-page__check">
@@ -463,10 +476,10 @@ export default function SearchPage() {
             </section>
 
             <section className="search-page__price">
-              <h2>Price</h2>
+              <h2>{t("search.price")}</h2>
               <div className="search-page__price-fields">
                 <TextField
-                  label="Min"
+                  label={t("common.min")}
                   type="number"
                   min={0}
                   step="0.01"
@@ -474,7 +487,7 @@ export default function SearchPage() {
                   onChange={(e) => setMinText(e.target.value)}
                 />
                 <TextField
-                  label="Max"
+                  label={t("common.max")}
                   type="number"
                   min={0}
                   step="0.01"
@@ -483,14 +496,14 @@ export default function SearchPage() {
                 />
               </div>
               <p className="search-page__muted">
-                Items without a price are excluded when min or max is set.
+                {t("search.priceHint")}
               </p>
             </section>
 
             <section>
-              <h2>Expiration</h2>
+              <h2>{t("search.expiration")}</h2>
               <label className="search-page__select">
-                <span className="search-page__select-label">Status</span>
+                <span className="search-page__select-label">{t("common.status")}</span>
                 <select
                   value={filters.expiration}
                   onChange={(e) =>
@@ -500,28 +513,28 @@ export default function SearchPage() {
                     }))
                   }
                 >
-                  <option value="any">Any</option>
-                  <option value="has">Has date</option>
-                  <option value="missing">Missing date</option>
-                  <option value="expiring">Expiring soon (≤{threshold}d)</option>
-                  <option value="overdue">Overdue</option>
+                  <option value="any">{t("common.any")}</option>
+                  <option value="has">{t("search.hasDate")}</option>
+                  <option value="missing">{t("search.missingDate")}</option>
+                  <option value="expiring">{t("search.expiringSoonDays", { count: threshold })}</option>
+                  <option value="overdue">{t("inventory.overdue")}</option>
                 </select>
               </label>
             </section>
 
             <section>
-              <h2>Photo</h2>
+              <h2>{t("search.photo")}</h2>
               <label className="search-page__select">
-                <span className="search-page__select-label">Has photo</span>
+                <span className="search-page__select-label">{t("search.hasPhoto")}</span>
                 <select
                   value={filters.hasPhoto}
                   onChange={(e) =>
                     setFilters((p) => ({ ...p, hasPhoto: e.target.value as PhotoFilter }))
                   }
                 >
-                  <option value="any">Any</option>
-                  <option value="yes">Has photo</option>
-                  <option value="no">No photo</option>
+                  <option value="any">{t("common.any")}</option>
+                  <option value="yes">{t("search.hasPhoto")}</option>
+                  <option value="no">{t("search.noPhoto")}</option>
                 </select>
               </label>
             </section>
@@ -531,11 +544,11 @@ export default function SearchPage() {
             <div className="search-page__results-toolbar">
               <p className="search-page__count">
                 {isLoading
-                  ? "Loading…"
-                  : `Showing ${results.length} of ${items.length} item${items.length === 1 ? "" : "s"}`}
+                  ? t("common.loading")
+                  : t("search.showingOf", { shown: results.length, count: items.length })}
               </p>
               <label className="search-page__sort">
-                <span>Sort</span>
+                <span>{t("common.sort")}</span>
                 <select
                   value={sort}
                   onChange={(e) => setSort(e.target.value as SearchSort)}
@@ -551,18 +564,18 @@ export default function SearchPage() {
 
             {!isLoading && items.length === 0 ? (
               <div className="search-page__empty">
-                <p>No items yet. Add some in Inventory.</p>
+                <p>{t("search.noItemsYet")}</p>
                 <Link className="search-page__cta" to="/inventory">
-                  Go to Inventory
+                  {t("search.goInventory")}
                 </Link>
               </div>
             ) : null}
 
             {!isLoading && items.length > 0 && results.length === 0 ? (
               <div className="search-page__empty">
-                <p>No items match. Try a different search or clear filters.</p>
+                <p>{t("search.noMatch")}</p>
                 <button type="button" className="search-page__cta" onClick={clearAll}>
-                  Clear filters
+                  {t("search.clearFilters")}
                 </button>
               </div>
             ) : null}
@@ -598,8 +611,8 @@ export default function SearchPage() {
                         {days === null ? (
                           <span
                             className="search-page__expiry is-none"
-                            data-tooltip="No expiry"
-                            aria-label="No expiry"
+                            data-tooltip={t("search.noExpiry")}
+                            aria-label={t("search.noExpiry")}
                           >
                             <svg
                               className="search-page__expiry-icon"

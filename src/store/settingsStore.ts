@@ -1,6 +1,13 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { authApi, getAccessToken } from "../api/client";
+import { applyLanguage } from "../i18n";
+import {
+  detectBrowserLanguage,
+  isLanguage,
+  parseLanguage,
+  type Language,
+} from "../i18n/language";
 import {
   applyEffectiveTheme,
   clearLegacyTheme,
@@ -13,17 +20,20 @@ import {
 } from "../utils/theme";
 
 export type Theme = ThemePreference;
+export type { Language };
 
 export const SETTINGS_PERSIST_KEY = "tori-settings";
 
 interface SettingsState {
   theme: Theme;
+  language: Language;
   effectiveTheme: EffectiveTheme;
   setTheme: (theme: Theme) => void;
+  setLanguage: (language: Language) => void;
   toggleTheme: () => void;
   getEffectiveTheme: () => EffectiveTheme;
   savePreferences: () => Promise<void>;
-  applyFromServer: (theme: string) => void;
+  applyFromServer: (theme?: string | null, language?: string | null) => void;
 }
 
 const THEME_CYCLE: Theme[] = ["light", "dark", "auto"];
@@ -82,6 +92,7 @@ export function hasPersistedSettings(): boolean {
 export function initThemeSync(): () => void {
   const state = useSettingsStore.getState();
   applyThemePreference(state.theme, (partial) => useSettingsStore.setState(partial));
+  applyLanguage(state.language);
   ensureSystemThemeSubscription(() => useSettingsStore.getState());
   return () => {
     clearSystemThemeSubscription();
@@ -92,21 +103,25 @@ export const useSettingsStore = create<SettingsState>()(
   persist(
     (set, get) => ({
       theme: "auto",
+      language: detectBrowserLanguage(),
       effectiveTheme: "light",
 
       getEffectiveTheme: () => resolveEffectiveTheme(get().theme),
 
-      applyFromServer: (theme) => {
-        const parsedTheme = parseTheme(theme);
+      applyFromServer: (theme, language) => {
+        const parsedTheme = theme != null && theme !== "" ? parseTheme(theme) : get().theme;
+        const parsedLanguage =
+          language != null && language !== "" ? parseLanguage(language) : get().language;
         const effective = applyThemePreference(parsedTheme);
+        applyLanguage(parsedLanguage);
         ensureSystemThemeSubscription(get);
-        set({ theme: parsedTheme, effectiveTheme: effective });
+        set({ theme: parsedTheme, language: parsedLanguage, effectiveTheme: effective });
       },
 
       savePreferences: async () => {
-        const { theme } = get();
+        const { theme, language } = get();
         if (getAccessToken()) {
-          await authApi.updateProfile({ theme });
+          await authApi.updateProfile({ theme, language });
         }
       },
 
@@ -114,6 +129,15 @@ export const useSettingsStore = create<SettingsState>()(
         const effective = applyThemePreference(theme);
         ensureSystemThemeSubscription(get);
         set({ theme, effectiveTheme: effective });
+      },
+
+      setLanguage: (language) => {
+        const parsed = parseLanguage(language);
+        applyLanguage(parsed);
+        set({ language: parsed });
+        if (getAccessToken()) {
+          void authApi.updateProfile({ language: parsed }).catch(() => undefined);
+        }
       },
 
       toggleTheme: () =>
@@ -127,18 +151,20 @@ export const useSettingsStore = create<SettingsState>()(
     }),
     {
       name: SETTINGS_PERSIST_KEY,
-      partialize: (s) => ({ theme: s.theme }),
+      partialize: (s) => ({ theme: s.theme, language: s.language }),
       merge: (persisted, current) => {
         const p = (persisted ?? {}) as Partial<SettingsState>;
         const legacy = readLegacyTheme();
         const theme = isThemePreference(p.theme) ? p.theme : legacy ?? current.theme;
+        const language = isLanguage(p.language) ? p.language : current.language;
         if (legacy) clearLegacyTheme();
-        return { ...current, ...p, theme };
+        return { ...current, ...p, theme, language };
       },
       onRehydrateStorage: () => (state) => {
         if (!state) return;
         const effective = applyThemePreference(state.theme);
         state.effectiveTheme = effective;
+        applyLanguage(state.language);
         ensureSystemThemeSubscription(() => useSettingsStore.getState());
       },
     }

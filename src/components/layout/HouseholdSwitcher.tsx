@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useHouseholdStore } from "../../store/householdStore";
 import { useInventoryStore } from "../../store/inventoryStore";
 import "./HouseholdSwitcher.scss";
@@ -9,6 +10,7 @@ interface HouseholdSwitcherProps {
 }
 
 export function HouseholdSwitcher({ collapsed = false }: HouseholdSwitcherProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const listId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
@@ -59,7 +61,7 @@ export function HouseholdSwitcher({ collapsed = false }: HouseholdSwitcherProps)
         aria-expanded={open}
         aria-controls={listId}
         title={collapsed ? household.name : undefined}
-        aria-label={collapsed ? `Household: ${household.name}` : undefined}
+        aria-label={collapsed ? `${t("household.switcher")}: ${household.name}` : undefined}
         onClick={() => setOpen((v) => !v)}
       >
         {collapsed ? (
@@ -101,7 +103,11 @@ export function HouseholdSwitcher({ collapsed = false }: HouseholdSwitcherProps)
               onClick={() => onSelect(h.id)}
             >
               <span>{h.name}</span>
-              {!collapsed ? <span className="household-switcher__role">{h.role}</span> : null}
+              {!collapsed ? (
+                <span className="household-switcher__role">
+                  {h.role === "owner" ? t("household.roleOwner") : t("household.roleMember")}
+                </span>
+              ) : null}
             </button>
           ))}
           <Link
@@ -109,7 +115,7 @@ export function HouseholdSwitcher({ collapsed = false }: HouseholdSwitcherProps)
             className="household-switcher__option household-switcher__option--add"
             onClick={() => setOpen(false)}
           >
-            Add household
+            {t("household.addHousehold")}
           </Link>
         </div>
       ) : null}

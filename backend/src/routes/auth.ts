@@ -35,6 +35,7 @@ function publicUser(user: User) {
     email: user.email,
     displayName: user.displayName,
     theme: user.theme ?? "auto",
+    language: user.language ?? "en",
   };
 }
 
@@ -117,7 +118,7 @@ authRouter.patch("/me", authMiddleware, async (req: AuthedRequest, res) => {
     return;
   }
 
-  const { displayName, email, currentPassword, newPassword, theme } = parsed.data;
+  const { displayName, email, currentPassword, newPassword, theme, language } = parsed.data;
 
   if (newPassword) {
     const ok = await bcrypt.compare(currentPassword!, user.passwordHash);
@@ -139,6 +140,7 @@ authRouter.patch("/me", authMiddleware, async (req: AuthedRequest, res) => {
 
   if (displayName) user.displayName = displayName;
   if (theme) user.theme = theme;
+  if (language) user.language = language;
   await user.save();
   res.json(publicUser(user));
 });

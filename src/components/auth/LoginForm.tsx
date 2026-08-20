@@ -1,7 +1,9 @@
 import { useState, type FormEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { authApi } from "../../api/client";
+import { translateError } from "../../i18n/apiErrors";
 import { useAuthStore } from "../../store/authStore";
 import { useHouseholdStore } from "../../store/householdStore";
 import { Banner } from "../ui/Banner";
@@ -10,12 +12,8 @@ import { PasswordField } from "../ui/PasswordField";
 import { TextField } from "../ui/TextField";
 import "./LoginForm.scss";
 
-const schema = z.object({
-  email: z.string().email("Enter a valid email"),
-  password: z.string().min(1, "Password is required"),
-});
-
 export function LoginForm() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const signIn = useAuthStore((s) => s.signIn);
@@ -27,6 +25,11 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false);
   const resetNotice =
     (location.state as { passwordReset?: boolean } | null)?.passwordReset === true;
+
+  const schema = z.object({
+    email: z.string().email(t("auth.validEmail")),
+    password: z.string().min(1, t("auth.passwordRequired")),
+  });
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -49,7 +52,8 @@ export function LoginForm() {
       const household = await fetchMine();
       navigate(household ? "/inventory" : "/onboarding");
     } catch (err) {
-      setApiError(err instanceof Error ? err.message : "Login failed");
+      const message = err instanceof Error ? err.message : t("errors.loginFailed");
+      setApiError(translateError(message, t));
     } finally {
       setLoading(false);
     }
@@ -58,15 +62,13 @@ export function LoginForm() {
   return (
     <form className="login-form" onSubmit={onSubmit} noValidate>
       <header className="login-form__header">
-        <h1 className="login-form__title">Log in</h1>
-        <p className="login-form__subtitle">Welcome back to Tori.</p>
+        <h1 className="login-form__title">{t("auth.logIn")}</h1>
+        <p className="login-form__subtitle">{t("auth.welcomeBack")}</p>
       </header>
-      {resetNotice ? (
-        <Banner tone="success">Password updated. Log in with your new password.</Banner>
-      ) : null}
+      {resetNotice ? <Banner tone="success">{t("auth.passwordUpdated")}</Banner> : null}
       {apiError ? <Banner>{apiError}</Banner> : null}
       <TextField
-        label="Email"
+        label={t("auth.email")}
         name="email"
         type="email"
         autoComplete="email"
@@ -75,7 +77,7 @@ export function LoginForm() {
         error={errors.email}
       />
       <PasswordField
-        label="Password"
+        label={t("auth.password")}
         name="password"
         autoComplete="current-password"
         value={password}
@@ -83,13 +85,13 @@ export function LoginForm() {
         error={errors.password}
       />
       <p className="login-form__forgot">
-        <Link to="/forgot-password">Forgot password?</Link>
+        <Link to="/forgot-password">{t("auth.forgotPassword")}</Link>
       </p>
       <Button type="submit" disabled={loading}>
-        {loading ? "Logging in…" : "Log in"}
+        {loading ? t("auth.loggingIn") : t("auth.logIn")}
       </Button>
       <p className="login-form__footer">
-        Need an account? <Link to="/signup">Sign up</Link>
+        {t("auth.needAccount")} <Link to="/signup">{t("auth.signUp")}</Link>
       </p>
     </form>
   );

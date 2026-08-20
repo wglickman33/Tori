@@ -1,7 +1,9 @@
 import { useEffect, useId, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { Folder, Item } from "../../api/client";
 import { Banner } from "../ui/Banner";
 import { Button } from "../ui/Button";
+import { translateError } from "../../i18n/apiErrors";
 import {
   downloadInventoryCsvFile,
   downloadInventoryJson,
@@ -26,6 +28,7 @@ export function InventoryTransferBar({
   items,
   className = "",
 }: InventoryTransferBarProps) {
+  const { t } = useTranslation();
   const menuId = useId();
   const importInputId = useId();
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -66,21 +69,22 @@ export function InventoryTransferBar({
     try {
       if (kind === "json") {
         downloadInventoryJson(folders, items, householdName);
-        setMessage("Tori JSON downloaded.");
+        setMessage(t("inventory.downloadedJson"));
       } else if (kind === "csv") {
         downloadInventoryCsvFile(folders, items, householdName);
-        setMessage("CSV downloaded.");
+        setMessage(t("inventory.downloadedCsv"));
       } else if (kind === "txt") {
         downloadInventoryPlainText(folders, items, householdName);
-        setMessage("Plain text downloaded.");
+        setMessage(t("inventory.downloadedTxt"));
       } else {
         setBusy("export-pdf");
         await downloadInventoryPdf(folders, items, householdName);
-        setMessage("PDF downloaded.");
+        setMessage(t("inventory.downloadedPdf"));
       }
       setExportOpen(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Export failed");
+      const raw = err instanceof Error ? err.message : t("errors.exportFailed");
+      setError(translateError(raw, t));
     } finally {
       setBusy(null);
     }
@@ -99,13 +103,14 @@ export function InventoryTransferBar({
         createItem,
       });
       setMessage(
-        `Imported ${result.itemsCreated} item${result.itemsCreated === 1 ? "" : "s"}` +
+        t("inventory.importedItems", { count: result.itemsCreated }) +
           (result.foldersCreated
-            ? ` and created ${result.foldersCreated} folder${result.foldersCreated === 1 ? "" : "s"}.`
+            ? t("inventory.createdFolders", { count: result.foldersCreated })
             : ".")
       );
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Import failed");
+      const raw = err instanceof Error ? err.message : t("errors.importFailed");
+      setError(translateError(raw, t));
     } finally {
       setBusy(null);
       if (fileRef.current) fileRef.current.value = "";
@@ -126,18 +131,18 @@ export function InventoryTransferBar({
             onClick={() => setExportOpen((v) => !v)}
             disabled={busy !== null}
           >
-            Export
+            {t("common.export")}
           </Button>
           {exportOpen ? (
             <div className="inventory-transfer__menu" id={menuId} role="menu">
               <button type="button" role="menuitem" onClick={() => void runExport("json")}>
-                Tori file (.tori.json)
+                {t("inventory.exportJson")}
               </button>
               <button type="button" role="menuitem" onClick={() => void runExport("csv")}>
-                Spreadsheet (.csv)
+                {t("inventory.exportCsv")}
               </button>
               <button type="button" role="menuitem" onClick={() => void runExport("txt")}>
-                Plain text (.txt)
+                {t("inventory.exportTxt")}
               </button>
               <button
                 type="button"
@@ -145,7 +150,7 @@ export function InventoryTransferBar({
                 onClick={() => void runExport("pdf")}
                 disabled={busy === "export-pdf"}
               >
-                {busy === "export-pdf" ? "Creating PDF…" : "PDF (.pdf)"}
+                {busy === "export-pdf" ? t("inventory.creatingPdf") : t("inventory.exportPdf")}
               </button>
             </div>
           ) : null}
@@ -158,7 +163,7 @@ export function InventoryTransferBar({
           onClick={() => fileRef.current?.click()}
           disabled={busy !== null}
         >
-          {busy === "import" ? "Importing…" : "Import"}
+          {busy === "import" ? t("common.importing") : t("common.import")}
         </Button>
         <input
           ref={fileRef}
@@ -169,7 +174,7 @@ export function InventoryTransferBar({
           onChange={(e) => void onImportFile(e.target.files?.[0])}
         />
       </div>
-      <p className="inventory-transfer__hint">Import a Tori JSON or CSV file.</p>
+      <p className="inventory-transfer__hint">{t("inventory.importHint")}</p>
       {error ? <Banner>{error}</Banner> : null}
       {message && !error ? <p className="inventory-transfer__status">{message}</p> : null}
     </div>

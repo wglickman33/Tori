@@ -1,12 +1,15 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { AppShell } from "../components/layout/AppShell";
 import { ConfirmDeleteModal } from "../components/inventory/ConfirmDeleteModal";
 import { Banner } from "../components/ui/Banner";
 import { Button } from "../components/ui/Button";
 import { Modal } from "../components/ui/Modal";
 import { TextField } from "../components/ui/TextField";
-import { DEFAULT_LOCATION_PRESETS } from "../constants/inventory";
+import { defaultLocationPresetsForLanguage } from "../constants/inventory";
+import { currentLanguage } from "../i18n";
+import { translateError } from "../i18n/apiErrors";
 import { useEnsureInventory } from "../hooks/useEnsureInventory";
 import { useHouseholdStore } from "../store/householdStore";
 import { useInventoryStore } from "../store/inventoryStore";
@@ -16,13 +19,14 @@ import "./LocationsPage.scss";
 
 export default function LocationsPage() {
   useEnsureInventory();
+  const { t } = useTranslation();
   const household = useHouseholdStore((s) => s.household);
   const updateLocationPresets = useHouseholdStore((s) => s.updateLocationPresets);
   const items = useInventoryStore((s) => s.items);
   const updateItem = useInventoryStore((s) => s.updateItem);
   const isLoading = useInventoryStore((s) => s.isLoading);
 
-  const presets = household?.locationPresets ?? [...DEFAULT_LOCATION_PRESETS];
+  const presets = household?.locationPresets ?? defaultLocationPresetsForLanguage(currentLanguage());
 
   const rows = useMemo(
     () => buildManagedLocationRows(household?.locationPresets ?? null, items),
@@ -43,26 +47,27 @@ export default function LocationsPage() {
   const addLocation = async () => {
     const trimmed = nextName.trim();
     if (!trimmed) {
-      setError("Location name is required");
+      setError(t("errors.locationNameRequired"));
       return;
     }
     if (trimmed.length > 80) {
-      setError("Location must be 80 characters or fewer");
+      setError(t("errors.locationMax"));
       return;
     }
     if (presets.some((loc) => loc.toLowerCase() === trimmed.toLowerCase())) {
-      setError("That location is already in your list");
+      setError(t("errors.locationExists"));
       return;
     }
     setBusy(true);
     setError(null);
     try {
       await savePresets([...presets, trimmed]);
-      toastSuccess(`Location “${trimmed}” added`);
+      toastSuccess(t("locations.added", { name: trimmed }));
       setAdding(false);
       setNextName("");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not add location");
+      const raw = err instanceof Error ? err.message : t("errors.couldNotAddLocation");
+      setError(translateError(raw, t));
     } finally {
       setBusy(false);
     }
@@ -72,18 +77,18 @@ export default function LocationsPage() {
     if (!editingLocation) return;
     const trimmed = nextName.trim();
     if (!trimmed) {
-      setError("Location name is required");
+      setError(t("errors.locationNameRequired"));
       return;
     }
     if (trimmed.length > 80) {
-      setError("Location must be 80 characters or fewer");
+      setError(t("errors.locationMax"));
       return;
     }
     if (
       trimmed.toLowerCase() !== editingLocation.toLowerCase() &&
       presets.some((loc) => loc.toLowerCase() === trimmed.toLowerCase())
     ) {
-      setError("That location is already in your list");
+      setError(t("errors.locationExists"));
       return;
     }
     if (trimmed === editingLocation) {
@@ -104,10 +109,11 @@ export default function LocationsPage() {
       if (targets.length > 0) {
         await Promise.all(targets.map((item) => updateItem(item.id, { location: trimmed })));
       }
-      toastSuccess(`Location “${editingLocation}” renamed to “${trimmed}”`);
+      toastSuccess(t("locations.renamed", { from: editingLocation, to: trimmed }));
       setEditingLocation(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not rename location");
+      const raw = err instanceof Error ? err.message : t("errors.couldNotRenameLocation");
+      setError(translateError(raw, t));
     } finally {
       setBusy(false);
     }
@@ -124,7 +130,7 @@ export default function LocationsPage() {
     if (targets.length > 0) {
       await Promise.all(targets.map((item) => updateItem(item.id, { location: null })));
     }
-    toastSuccess(`Location “${removed}” deleted`);
+    toastSuccess(t("locations.deleted", { name: removed }));
   };
 
   return (
@@ -132,11 +138,8 @@ export default function LocationsPage() {
       <div className="locations-page">
         <header className="locations-page__header">
           <div className="locations-page__heading">
-            <h1>Locations</h1>
-            <p>
-              Manage the location list used when adding items. Edit renames everywhere it is used;
-              Delete removes it from the list and clears it from items.
-            </p>
+            <h1>{t("locations.title")}</h1>
+            <p>{t("locations.subtitle")}</p>
           </div>
           <Button
             type="button"
@@ -146,15 +149,15 @@ export default function LocationsPage() {
               setError(null);
             }}
           >
-            Add location
+            {t("locations.add")}
           </Button>
         </header>
 
-        {isLoading && !household ? <p className="locations-page__muted">Loading locations…</p> : null}
+        {isLoading && !household ? <p className="locations-page__muted">{t("locations.loading")}</p> : null}
 
         {!isLoading && rows.length === 0 ? (
           <div className="locations-page__empty">
-            <p>No locations in your list yet. Add one to use it on items.</p>
+            <p>{t("locations.empty")}</p>
             <Button
               type="button"
               onClick={() => {
@@ -163,10 +166,10 @@ export default function LocationsPage() {
                 setError(null);
               }}
             >
-              Add location
+              {t("locations.add")}
             </Button>
             <Link className="locations-page__link" to="/inventory">
-              Go to Inventory
+              {t("locations.goInventory")}
             </Link>
           </div>
         ) : null}
@@ -179,9 +182,9 @@ export default function LocationsPage() {
                   <span className="locations-page__name">{row.location}</span>
                   <span className="locations-page__meta">
                     <span className="locations-page__count">
-                      {row.itemCount} {row.itemCount === 1 ? "item" : "items"}
+                      {t("common.item", { count: row.itemCount })}
                     </span>
-                    {row.orphan ? <span className="locations-page__badge">In use only</span> : null}
+                    {row.orphan ? <span className="locations-page__badge">{t("locations.inUseOnly")}</span> : null}
                   </span>
                 </div>
                 <div className="locations-page__actions">
@@ -194,14 +197,14 @@ export default function LocationsPage() {
                       setError(null);
                     }}
                   >
-                    Edit
+                    {t("common.edit")}
                   </button>
                   <button
                     type="button"
                     className="locations-page__action locations-page__action--danger"
                     onClick={() => setDeletingLocation(row.location)}
                   >
-                    Delete
+                    {t("common.delete")}
                   </button>
                 </div>
               </li>
@@ -211,7 +214,7 @@ export default function LocationsPage() {
       </div>
 
       <Modal
-        title={adding ? "Add location" : "Edit location"}
+        title={adding ? t("locations.add") : t("locations.edit")}
         isOpen={adding || !!editingLocation}
         onClose={() => {
           setAdding(false);
@@ -222,7 +225,7 @@ export default function LocationsPage() {
         <div className="locations-page__modal">
           {error ? <Banner>{error}</Banner> : null}
           <TextField
-            label="Location name"
+            label={t("locations.name")}
             value={nextName}
             onChange={(e) => setNextName(e.target.value)}
             maxLength={80}
@@ -238,14 +241,14 @@ export default function LocationsPage() {
                 setError(null);
               }}
             >
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button
               type="button"
               onClick={adding ? addLocation : renameLocation}
               disabled={busy}
             >
-              {busy ? "Saving…" : adding ? "Add" : "Save"}
+              {busy ? t("common.saving") : adding ? t("common.add") : t("common.save")}
             </Button>
           </div>
         </div>
@@ -253,9 +256,9 @@ export default function LocationsPage() {
 
       <ConfirmDeleteModal
         isOpen={!!deletingLocation}
-        title="Delete location?"
-        message={`Delete “${deletingLocation}” from your location list? It will also be cleared from every item that uses it.`}
-        confirmLabel="Delete"
+        title={t("locations.deleteTitle")}
+        message={t("locations.deleteMessage", { name: deletingLocation })}
+        confirmLabel={t("common.delete")}
         onClose={() => setDeletingLocation(null)}
         onConfirm={deleteLocation}
       />

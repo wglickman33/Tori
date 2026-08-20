@@ -1,4 +1,5 @@
 import { parseSseBuffer } from "../utils/parseSse";
+import { currentLanguage } from "../i18n";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3001";
 
@@ -66,6 +67,7 @@ export interface AuthUser {
   email: string;
   displayName: string;
   theme?: "light" | "dark" | "auto";
+  language?: "en" | "es";
 }
 
 export interface AuthSession {
@@ -134,6 +136,7 @@ export type ProfileUpdate = {
   currentPassword?: string;
   newPassword?: string;
   theme?: "light" | "dark" | "auto";
+  language?: "en" | "es";
 };
 
 export interface HouseholdMemberRow {
@@ -314,7 +317,7 @@ async function fetchToriChatStream(
   const res = await fetch(`${API_URL}/api/tori/chat`, {
     method: "POST",
     headers,
-    body: JSON.stringify({ householdId, messages }),
+    body: JSON.stringify({ householdId, messages, locale: currentLanguage() }),
   });
 
   if (res.status === 401 && retry && getRefreshToken()) {
@@ -329,7 +332,7 @@ export const toriApi = {
   chat: (messages: ToriChatMessage[], householdId: string) =>
     api<ToriChatResponse>("/api/tori/chat", {
       method: "POST",
-      body: JSON.stringify({ householdId, messages }),
+      body: JSON.stringify({ householdId, messages, locale: currentLanguage() }),
     }),
   chatStream: async (
     messages: ToriChatMessage[],

@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useHouseholdStore } from "../../store/householdStore";
 import { useInventoryStore } from "../../store/inventoryStore";
 import { Button } from "../ui/Button";
 import "./OnboardingHouseholdsPanel.scss";
 
 export function OnboardingHouseholdsPanel() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const households = useHouseholdStore((s) => s.households);
   const activeId = useHouseholdStore((s) => s.household?.id);
@@ -31,15 +33,13 @@ export function OnboardingHouseholdsPanel() {
   };
 
   return (
-    <section className="onboarding-households" aria-label="Your households">
+    <section className="onboarding-households" aria-label={t("onboarding.yourHouseholds")}>
       <div className="onboarding-households__intro">
-        <p className="onboarding-households__eyebrow">Already set up</p>
-        <h2 className="onboarding-households__title">Your households</h2>
-        <p className="onboarding-households__copy">
-          Select a household to continue, or create/join another below.
-        </p>
+        <p className="onboarding-households__eyebrow">{t("onboarding.alreadySetUp")}</p>
+        <h2 className="onboarding-households__title">{t("onboarding.yourHouseholds")}</h2>
+        <p className="onboarding-households__copy">{t("onboarding.panelCopy")}</p>
       </div>
-      <ul className="onboarding-households__list" role="listbox" aria-label="Households">
+      <ul className="onboarding-households__list" role="listbox" aria-label={t("onboarding.householdsList")}>
         {households.map((h) => {
           const isSelected = h.id === selectedId;
           return (
@@ -54,12 +54,14 @@ export function OnboardingHouseholdsPanel() {
                 <span className="onboarding-households__item-text">
                   <span className="onboarding-households__name">{h.name}</span>
                   <span className="onboarding-households__meta">
-                    {h.role === "owner" ? "Owner" : "Member"}
-                    {typeof h.memberCount === "number" ? ` · ${h.memberCount} members` : ""}
+                    {h.role === "owner" ? t("common.owner") : t("common.member")}
+                    {typeof h.memberCount === "number"
+                      ? ` · ${t("settings.member", { count: h.memberCount })}`
+                      : ""}
                   </span>
                 </span>
                 <span className="onboarding-households__check" aria-hidden>
-                  {isSelected ? "Selected" : "Select"}
+                  {isSelected ? t("onboarding.selected") : t("onboarding.select")}
                 </span>
               </button>
             </li>
@@ -72,7 +74,7 @@ export function OnboardingHouseholdsPanel() {
         disabled={!selected}
         onClick={continueToHousehold}
       >
-        {selected ? `Continue to ${selected.name}` : "Please select a household"}
+        {selected ? t("onboarding.continueTo", { name: selected.name }) : t("onboarding.pleaseSelect")}
       </Button>
     </section>
   );

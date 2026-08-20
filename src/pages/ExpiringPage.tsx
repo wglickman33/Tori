@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { AppShell } from "../components/layout/AppShell";
 import { useEnsureInventory } from "../hooks/useEnsureInventory";
 import { useInventoryStore } from "../store/inventoryStore";
@@ -17,6 +18,7 @@ type ViewFilter = "all" | "overdue" | "soon";
 
 export default function ExpiringPage() {
   useEnsureInventory();
+  const { t } = useTranslation();
   const folders = useInventoryStore((s) => s.folders);
   const items = useInventoryStore((s) => s.items);
   const isLoading = useInventoryStore((s) => s.isLoading);
@@ -58,24 +60,26 @@ export default function ExpiringPage() {
     writeExpiringThreshold(n);
   };
 
+  const daysBeforeCount = thresholdText === "1" ? 1 : Number(thresholdText) || 0;
+
   return (
     <AppShell>
       <div className="expiring-page">
         <header className="expiring-page__header">
           <div className="expiring-page__heading">
-            <h1>Expiring</h1>
-            <p>Items at or past your warning window, most urgent first.</p>
+            <h1>{t("expiring.title")}</h1>
+            <p>{t("expiring.subtitle")}</p>
           </div>
 
           <label className="expiring-page__remind">
-            <span className="expiring-page__remind-text">Warn me</span>
+            <span className="expiring-page__remind-text">{t("expiring.warnMe")}</span>
             <input
               className="expiring-page__remind-input"
               type="number"
               min={0}
               max={365}
               inputMode="numeric"
-              aria-label="Warn me how many days before"
+              aria-label={t("expiring.warnAria")}
               value={thresholdText}
               onChange={(e) => setThresholdText(e.target.value)}
               onBlur={() => commitThreshold(thresholdText)}
@@ -87,27 +91,27 @@ export default function ExpiringPage() {
               }}
             />
             <span className="expiring-page__remind-text">
-              day{thresholdText === "1" ? "" : "s"} before
+              {t("expiring.daysBefore", { count: daysBeforeCount === 1 ? 1 : 2 })}
             </span>
             <span className="expiring-page__remind-hint">
-              Default {DEFAULT_EXPIRING_THRESHOLD}. Use 0 for today and overdue only.
+              {t("expiring.defaultHint", { count: DEFAULT_EXPIRING_THRESHOLD })}
             </span>
           </label>
         </header>
 
-        {isLoading ? <p className="expiring-page__muted">Loading…</p> : null}
+        {isLoading ? <p className="expiring-page__muted">{t("common.loading")}</p> : null}
 
         {!isLoading && items.length === 0 ? (
           <div className="expiring-page__empty">
-            <p>No items yet. Add inventory with expiration dates to track urgency here.</p>
+            <p>{t("expiring.empty")}</p>
             <Link to="/inventory" className="expiring-page__link">
-              Go to Inventory
+              {t("expiring.goInventory")}
             </Link>
           </div>
         ) : null}
 
         {!isLoading && items.length > 0 ? (
-          <section className="expiring-page__summary" aria-label="Expiring summary">
+          <section className="expiring-page__summary" aria-label={t("expiring.summary")}>
             <button
               type="button"
               className={`expiring-page__metric${viewFilter === "all" ? " is-active" : ""}`}
@@ -115,7 +119,7 @@ export default function ExpiringPage() {
               aria-pressed={viewFilter === "all"}
             >
               <span className="expiring-page__metric-value">{stats.total}</span>
-              <span className="expiring-page__metric-label">In window</span>
+              <span className="expiring-page__metric-label">{t("expiring.inWindow")}</span>
             </button>
             <button
               type="button"
@@ -126,7 +130,7 @@ export default function ExpiringPage() {
               aria-pressed={viewFilter === "overdue"}
             >
               <span className="expiring-page__metric-value">{stats.overdue}</span>
-              <span className="expiring-page__metric-label">Overdue</span>
+              <span className="expiring-page__metric-label">{t("expiring.overdue")}</span>
             </button>
             <button
               type="button"
@@ -137,35 +141,29 @@ export default function ExpiringPage() {
               aria-pressed={viewFilter === "soon"}
             >
               <span className="expiring-page__metric-value">{stats.soon}</span>
-              <span className="expiring-page__metric-label">Coming up</span>
+              <span className="expiring-page__metric-label">{t("expiring.comingUp")}</span>
             </button>
           </section>
         ) : null}
 
         {!isLoading && items.length > 0 && expiring.length === 0 ? (
           <div className="expiring-page__empty">
-            <p>
-              Nothing expiring within {threshold} day{threshold === 1 ? "" : "s"}. You’re clear for
-              now.
-            </p>
+            <p>{t("expiring.nothingInWindow", { count: threshold })}</p>
             <Link to="/inventory" className="expiring-page__link">
-              Review inventory
+              {t("expiring.reviewInventory")}
             </Link>
           </div>
         ) : null}
 
         {expiring.length > 0 && visible.length === 0 ? (
           <div className="expiring-page__empty">
-            <p>
-              No{" "}
-              {viewFilter === "overdue" ? "overdue" : "coming up"} items in this window.
-            </p>
+            <p>{viewFilter === "overdue" ? t("expiring.noOverdue") : t("expiring.noComingUp")}</p>
             <button
               type="button"
               className="expiring-page__link-btn"
               onClick={() => setViewFilter("all")}
             >
-              Show all in window
+              {t("expiring.showAll")}
             </button>
           </div>
         ) : null}

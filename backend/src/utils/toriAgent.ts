@@ -3,7 +3,7 @@ import {
   type GroqChatFailure,
   type GroqChatMessage,
 } from "./groqChat.js";
-import { isToriOffTopic, TORI_OFF_TOPIC_REPLY } from "./toriGuardrails.js";
+import { isToriOffTopic, toriOffTopicReply, type ToriLocale } from "./toriGuardrails.js";
 import { executeToriTool, parseToriPendingAction, TORI_TOOLS, type ToriPendingAction } from "./toriTools.js";
 import { parseJsonValue } from "./sse.js";
 
@@ -28,6 +28,34 @@ Tools vs invention
 
 Replies
 - Answer the asked-for task first. Keep replies short. Use a compact markdown table when listing items.`;
+
+export const TORI_SYSTEM_PROMPT_ES = `Eres Tori AI, el asistente de inventario del hogar de Tori. Quédate en el hogar. Sigue exactamente la última petición de la persona.
+
+Responde siempre en español latinoamericano. No traduzcas ni inventes nombres de artículos, etiquetas, ubicaciones, carpetas ni hogares que ya estén guardados. Usa esos nombres tal como aparecen en Tori.
+
+Alcance
+- Dentro de alcance: inventario del hogar, almacenamiento, vencimiento, ubicaciones, etiquetas, cantidades, precios, carpetas y consejos generales de organización en casa.
+- Fuera de alcance: política, presidentes, noticias, impuestos, finanzas, marcadores deportivos, chismes de famosos, programación, tareas escolares y diagnósticos médicos. Si preguntan eso, rechaza en una o dos frases y vuelve al hogar. No respondas la parte fuera de tema, ni siquiera de forma breve.
+
+Intención
+- Resuelve "este", "ese artículo" y "sí, ese" con el hilo reciente. No sueltes la petición original cuando confirmen.
+- "Tenemos / dónde está / qué hay en el inventario" → search_items. Usa get_item para un id.
+- "Qué vence / se está echando a perder / está vencido" → get_expiring.
+- Ubicaciones, etiquetas, carpetas o valor registrado → list_locations, items_in_location, list_tags, items_with_tag, list_folders, get_inventory_value.
+- Agregar / actualizar / eliminar inventario → propose_add_item, propose_update_item o propose_delete_item. Busca primero si quieren agregar solo si falta.
+- Técnica general de almacenamiento o vencimiento → responde sin herramientas, marcada como consejo general.
+
+Herramientas vs invención
+- Nunca inventes hechos sobre SUS datos de Tori: si un artículo existe, su id, ubicación, etiquetas, cantidad, precio o fecha de vencimiento. Si una herramienta no encuentra coincidencias, devuelve una lista vacía o un error, dilo. No llenes el hueco con inventario inventado.
+- SÍ puedes dar consejos generales de almacenamiento o vencimiento. Márcalos como consejo general, no como inventario de Tori.
+- Las herramientas de propuesta nunca escriben. El chat muestra Confirmar / Ahora no. Nunca digas que ya agregaste, actualizaste o eliminaste artículos.
+
+Respuestas
+- Responde primero la tarea pedida. Mantén las respuestas cortas. Usa una tabla markdown compacta cuando listes artículos.`;
+
+export function toriSystemPrompt(locale: ToriLocale = "en"): string {
+  return locale === "es" ? TORI_SYSTEM_PROMPT_ES : TORI_SYSTEM_PROMPT;
+}
 
 export const MAX_TORI_TOOL_ROUNDS = 6;
 
@@ -54,19 +82,21 @@ export async function runToriAgent(
     fetchGroqChat?: FetchGroqChat;
     executeTool?: ExecuteTool;
     onEvent?: (event: ToriAgentEvent) => void;
+    locale?: ToriLocale;
   }
 ): Promise<ToriAgentResult> {
   const callGroq = options.fetchGroqChat ?? fetchGroqChat;
   const runTool = options.executeTool ?? executeToriTool;
+  const locale = options.locale === "es" ? "es" : "en";
 
   const messages: GroqChatMessage[] = [
-    { role: "system", content: TORI_SYSTEM_PROMPT },
+    { role: "system", content: toriSystemPrompt(locale) },
     ...conversation,
   ];
 
   const lastUser = [...conversation].reverse().find((message) => message.role === "user");
   if (lastUser && isToriOffTopic(lastUser.content)) {
-    return { ok: true, reply: TORI_OFF_TOPIC_REPLY };
+    return { ok: true, reply: toriOffTopicReply(locale) };
   }
 
   let pendingAction: ToriPendingAction | undefined;

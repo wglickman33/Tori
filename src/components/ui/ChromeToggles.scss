@@ -1,0 +1,24 @@
+@use "../../styles/tokens" as *;
+
+.chrome-toggles {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  flex-shrink: 0;
+
+  &--floating {
+    position: fixed;
+    top: max(#{$space-3}, env(safe-area-inset-top, 0px));
+    right: max(#{$space-3}, env(safe-area-inset-right, 0px));
+    z-index: 40;
+
+    @include tablet-up {
+      top: max(#{$space-4}, env(safe-area-inset-top, 0px));
+      right: max(#{$space-4}, env(safe-area-inset-right, 0px));
+    }
+  }
+
+  &--compact {
+    flex-direction: column;
+  }
+}

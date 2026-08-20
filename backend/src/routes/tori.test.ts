@@ -121,6 +121,21 @@ describe("POST /api/tori/chat", () => {
     expect(fetchGroqChat).not.toHaveBeenCalled();
   });
 
+  it("returns Spanish off-topic copy when locale is es", async () => {
+    const res = await request(app)
+      .post("/api/tori/chat")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({
+        householdId,
+        messages: [{ role: "user", content: "¿Quién fue el último presidente?" }],
+        locale: "es",
+      });
+
+    expect(res.status).toBe(200);
+    expect(res.body.reply).toMatch(/inventario del hogar/i);
+    expect(fetchGroqChat).not.toHaveBeenCalled();
+  });
+
   it("proxies a reply when Groq is configured", async () => {
     process.env.GROQ_API_KEY = "test-key";
     fetchGroqChat.mockResolvedValue({

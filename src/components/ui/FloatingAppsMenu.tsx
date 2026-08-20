@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import whiskLogo from "../../assets/logos/whiskLogoAmber.svg";
 import logo from "../../assets/logos/website-logo.png";
 import { getWhiskUrl } from "../../utils/whiskUrl";
@@ -36,6 +37,7 @@ function FabCloseIcon() {
 }
 
 export function FloatingAppsMenu() {
+  const { t } = useTranslation();
   const whiskHref = getWhiskUrl();
   const togglerId = useId();
   const rootRef = useRef<HTMLElement>(null);
@@ -75,7 +77,7 @@ export function FloatingAppsMenu() {
     <nav
       ref={rootRef}
       className={`floating-apps${open ? " is-open" : ""}${panel !== "none" ? " has-panel" : ""}`}
-      aria-label="Apps"
+      aria-label={t("apps.label")}
     >
       {panel === "whisk" ? (
         <aside className="floating-apps__panel" aria-label="Whisk">
@@ -83,16 +85,16 @@ export function FloatingAppsMenu() {
             <div className="floating-apps__panel-brand">
               <img src={whiskLogo} alt="" className="floating-apps__panel-logo" />
               <div>
-                <p className="floating-apps__panel-eyebrow">Also from us</p>
+                <p className="floating-apps__panel-eyebrow">{t("apps.alsoFromUs")}</p>
                 <p className="floating-apps__panel-title">Whisk</p>
               </div>
             </div>
-            <button type="button" className="floating-apps__panel-close" onClick={closeAll} aria-label="Close">
+            <button type="button" className="floating-apps__panel-close" onClick={closeAll} aria-label={t("common.close")}>
               <FabCloseIcon />
             </button>
           </div>
           <p className="floating-apps__panel-body">
-            Recipes and shopping lists for your kitchen, a sibling app to Tori.
+            {t("apps.whiskPanel")}
           </p>
           <a
             className="floating-apps__panel-cta floating-apps__panel-cta--whisk"
@@ -101,7 +103,7 @@ export function FloatingAppsMenu() {
             rel="noopener noreferrer"
             onClick={closeAll}
           >
-            Open Whisk
+            {t("apps.openWhisk")}
           </a>
         </aside>
       ) : null}
@@ -116,7 +118,7 @@ export function FloatingAppsMenu() {
           setPanel("none");
         }}
       />
-      <label htmlFor={togglerId} className="floating-apps__fab" aria-label={open ? "Close apps menu" : "Open apps menu"}>
+      <label htmlFor={togglerId} className="floating-apps__fab" aria-label={open ? t("apps.closeMenu") : t("apps.openMenu")}>
         <span className="floating-apps__fab-icon" aria-hidden>
           <FabPlusIcon />
         </span>
@@ -128,7 +130,7 @@ export function FloatingAppsMenu() {
             type="button"
             className="floating-apps__bubble floating-apps__bubble--whisk"
             data-tooltip="Whisk"
-            aria-label="Open Whisk"
+            aria-label={t("whisk.aria")}
             onClick={() => {
               setPanel("whisk");
               setOpen(false);
@@ -142,13 +144,13 @@ export function FloatingAppsMenu() {
             type="button"
             className="floating-apps__bubble floating-apps__bubble--tori"
             data-tooltip="Tori AI"
-            aria-label="Open Tori AI"
+            aria-label={t("ai.open")}
             onClick={() => {
               setPanel("none");
               setOpen(false);
               if (location.pathname === "/ai") {
-                toastInfo("You're already in the full Tori AI view.", {
-                  actionLabel: "Use widget on Inventory",
+                toastInfo(t("ai.alreadyFullView"), {
+                  actionLabel: t("ai.useWidgetInventory"),
                   actionHref: "/inventory",
                   onAction: openWidget,
                 });

@@ -1,5 +1,6 @@
 import type { Folder, Item } from "../api/client";
-import { DEFAULT_LOCATION_PRESETS } from "../constants/inventory";
+import { defaultLocationPresetsForLanguage } from "../constants/inventory";
+import i18n, { currentLanguage } from "../i18n";
 
 export type SearchFilters = {
   folderIds: string[]; // includes "__independent__"
@@ -110,7 +111,7 @@ export function buildLocationSelectOptions(
 ): string[] {
   const ordered =
     presets == null
-      ? [...DEFAULT_LOCATION_PRESETS]
+      ? defaultLocationPresetsForLanguage(currentLanguage())
       : presets
           .map((loc) => loc.trim())
           .filter((loc) => loc && loc !== "Custom")
@@ -141,7 +142,7 @@ export function buildManagedLocationRows(
   const usageMap = new Map(usage.map((row) => [row.location.toLowerCase(), row]));
   const orderedPresets =
     presets == null
-      ? [...DEFAULT_LOCATION_PRESETS]
+      ? defaultLocationPresetsForLanguage(currentLanguage())
       : presets
           .map((loc) => loc.trim())
           .filter(Boolean)
@@ -221,6 +222,6 @@ export function computeDashboardStats(
 }
 
 export function folderLabel(folders: Folder[], folderId: string | null): string {
-  if (!folderId) return "Independent";
-  return folders.find((f) => f.id === folderId)?.name ?? "Unknown folder";
+  if (!folderId) return i18n.t("inventory.independentLabel");
+  return folders.find((f) => f.id === folderId)?.name ?? i18n.t("inventory.unknownFolder");
 }

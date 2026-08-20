@@ -2,7 +2,7 @@ import { Router, type Request } from "express";
 import { authMiddleware } from "../middleware/auth.js";
 import { requireMembership } from "../utils/householdAccess.js";
 import { validateToriChatBody } from "../utils/validation.js";
-import { isToriOffTopic, TORI_OFF_TOPIC_REPLY } from "../utils/toriGuardrails.js";
+import { isToriOffTopic, parseToriLocale, toriOffTopicReply } from "../utils/toriGuardrails.js";
 import { runToriAgent } from "../utils/toriAgent.js";
 import { openToriEventStream, wantsEventStream, writeSse } from "../utils/sse.js";
 
@@ -26,15 +26,17 @@ router.post("/chat", async (req: AuthRequest, res) => {
   }
 
   const lastUser = [...parsed.messages].reverse().find((message) => message.role === "user");
+  const locale = parseToriLocale(parsed.locale);
   if (lastUser && isToriOffTopic(lastUser.content)) {
+    const reply = toriOffTopicReply(locale);
     if (wantsEventStream(req)) {
       openToriEventStream(res);
       writeSse(res, "started", { ok: true });
-      writeSse(res, "reply", { reply: TORI_OFF_TOPIC_REPLY });
+      writeSse(res, "reply", { reply });
       res.end();
       return;
     }
-    res.json({ reply: TORI_OFF_TOPIC_REPLY });
+    res.json({ reply });
     return;
   }
 
@@ -61,6 +63,7 @@ router.post("/chat", async (req: AuthRequest, res) => {
   try {
     const result = await runToriAgent(req.userId!, parsed.householdId, parsed.messages, {
       apiKey,
+      locale,
       onEvent: stream
         ? (event) => {
             if (!res.writableEnded) writeSse(res, event.type, event);

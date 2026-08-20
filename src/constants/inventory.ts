@@ -40,5 +40,25 @@ export const DEFAULT_LOCATION_PRESETS = [
   "Shed",
 ] as const;
 
+export const DEFAULT_LOCATION_PRESETS_ES = [
+  "Refrigerador de arriba",
+  "Refrigerador de abajo",
+  "Closet",
+  "Gabinete",
+  "Escritorio",
+  "Cómoda",
+  "Ático",
+  "Sótano bajo",
+  "Despensa",
+  "Garaje",
+  "Cuarto de lavado",
+  "Closet del pasillo",
+  "Cobertizo",
+] as const;
+
+export function defaultLocationPresetsForLanguage(language?: string | null): string[] {
+  return language === "es" ? [...DEFAULT_LOCATION_PRESETS_ES] : [...DEFAULT_LOCATION_PRESETS];
+}
+
 /** @deprecated Prefer DEFAULT_LOCATION_PRESETS + household.locationPresets */
 export const ITEM_LOCATIONS = [...DEFAULT_LOCATION_PRESETS, "Custom"] as const;

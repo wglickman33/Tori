@@ -1,6 +1,8 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import logo from "../../assets/logos/website-logo.png";
 import { BP_DESKTOP } from "../../constants/breakpoints";
+import { MAIN_NAV, META_NAV } from "../../constants/nav";
 import { useWindowWidth } from "../../hooks/useWindowWidth";
 import { useAuthStore } from "../../store/authStore";
 import { useHouseholdStore } from "../../store/householdStore";
@@ -8,43 +10,13 @@ import { useInventoryStore } from "../../store/inventoryStore";
 import { useSidebarStore } from "../../store/sidebarStore";
 import { IconHamburger } from "../ui/IconHamburger";
 import "../ui/IconHamburger.scss";
-import {
-  IconDashboard,
-  IconExpiring,
-  IconHelp,
-  IconHousehold,
-  IconInventory,
-  IconLogout,
-  IconSearch,
-  IconSettings,
-  IconLocations,
-  IconTags,
-  IconUser,
-  IconValue,
-  IconToriAi,
-} from "../ui/SidebarIcons";
-import { ThemeToggle } from "../ui/ThemeToggle";
+import { IconLogout, IconUser } from "../ui/SidebarIcons";
+import { ChromeToggles } from "../ui/ChromeToggles";
 import { HouseholdSwitcher } from "./HouseholdSwitcher";
 import "./Sidebar.scss";
 
-const MAIN_NAV = [
-  { to: "/dashboard", label: "Dashboard", icon: IconDashboard },
-  { to: "/inventory", label: "Inventory", icon: IconInventory },
-  { to: "/search", label: "Search", icon: IconSearch },
-  { to: "/tags", label: "Tags", icon: IconTags },
-  { to: "/locations", label: "Locations", icon: IconLocations },
-  { to: "/value", label: "Value", icon: IconValue },
-  { to: "/expiring", label: "Expiring", icon: IconExpiring },
-  { to: "/ai", label: "Tori AI", icon: IconToriAi },
-  { to: "/household", label: "Household", icon: IconHousehold },
-] as const;
-
-const META_NAV = [
-  { to: "/help", label: "Help", icon: IconHelp },
-  { to: "/settings", label: "Settings", icon: IconSettings },
-] as const;
-
 export function Sidebar() {
+  const { t } = useTranslation();
   const width = useWindowWidth();
   const isDesktop = width > BP_DESKTOP;
   const expanded = useSidebarStore((s) => s.expanded);
@@ -82,13 +54,13 @@ export function Sidebar() {
       ]
         .filter(Boolean)
         .join(" ")}
-      aria-label="Site navigation"
+      aria-label={t("nav.site")}
     >
       <div className="tori-sidebar__header">
         <Link
           to={homeTo}
           className={`tori-sidebar__brand${showExpanded ? "" : " tori-sidebar__brand--icon"}`}
-          aria-label={showExpanded ? undefined : "Tori home"}
+          aria-label={showExpanded ? undefined : t("nav.home")}
           onClick={handleLinkClick}
         >
           <span className="tori-sidebar__logo-wrap">
@@ -96,7 +68,7 @@ export function Sidebar() {
           </span>
           {showExpanded ? (
             <span className="tori-sidebar__brand-text">
-              <span className="tori-sidebar__title">Tori</span>
+              <span className="tori-sidebar__title">{t("app.name")}</span>
             </span>
           ) : null}
         </Link>
@@ -107,9 +79,9 @@ export function Sidebar() {
           aria-label={
             isDesktop
               ? showExpanded
-                ? "Collapse sidebar"
-                : "Expand sidebar"
-              : "Close menu"
+                ? t("nav.collapseSidebar")
+                : t("nav.expandSidebar")
+              : t("nav.closeMenu")
           }
         >
           <IconHamburger open={showExpanded || (!isDesktop && drawerOpen)} />
@@ -120,71 +92,78 @@ export function Sidebar() {
         <HouseholdSwitcher collapsed={!showExpanded} />
       </div>
 
-      <nav className="tori-sidebar__nav" aria-label="Primary">
+      <nav className="tori-sidebar__nav" aria-label={t("nav.primary")}>
         <ul className="tori-sidebar__list">
-          {MAIN_NAV.map(({ to, label, icon: Icon }) => (
-            <li key={to}>
-              <NavLink
-                to={to}
-                className={({ isActive }) =>
-                  `tori-sidebar__link${isActive ? " is-active" : ""}`
-                }
-                title={!showExpanded ? label : undefined}
-                aria-label={label}
-                onClick={handleLinkClick}
-              >
-                <span className="tori-sidebar__link-icon">
-                  <Icon />
-                </span>
-                {showExpanded ? <span className="tori-sidebar__link-label">{label}</span> : null}
-              </NavLink>
-            </li>
-          ))}
+          {MAIN_NAV.map(({ to, labelKey, icon: Icon }) => {
+            const label = t(labelKey);
+            return (
+              <li key={to}>
+                <NavLink
+                  to={to}
+                  className={({ isActive }) =>
+                    `tori-sidebar__link${isActive ? " is-active" : ""}`
+                  }
+                  title={!showExpanded ? label : undefined}
+                  aria-label={label}
+                  onClick={handleLinkClick}
+                >
+                  <span className="tori-sidebar__link-icon">
+                    <Icon />
+                  </span>
+                  {showExpanded ? <span className="tori-sidebar__link-label">{label}</span> : null}
+                </NavLink>
+              </li>
+            );
+          })}
         </ul>
 
         <ul className="tori-sidebar__list tori-sidebar__list--meta">
-          {META_NAV.map(({ to, label, icon: Icon }) => (
-            <li key={to}>
-              <NavLink
-                to={to}
-                className={({ isActive }) =>
-                  `tori-sidebar__link${isActive ? " is-active" : ""}`
-                }
-                title={!showExpanded ? label : undefined}
-                aria-label={label}
-                onClick={handleLinkClick}
-              >
-                <span className="tori-sidebar__link-icon">
-                  <Icon />
-                </span>
-                {showExpanded ? <span className="tori-sidebar__link-label">{label}</span> : null}
-              </NavLink>
-            </li>
-          ))}
+          {META_NAV.map(({ to, labelKey, icon: Icon }) => {
+            const label = t(labelKey);
+            return (
+              <li key={to}>
+                <NavLink
+                  to={to}
+                  className={({ isActive }) =>
+                    `tori-sidebar__link${isActive ? " is-active" : ""}`
+                  }
+                  title={!showExpanded ? label : undefined}
+                  aria-label={label}
+                  onClick={handleLinkClick}
+                >
+                  <span className="tori-sidebar__link-icon">
+                    <Icon />
+                  </span>
+                  {showExpanded ? <span className="tori-sidebar__link-label">{label}</span> : null}
+                </NavLink>
+              </li>
+            );
+          })}
         </ul>
       </nav>
 
       <div className="tori-sidebar__footer">
-        <div className="tori-sidebar__tools">
-          <ThemeToggle variant="header" />
-          <button
-            type="button"
-            className="tori-sidebar__logout"
-            onClick={onLogout}
-            title="Log out"
-            aria-label="Log out"
-          >
-            <IconLogout />
-            {showExpanded ? <span>Log out</span> : null}
-          </button>
-        </div>
-        <div className="tori-sidebar__user">
-          <span className="tori-sidebar__avatar" aria-hidden>
-            <IconUser />
-          </span>
-          {showExpanded ? (
-            <span className="tori-sidebar__user-name">{user?.displayName ?? "Signed in"}</span>
-          ) : null}
+        <div className="tori-sidebar__account">
+          <div className="tori-sidebar__user">
+            <span className="tori-sidebar__avatar" aria-hidden>
+              <IconUser />
+            </span>
+            {showExpanded ? (
+              <span className="tori-sidebar__user-name">{user?.displayName ?? t("nav.signedIn")}</span>
+            ) : null}
+          </div>
+          <div className="tori-sidebar__tools">
+            <ChromeToggles variant={showExpanded ? "header" : "compact"} />
+            <button
+              type="button"
+              className="tori-sidebar__logout"
+              onClick={onLogout}
+              title={t("nav.logOut")}
+              aria-label={t("nav.logOut")}
+            >
+              <IconLogout />
+            </button>
+          </div>
         </div>
       </div>
     </aside>

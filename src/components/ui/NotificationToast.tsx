@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useToastStore, type ToastItem as ToastItemData } from "../../store/toastStore";
 import "./NotificationToast.scss";
 
@@ -21,6 +22,7 @@ function CloseIcon() {
 }
 
 function ToastCard({ item, onClose }: { item: ToastItemData; onClose: () => void }) {
+  const { t } = useTranslation();
   const [exiting, setExiting] = useState(false);
   const onCloseRef = useRef(onClose);
   const exitingRef = useRef(false);
@@ -77,7 +79,7 @@ function ToastCard({ item, onClose }: { item: ToastItemData; onClose: () => void
           ) : null}
         </div>
       </div>
-      <button type="button" className="notification-toast__close" onClick={dismiss} aria-label="Dismiss">
+      <button type="button" className="notification-toast__close" onClick={dismiss} aria-label={t("common.dismiss")}>
         <CloseIcon />
       </button>
     </div>
@@ -85,13 +87,14 @@ function ToastCard({ item, onClose }: { item: ToastItemData; onClose: () => void
 }
 
 export function NotificationToastContainer() {
+  const { t } = useTranslation();
   const items = useToastStore((s) => s.items);
   const remove = useToastStore((s) => s.remove);
 
   if (items.length === 0) return null;
 
   return (
-    <div className="notification-toast-container" role="region" aria-label="Notifications">
+    <div className="notification-toast-container" role="region" aria-label={t("common.notifications")}>
       {items.map((item) => (
         <ToastCard key={item.id} item={item} onClose={() => remove(item.id)} />
       ))}

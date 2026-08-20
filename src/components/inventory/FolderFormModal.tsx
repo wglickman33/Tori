@@ -1,6 +1,8 @@
 import { useEffect, useState, type FormEvent } from "react";
+import { useTranslation } from "react-i18next";
 import { FOLDER_CATEGORIES } from "../../constants/inventory";
 import type { Folder, FolderInput } from "../../api/client";
+import { translateError } from "../../i18n/apiErrors";
 import { Banner } from "../ui/Banner";
 import { Button } from "../ui/Button";
 import { Modal } from "../ui/Modal";
@@ -15,6 +17,7 @@ interface FolderFormModalProps {
 }
 
 export function FolderFormModal({ isOpen, folder, onClose, onSubmit }: FolderFormModalProps) {
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const [category, setCategory] = useState<string>(FOLDER_CATEGORIES[0]);
   const [customCategory, setCustomCategory] = useState("");
@@ -37,11 +40,11 @@ export function FolderFormModal({ isOpen, folder, onClose, onSubmit }: FolderFor
     setError(null);
     const resolvedCategory = category === "Custom" ? customCategory.trim() : category;
     if (!name.trim()) {
-      setError("Folder name is required");
+      setError(t("errors.folderNameRequired"));
       return;
     }
     if (!resolvedCategory) {
-      setError("Category is required");
+      setError(t("errors.categoryRequired"));
       return;
     }
     setLoading(true);
@@ -53,46 +56,56 @@ export function FolderFormModal({ isOpen, folder, onClose, onSubmit }: FolderFor
       });
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not save folder");
+      const raw = err instanceof Error ? err.message : t("errors.couldNotSaveFolder");
+      setError(translateError(raw, t));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Modal title={folder ? "Edit folder" : "Add folder"} isOpen={isOpen} onClose={onClose}>
+    <Modal
+      title={folder ? t("inventory.editFolder") : t("inventory.addFolder")}
+      isOpen={isOpen}
+      onClose={onClose}
+    >
       <form className="inventory-form" onSubmit={handleSubmit} noValidate>
         {error ? <Banner>{error}</Banner> : null}
-        <TextField label="Name" value={name} onChange={(e) => setName(e.target.value)} required />
+        <TextField
+          label={t("inventory.name")}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
         <label className="inventory-form__field">
-          <span>Category</span>
+          <span>{t("inventory.category")}</span>
           <select value={category} onChange={(e) => setCategory(e.target.value)}>
             {FOLDER_CATEGORIES.map((c) => (
               <option key={c} value={c}>
-                {c}
+                {t(`categories.${c}`, { defaultValue: c })}
               </option>
             ))}
           </select>
         </label>
         {category === "Custom" ? (
           <TextField
-            label="Custom category"
+            label={t("inventory.customCategory")}
             value={customCategory}
             onChange={(e) => setCustomCategory(e.target.value)}
           />
         ) : null}
         <TextField
-          label="Creation date"
+          label={t("inventory.creationDate")}
           type="date"
           value={creationDate}
           onChange={(e) => setCreationDate(e.target.value)}
         />
         <div className="inventory-form__actions">
           <Button type="button" variant="ghost" onClick={onClose}>
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button type="submit" disabled={loading}>
-            {loading ? "Saving…" : folder ? "Save changes" : "Add folder"}
+            {loading ? t("common.saving") : folder ? t("inventory.saveChanges") : t("inventory.addFolder")}
           </Button>
         </div>
       </form>

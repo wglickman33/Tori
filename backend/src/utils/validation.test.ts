@@ -18,7 +18,18 @@ describe("validateToriChatBody", () => {
     ).toEqual({
       householdId: HOUSEHOLD_ID,
       messages: [{ role: "user", content: "How should I store rice?" }],
+      locale: "en",
     });
+  });
+
+  it("accepts locale es", () => {
+    expect(
+      validateToriChatBody({
+        householdId: HOUSEHOLD_ID,
+        messages: [{ role: "user", content: "Hola" }],
+        locale: "es",
+      })
+    ).toMatchObject({ locale: "es" });
   });
 
   it("rejects a missing household", () => {

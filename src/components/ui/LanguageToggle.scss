@@ -1,0 +1,61 @@
+@use "../../styles/tokens" as *;
+
+.language-toggle {
+  display: inline-flex;
+  flex-shrink: 0;
+  border-radius: $radius-sm;
+  border: $border-subtle;
+  background: transparent;
+  overflow: hidden;
+  transition: $transition-ui;
+
+  &:hover {
+    border-color: var(--border-hover);
+  }
+
+  button {
+    margin: 0;
+    border: none;
+    background: transparent;
+    color: $text-muted;
+    font-family: $font-ui;
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: $transition-ui;
+
+    &:hover:not(.is-active) {
+      color: var(--heading);
+      background: var(--surface-hover);
+    }
+
+    &.is-active {
+      background: var(--accent-muted);
+      color: var(--heading);
+    }
+  }
+
+  &--header {
+    height: 44px;
+
+    button {
+      min-width: 2.15rem;
+      height: 100%;
+      padding: 0 $space-2;
+    }
+  }
+
+  &--compact {
+    width: 44px;
+    height: 44px;
+    flex-direction: column;
+
+    button {
+      flex: 1;
+      width: 100%;
+      padding: 0;
+      line-height: 1;
+    }
+  }
+}

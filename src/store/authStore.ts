@@ -50,7 +50,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     setTokens(accessToken, refreshToken);
     cacheUser(user);
     set({ user, isSignedIn: true, isLoading: false });
-    void syncThemeFromUser(user.theme);
+    void syncThemeFromUser(user.theme, user.language);
   },
 
   signOut: async () => {
@@ -76,7 +76,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       const user = await authApi.me();
       cacheUser(user);
       set({ user, isSignedIn: true, isLoading: false });
-      await syncThemeFromUser(user.theme);
+      await syncThemeFromUser(user.theme, user.language);
     } catch {
       clearTokens();
       localStorage.removeItem(USER_CACHE_KEY);

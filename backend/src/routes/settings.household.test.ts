@@ -43,6 +43,13 @@ describe("settings + household management", () => {
     expect(themePatched.status).toBe(200);
     expect(themePatched.body.theme).toBe("dark");
 
+    const languagePatched = await request(app)
+      .patch("/api/auth/me")
+      .set("Authorization", `Bearer ${ownerToken}`)
+      .send({ language: "es" });
+    expect(languagePatched.status).toBe(200);
+    expect(languagePatched.body.language).toBe("es");
+
     const passwordMissingCurrent = await request(app)
       .patch("/api/auth/me")
       .set("Authorization", `Bearer ${ownerToken}`)

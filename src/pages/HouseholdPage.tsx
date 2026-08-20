@@ -1,23 +1,20 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { AppShell } from "../components/layout/AppShell";
 import { ConfirmDeleteModal } from "../components/inventory/ConfirmDeleteModal";
 import { Banner } from "../components/ui/Banner";
 import { Button } from "../components/ui/Button";
 import { InviteCodePanel } from "../components/ui/InviteCodePanel";
 import { TextField } from "../components/ui/TextField";
+import { translateError } from "../i18n/apiErrors";
 import { useAuthStore } from "../store/authStore";
 import { useHouseholdStore } from "../store/householdStore";
 import { useInventoryStore } from "../store/inventoryStore";
 import "./HouseholdPage.scss";
 
-function roleLabel(role: string | undefined): string {
-  if (role === "owner") return "Owner";
-  if (role === "member") return "Member";
-  return role ? role : "Member";
-}
-
 export default function HouseholdPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const userId = useAuthStore((s) => s.user?.id);
   const household = useHouseholdStore((s) => s.household);
@@ -36,13 +33,20 @@ export default function HouseholdPage() {
   const [removingId, setRemovingId] = useState<string | null>(null);
   const [leaveOpen, setLeaveOpen] = useState(false);
 
+  const roleLabel = (role: string | undefined): string => {
+    if (role === "owner") return t("common.owner");
+    if (role === "member") return t("common.member");
+    return role ? role : t("common.member");
+  };
+
   useEffect(() => {
     let cancelled = false;
     setMembersLoading(true);
     void loadMembers()
       .catch((err) => {
         if (!cancelled) {
-          setError(err instanceof Error ? err.message : "Could not load members");
+          const raw = err instanceof Error ? err.message : t("errors.couldNotLoadMembers");
+          setError(translateError(raw, t));
         }
       })
       .finally(() => {
@@ -51,7 +55,7 @@ export default function HouseholdPage() {
     return () => {
       cancelled = true;
     };
-  }, [loadMembers, household?.id]);
+  }, [loadMembers, household?.id, t]);
 
   useEffect(() => {
     setName(household?.name ?? "");
@@ -64,7 +68,8 @@ export default function HouseholdPage() {
     try {
       await rename(name.trim());
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not rename household");
+      const raw = err instanceof Error ? err.message : t("errors.couldNotRenameHousehold");
+      setError(translateError(raw, t));
     } finally {
       setSaving(false);
     }
@@ -84,12 +89,12 @@ export default function HouseholdPage() {
       <div className="household-page">
         <header className="household-page__header">
           <div className="household-page__heading">
-            <h1>Household</h1>
-            <p>Invite people, manage roles, and keep one shared inventory.</p>
+            <h1>{t("household.title")}</h1>
+            <p>{t("household.subtitle")}</p>
           </div>
-          <div className="household-page__identity" aria-label="Household summary">
+          <div className="household-page__identity" aria-label={t("household.summary")}>
             <span className="household-page__identity-name">
-              {household?.name ?? "Your household"}
+              {household?.name ?? t("household.yourHousehold")}
             </span>
             <span
               className={`household-page__pill household-page__pill--${
@@ -99,7 +104,7 @@ export default function HouseholdPage() {
               {yourRole}
             </span>
             <span className="household-page__identity-count">
-              {memberCount} member{memberCount === 1 ? "" : "s"}
+              {t("common.memberCount", { count: memberCount })}
             </span>
           </div>
         </header>
@@ -108,30 +113,30 @@ export default function HouseholdPage() {
 
         {household?.role === "owner" ? (
           <section className="household-page__card">
-            <h2>Name</h2>
+            <h2>{t("inventory.name")}</h2>
             <form className="household-page__rename" onSubmit={onRename}>
               <TextField
                 className="household-page__rename-field"
-                label="Household name"
+                label={t("onboarding.householdName")}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
               <Button type="submit" disabled={saving || !name.trim()}>
-                {saving ? "Saving…" : "Save name"}
+                {saving ? t("common.saving") : t("household.saveName")}
               </Button>
             </form>
           </section>
         ) : (
           <section className="household-page__card">
-            <h2>Name</h2>
+            <h2>{t("inventory.name")}</h2>
             <p className="household-page__readonly-name">{household?.name}</p>
-            <p className="household-page__muted">You are a member of this household.</p>
+            <p className="household-page__muted">{t("household.memberOf")}</p>
           </section>
         )}
 
         {household?.role === "owner" && household.inviteCode ? (
           <section className="household-page__card">
-            <h2>Invite code</h2>
+            <h2>{t("household.invite")}</h2>
             <InviteCodePanel
               embedded
               inviteCode={household.inviteCode}
@@ -140,9 +145,9 @@ export default function HouseholdPage() {
                 try {
                   await regenerateCode();
                 } catch (err) {
-                  setError(
-                    err instanceof Error ? err.message : "Could not regenerate invite code"
-                  );
+                  const raw =
+                    err instanceof Error ? err.message : t("errors.couldNotRegenerate");
+                  setError(translateError(raw, t));
                   throw err;
                 }
               }}
@@ -151,11 +156,11 @@ export default function HouseholdPage() {
         ) : null}
 
         <section className="household-page__card">
-          <h2>Members ({memberCount})</h2>
+          <h2>{t("household.membersTitle", { count: memberCount })}</h2>
           {membersLoading ? (
-            <p className="household-page__muted">Loading members…</p>
+            <p className="household-page__muted">{t("household.loadingMembers")}</p>
           ) : members.length === 0 ? (
-            <p className="household-page__muted">No members loaded yet.</p>
+            <p className="household-page__muted">{t("household.noMembers")}</p>
           ) : (
             <ul className="household-page__members">
               {members.map((member) => {
@@ -165,7 +170,11 @@ export default function HouseholdPage() {
                     <div className="household-page__member-main">
                       <div className="household-page__member-top">
                         <strong className="household-page__member-name">{member.displayName}</strong>
-                        {isYou ? <span className="household-page__pill household-page__pill--you">You</span> : null}
+                        {isYou ? (
+                          <span className="household-page__pill household-page__pill--you">
+                            {t("household.you")}
+                          </span>
+                        ) : null}
                         <span
                           className={`household-page__pill household-page__pill--${
                             member.role === "owner" ? "owner" : "member"
@@ -183,7 +192,7 @@ export default function HouseholdPage() {
                         className="household-page__remove"
                         onClick={() => setRemovingId(member.userId)}
                       >
-                        Remove
+                        {t("household.removeMember")}
                       </Button>
                     ) : null}
                   </li>
@@ -194,22 +203,22 @@ export default function HouseholdPage() {
         </section>
 
         <section className="household-page__card household-page__card--danger">
-          <h2>{household?.role === "owner" ? "Dissolve household" : "Leave household"}</h2>
+          <h2>
+            {household?.role === "owner" ? t("household.dissolve") : t("household.leave")}
+          </h2>
           <p className="household-page__muted">
-            {household?.role === "owner"
-              ? "If you are the only member, leaving deletes this household and its inventory. With other members, remove them first."
-              : "You will lose access to this shared inventory until invited again."}
+            {household?.role === "owner" ? t("household.dissolveCopy") : t("household.leaveCopy")}
           </p>
           <Button type="button" variant="secondary" onClick={() => setLeaveOpen(true)}>
-            {household?.role === "owner" ? "Leave / dissolve" : "Leave household"}
+            {household?.role === "owner" ? t("household.leaveDissolve") : t("household.leave")}
           </Button>
         </section>
       </div>
 
       <ConfirmDeleteModal
         isOpen={!!removingId}
-        title="Remove member"
-        message="They will lose access to this household inventory immediately."
+        title={t("household.removeTitle")}
+        message={t("household.removeMessage")}
         onClose={() => setRemovingId(null)}
         onConfirm={async () => {
           if (!removingId) return;
@@ -219,12 +228,12 @@ export default function HouseholdPage() {
 
       <ConfirmDeleteModal
         isOpen={leaveOpen}
-        title="Leave household"
-        confirmLabel="Leave"
+        title={t("household.leaveTitle")}
+        confirmLabel={t("household.leaveAction")}
         message={
           household?.role === "owner"
-            ? "If you are the only member, this permanently deletes the household and all inventory."
-            : "You will leave this household and lose access until invited again."
+            ? t("household.leaveConfirmOwner")
+            : t("household.leaveConfirmMember")
         }
         onClose={() => setLeaveOpen(false)}
         onConfirm={async () => {

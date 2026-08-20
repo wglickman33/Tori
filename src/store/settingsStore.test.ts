@@ -22,7 +22,7 @@ describe("settingsStore", () => {
   beforeEach(async () => {
     localStorage.clear();
     document.documentElement.removeAttribute("data-theme");
-    useSettingsStore.setState({ theme: "auto", effectiveTheme: "light" });
+    useSettingsStore.setState({ theme: "auto", language: "en", effectiveTheme: "light" });
     vi.clearAllMocks();
     const { getAccessToken } = await import("../api/client");
     vi.mocked(getAccessToken).mockReturnValue("access");
@@ -50,7 +50,7 @@ describe("settingsStore", () => {
     const { authApi } = await import("../api/client");
     useSettingsStore.getState().setTheme("dark");
     await useSettingsStore.getState().savePreferences();
-    expect(authApi.updateProfile).toHaveBeenCalledWith({ theme: "dark" });
+    expect(authApi.updateProfile).toHaveBeenCalledWith({ theme: "dark", language: "en" });
   });
 
   it("savePreferences skips API when not signed in", async () => {
@@ -58,5 +58,13 @@ describe("settingsStore", () => {
     vi.mocked(getAccessToken).mockReturnValue(null);
     await useSettingsStore.getState().savePreferences();
     expect(authApi.updateProfile).not.toHaveBeenCalled();
+  });
+
+  it("setLanguage updates html lang", () => {
+    useSettingsStore.getState().setLanguage("es");
+    expect(useSettingsStore.getState().language).toBe("es");
+    expect(document.documentElement.lang).toBe("es");
+    useSettingsStore.getState().setLanguage("en");
+    expect(document.documentElement.lang).toBe("en");
   });
 });

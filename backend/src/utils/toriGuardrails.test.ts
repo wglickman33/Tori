@@ -7,6 +7,9 @@ describe("isToriOffTopic", () => {
     expect(isToriOffTopic("How do I file my taxes?")).toBe(true);
     expect(isToriOffTopic("What is the current US president?")).toBe(true);
     expect(isToriOffTopic("Write me a python script")).toBe(true);
+    expect(isToriOffTopic("¿Quién fue el último presidente?")).toBe(true);
+    expect(isToriOffTopic("¿Cómo presento mis impuestos?")).toBe(true);
+    expect(isToriOffTopic("Escríbeme un script en python")).toBe(true);
   });
 
   it("allows inventory, expiry, locations, and storage questions", () => {
@@ -14,5 +17,7 @@ describe("isToriOffTopic", () => {
     expect(isToriOffTopic("Where is the extra paper towels?")).toBe(false);
     expect(isToriOffTopic("How should I store milk?")).toBe(false);
     expect(isToriOffTopic("What's in the fridge?")).toBe(false);
+    expect(isToriOffTopic("¿Qué se vence esta semana?")).toBe(false);
+    expect(isToriOffTopic("¿Qué hay en el refrigerador?")).toBe(false);
   });
 });

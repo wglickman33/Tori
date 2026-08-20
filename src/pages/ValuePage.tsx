@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { AppShell } from "../components/layout/AppShell";
 import { InventoryTransferBar } from "../components/inventory/InventoryTransferBar";
 import { useEnsureInventory } from "../hooks/useEnsureInventory";
@@ -42,6 +43,7 @@ function compareRows(a: ValueItemRow, b: ValueItemRow, key: SortKey, dir: 1 | -1
 
 export default function ValuePage() {
   useEnsureInventory();
+  const { t } = useTranslation();
   const household = useHouseholdStore((s) => s.household);
   const folders = useInventoryStore((s) => s.folders);
   const items = useInventoryStore((s) => s.items);
@@ -86,10 +88,11 @@ export default function ValuePage() {
       <div className="value-page">
         <header className="value-page__header">
           <div className="value-page__heading">
-            <h1 className="value-page__title">Value</h1>
+            <h1 className="value-page__title">{t("value.title")}</h1>
             <p className="value-page__subtitle">
-              Recorded inventory worth for {household?.name ?? "your household"}. Each line is unit
-              price × quantity; items without a price are left out of the total.
+              {household?.name
+                ? t("value.subtitleNamed", { name: household.name })
+                : t("value.subtitle")}
             </p>
           </div>
           <InventoryTransferBar
@@ -100,59 +103,59 @@ export default function ValuePage() {
           />
         </header>
 
-        {isLoading ? <p className="value-page__status">Loading value…</p> : null}
+        {isLoading ? <p className="value-page__status">{t("value.loading")}</p> : null}
 
         {!isLoading && items.length === 0 ? (
           <div className="value-page__empty">
-            <p>No items yet. Add inventory to track recorded value.</p>
+            <p>{t("value.empty")}</p>
             <Link to="/inventory" className="value-page__empty-link">
-              Go to Inventory
+              {t("value.goInventory")}
             </Link>
           </div>
         ) : null}
 
         {items.length > 0 ? (
           <>
-            <section className="value-hero" aria-label="Value summary">
+            <section className="value-hero" aria-label={t("value.summary")}>
               <div className="value-hero__card value-hero__card--primary">
-                <span className="value-hero__label">Total recorded value</span>
+                <span className="value-hero__label">{t("value.totalRecorded")}</span>
                 <span className="value-hero__value">
-                  {coverage.pricedCount > 0 ? formatMoney(coverage.totalValue) : "-"}
+                  {coverage.pricedCount > 0 ? formatMoney(coverage.totalValue) : t("common.dash")}
                 </span>
-                <span className="value-hero__hint">Unit price × quantity for priced items</span>
+                <span className="value-hero__hint">{t("value.totalHint")}</span>
               </div>
               <div className="value-hero__card">
-                <span className="value-hero__label">Price coverage</span>
+                <span className="value-hero__label">{t("value.priceCoverage")}</span>
                 <span className="value-hero__value">{formatPercent(coverage.pricedShare)}</span>
                 <span className="value-hero__hint">
-                  {coverage.pricedCount} of {coverage.itemCount} items priced
+                  {t("value.pricedOf", { priced: coverage.pricedCount, total: coverage.itemCount })}
                 </span>
               </div>
               <div className="value-hero__card">
-                <span className="value-hero__label">Missing price</span>
+                <span className="value-hero__label">{t("value.missingPrice")}</span>
                 <span className="value-hero__value">{coverage.missingPriceCount}</span>
-                <span className="value-hero__hint">These don’t count toward the total</span>
+                <span className="value-hero__hint">{t("value.missingHint")}</span>
               </div>
             </section>
 
             <div className="value-page__split">
-              <BreakdownPanel title="By folder" rows={summary.byFolder} />
-              <BreakdownPanel title="By category" rows={summary.byCategory} />
-              <BreakdownPanel title="By location" rows={summary.byLocation} />
+              <BreakdownPanel title={t("value.byFolder")} rows={summary.byFolder} />
+              <BreakdownPanel title={t("value.byCategory")} rows={summary.byCategory} />
+              <BreakdownPanel title={t("value.byLocation")} rows={summary.byLocation} />
             </div>
 
             <section className="value-table-panel" aria-labelledby="value-table-title">
               <div className="value-table-panel__header">
                 <h2 id="value-table-title" className="value-table-panel__title">
-                  Items
+                  {t("value.items")}
                 </h2>
                 <div className="value-table-panel__filters">
-                  <div className="value-table-panel__seg" role="group" aria-label="Price filter">
+                  <div className="value-table-panel__seg" role="group" aria-label={t("value.priceFilter")}>
                     {(
                       [
-                        ["all", "All"],
-                        ["priced", "Priced"],
-                        ["missing", "Missing"],
+                        ["all", t("common.all")],
+                        ["priced", t("value.priced")],
+                        ["missing", t("value.missing")],
                       ] as const
                     ).map(([value, label]) => (
                       <button
@@ -166,14 +169,14 @@ export default function ValuePage() {
                     ))}
                   </div>
                   <label className="value-table-panel__folder">
-                    <span className="value-table-panel__folder-label">Folder</span>
+                    <span className="value-table-panel__folder-label">{t("inventory.folder")}</span>
                     <select
                       value={folderFilter}
                       onChange={(e) => setFolderFilter(e.target.value)}
-                      aria-label="Filter by folder"
+                      aria-label={t("value.filterByFolder")}
                     >
-                      <option value="all">All folders</option>
-                      <option value="__independent__">Independent</option>
+                      <option value="all">{t("value.allFolders")}</option>
+                      <option value="__independent__">{t("inventory.independentLabel")}</option>
                       {folders.map((folder) => (
                         <option key={folder.id} value={folder.id}>
                           {folder.name}
@@ -185,7 +188,7 @@ export default function ValuePage() {
               </div>
 
               {filteredRows.length === 0 ? (
-                <p className="value-page__status">No items match these filters.</p>
+                <p className="value-page__status">{t("value.noMatch")}</p>
               ) : (
                 <div className="value-table-wrap">
                   <table className="value-table">
@@ -193,27 +196,32 @@ export default function ValuePage() {
                       <tr>
                         <th>
                           <button type="button" onClick={() => toggleSort("name")}>
-                            Item{sortMark("name")}
+                            {t("value.colItem")}
+                            {sortMark("name")}
                           </button>
                         </th>
                         <th>
                           <button type="button" onClick={() => toggleSort("folder")}>
-                            Folder{sortMark("folder")}
+                            {t("value.colFolder")}
+                            {sortMark("folder")}
                           </button>
                         </th>
                         <th>
                           <button type="button" onClick={() => toggleSort("quantity")}>
-                            Qty{sortMark("quantity")}
+                            {t("value.colQty")}
+                            {sortMark("quantity")}
                           </button>
                         </th>
                         <th>
                           <button type="button" onClick={() => toggleSort("price")}>
-                            Unit price{sortMark("price")}
+                            {t("value.colUnitPrice")}
+                            {sortMark("price")}
                           </button>
                         </th>
                         <th>
                           <button type="button" onClick={() => toggleSort("value")}>
-                            Value{sortMark("value")}
+                            {t("value.colValue")}
+                            {sortMark("value")}
                           </button>
                         </th>
                       </tr>
@@ -227,10 +235,10 @@ export default function ValuePage() {
                           <td>{row.folderName}</td>
                           <td>{row.quantity}</td>
                           <td className={row.price === null ? "value-table__missing" : undefined}>
-                            {row.price === null ? "-" : formatMoney(row.price)}
+                            {row.price === null ? t("common.dash") : formatMoney(row.price)}
                           </td>
                           <td className={row.lineValue === null ? "value-table__missing" : undefined}>
-                            {row.lineValue === null ? "-" : formatMoney(row.lineValue)}
+                            {row.lineValue === null ? t("common.dash") : formatMoney(row.lineValue)}
                           </td>
                         </tr>
                       ))}
@@ -253,11 +261,12 @@ function BreakdownPanel({
   title: string;
   rows: { key: string; label: string; itemCount: number; totalValue: number; share: number }[];
 }) {
+  const { t } = useTranslation();
   return (
     <section className="value-breakdown" aria-label={title}>
       <h2 className="value-breakdown__title">{title}</h2>
       {rows.length === 0 ? (
-        <p className="value-breakdown__empty">No priced items yet.</p>
+        <p className="value-breakdown__empty">{t("value.noPriced")}</p>
       ) : (
         <ul className="value-breakdown__list">
           {rows.map((row) => (

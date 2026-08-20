@@ -60,12 +60,26 @@ describe("inventoryTransfer", () => {
 
   it("builds and parses csv", () => {
     const csv = inventoryToCsv(folders, items);
-    expect(csv).toContain("name,folder,location");
+    expect(csv).toContain("Name,Folder,Location");
     expect(csv).toContain("Oats,Pantry,Pantry");
     const parsed = parseInventoryCsv(csv);
     expect(parsed.items).toHaveLength(2);
     expect(parsed.folders.map((f) => f.name)).toContain("Pantry");
     expect(parsed.items.find((i) => i.name === "Flashlight")?.folderName).toBeNull();
+  });
+
+  it("round-trips spanish csv headers", async () => {
+    const i18n = (await import("../i18n")).default;
+    await i18n.changeLanguage("es");
+    try {
+      const csv = inventoryToCsv(folders, items);
+      expect(csv).toContain("Nombre,Carpeta,Ubicación");
+      const parsed = parseInventoryCsv(csv);
+      expect(parsed.items).toHaveLength(2);
+      expect(parsed.items.find((i) => i.name === "Flashlight")?.folderName).toBeNull();
+    } finally {
+      await i18n.changeLanguage("en");
+    }
   });
 
   it("parses quoted csv fields", () => {

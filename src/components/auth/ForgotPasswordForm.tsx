@@ -1,22 +1,25 @@
 import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { authApi } from "../../api/client";
+import { translateError } from "../../i18n/apiErrors";
 import { Banner } from "../ui/Banner";
 import { Button } from "../ui/Button";
 import { TextField } from "../ui/TextField";
 import "./ForgotPasswordForm.scss";
 
-const schema = z.object({
-  email: z.string().email("Enter a valid email"),
-});
-
 export function ForgotPasswordForm() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [apiError, setApiError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const schema = z.object({
+    email: z.string().email(t("auth.validEmail")),
+  });
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -36,9 +39,10 @@ export function ForgotPasswordForm() {
     setLoading(true);
     try {
       const res = await authApi.forgotPassword(parsed.data.email);
-      setMessage(res.message);
+      setMessage(translateError(res.message, t));
     } catch (err) {
-      setApiError(err instanceof Error ? err.message : "Could not send reset email");
+      const raw = err instanceof Error ? err.message : t("auth.couldNotSendReset");
+      setApiError(translateError(raw, t));
     } finally {
       setLoading(false);
     }
@@ -46,14 +50,12 @@ export function ForgotPasswordForm() {
 
   return (
     <form className="forgot-password-form" onSubmit={onSubmit} noValidate>
-      <h1 className="forgot-password-form__title">Forgot password</h1>
-      <p className="forgot-password-form__subtitle">
-        Enter your email and we will send a reset link if an account exists.
-      </p>
+      <h1 className="forgot-password-form__title">{t("auth.forgotTitle")}</h1>
+      <p className="forgot-password-form__subtitle">{t("auth.forgotCopy")}</p>
       {apiError ? <Banner>{apiError}</Banner> : null}
       {message ? <Banner tone="success">{message}</Banner> : null}
       <TextField
-        label="Email"
+        label={t("auth.email")}
         name="email"
         type="email"
         autoComplete="email"
@@ -62,10 +64,10 @@ export function ForgotPasswordForm() {
         error={errors.email}
       />
       <Button type="submit" disabled={loading}>
-        {loading ? "Sending…" : "Send reset link"}
+        {loading ? t("auth.sending") : t("auth.sendReset")}
       </Button>
       <p className="forgot-password-form__footer">
-        <Link to="/login">Back to log in</Link>
+        <Link to="/login">{t("auth.backToLogin")}</Link>
       </p>
     </form>
   );

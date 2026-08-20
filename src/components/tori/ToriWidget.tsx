@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useHouseholdStore } from "../../store/householdStore";
 import { useToriStore } from "../../store/toriStore";
 import { IconToriAi } from "../ui/SidebarIcons";
@@ -7,6 +8,7 @@ import { ToriChatPane } from "./ToriChatPane";
 import "./ToriWidget.scss";
 
 export function ToriWidget() {
+  const { t } = useTranslation();
   const location = useLocation();
   const widgetOpen = useToriStore((s) => s.widgetOpen);
   const closeWidget = useToriStore((s) => s.closeWidget);
@@ -32,11 +34,11 @@ export function ToriWidget() {
             <IconToriAi />
           </span>
           <div>
-            <h2 id="tori-widget-title">Tori AI</h2>
-            <p>Household assistant</p>
+            <h2 id="tori-widget-title">{t("ai.title")}</h2>
+            <p>{t("ai.householdAssistant")}</p>
           </div>
         </div>
-        <button type="button" className="tori-widget__close" onClick={closeWidget} aria-label="Close Tori AI">
+        <button type="button" className="tori-widget__close" onClick={closeWidget} aria-label={t("ai.close")}>
           <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden>
             <path
               d="M6 6l12 12M18 6L6 18"
@@ -53,17 +55,17 @@ export function ToriWidget() {
         <ToriChatPane variant="widget" inputId="tori-widget-message" />
       ) : (
         <div className="tori-widget__guest">
-          <p>Join a household to chat with Tori AI.</p>
-          <p>Inventory, expiry, and locations stay private to your household.</p>
+          <p>{t("ai.joinToChat")}</p>
+          <p>{t("ai.privacy")}</p>
           <Link to="/onboarding" className="tori-widget__cta" onClick={closeWidget}>
-            Set up household
+            {t("ai.setUpHousehold")}
           </Link>
         </div>
       )}
 
       <footer className="tori-widget__footer">
         <Link to="/ai" className="tori-widget__full" onClick={closeWidget}>
-          Open full view
+          {t("ai.openFullView")}
         </Link>
       </footer>
     </section>

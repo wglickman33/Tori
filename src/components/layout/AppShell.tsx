@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import { BP_DESKTOP, BP_TABLET } from "../../constants/breakpoints";
 import { useWindowWidth } from "../../hooks/useWindowWidth";
 import { useSidebarStore } from "../../store/sidebarStore";
@@ -11,6 +12,7 @@ import { Sidebar } from "./Sidebar";
 import "./AppShell.scss";
 
 export function AppShell({ children }: { children: ReactNode }) {
+  const { t } = useTranslation();
   const width = useWindowWidth();
   const expanded = useSidebarStore((s) => s.expanded);
   const drawerOpen = useSidebarStore((s) => s.drawerOpen);
@@ -39,7 +41,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <button
           type="button"
           className="app-shell__backdrop"
-          aria-label="Close menu"
+          aria-label={t("nav.closeMenu")}
           onClick={closeDrawer}
         />
       ) : null}

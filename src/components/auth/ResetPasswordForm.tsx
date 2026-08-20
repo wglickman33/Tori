@@ -1,23 +1,16 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { authApi } from "../../api/client";
+import { translateError } from "../../i18n/apiErrors";
 import { Banner } from "../ui/Banner";
 import { Button } from "../ui/Button";
 import { TextField } from "../ui/TextField";
 import "./ResetPasswordForm.scss";
 
-const schema = z
-  .object({
-    newPassword: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z.string().min(1, "Confirm your password"),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
-
 export function ResetPasswordForm() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const token = params.get("token") ?? "";
@@ -28,11 +21,21 @@ export function ResetPasswordForm() {
   const [apiError, setApiError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const schema = z
+    .object({
+      newPassword: z.string().min(8, t("auth.passwordMin")),
+      confirmPassword: z.string().min(1, t("auth.confirmYourPassword")),
+    })
+    .refine((data) => data.newPassword === data.confirmPassword, {
+      message: t("auth.passwordsMatch"),
+      path: ["confirmPassword"],
+    });
+
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setApiError(null);
     if (!token) {
-      setApiError("This reset link is missing a token. Request a new one from the login page.");
+      setApiError(t("auth.missingResetToken"));
       return;
     }
     const parsed = schema.safeParse({ newPassword, confirmPassword });
@@ -51,7 +54,8 @@ export function ResetPasswordForm() {
       await authApi.resetPassword(token, parsed.data.newPassword);
       navigate("/login", { replace: true, state: { passwordReset: true } });
     } catch (err) {
-      setApiError(err instanceof Error ? err.message : "Could not reset password");
+      const raw = err instanceof Error ? err.message : t("auth.couldNotReset");
+      setApiError(translateError(raw, t));
     } finally {
       setLoading(false);
     }
@@ -59,11 +63,11 @@ export function ResetPasswordForm() {
 
   return (
     <form className="reset-password-form" onSubmit={onSubmit} noValidate>
-      <h1 className="reset-password-form__title">Set a new password</h1>
-      <p className="reset-password-form__subtitle">Choose a new password for your Tori account.</p>
+      <h1 className="reset-password-form__title">{t("auth.setNewPassword")}</h1>
+      <p className="reset-password-form__subtitle">{t("auth.resetCopy")}</p>
       {apiError ? <Banner>{apiError}</Banner> : null}
       <TextField
-        label="New password"
+        label={t("auth.newPassword")}
         name="newPassword"
         type="password"
         autoComplete="new-password"
@@ -72,7 +76,7 @@ export function ResetPasswordForm() {
         error={errors.newPassword}
       />
       <TextField
-        label="Confirm password"
+        label={t("auth.confirmPassword")}
         name="confirmPassword"
         type="password"
         autoComplete="new-password"
@@ -81,12 +85,12 @@ export function ResetPasswordForm() {
         error={errors.confirmPassword}
       />
       <Button type="submit" disabled={loading}>
-        {loading ? "Updating…" : "Update password"}
+        {loading ? t("auth.updating") : t("auth.resetButton")}
       </Button>
       <p className="reset-password-form__footer">
-        <Link to="/forgot-password">Request a new link</Link>
+        <Link to="/forgot-password">{t("auth.requestNewLink")}</Link>
         {" · "}
-        <Link to="/login">Back to log in</Link>
+        <Link to="/login">{t("auth.backToLogin")}</Link>
       </p>
     </form>
   );

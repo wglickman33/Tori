@@ -1,22 +1,10 @@
+import i18n from "../i18n";
 import { formatMoney } from "./inventoryValue";
 
-export const TORI_TOOL_LABELS: Record<string, string> = {
-  search_items: "Searching inventory",
-  get_item: "Reading item",
-  get_expiring: "Checking what's expiring",
-  list_locations: "Listing locations",
-  items_in_location: "Listing items in a location",
-  list_tags: "Listing tags",
-  items_with_tag: "Listing tagged items",
-  get_inventory_value: "Checking recorded value",
-  list_folders: "Listing folders",
-  propose_add_item: "Proposing an add",
-  propose_update_item: "Proposing an update",
-  propose_delete_item: "Proposing a delete",
-};
-
 export function toriToolLabel(name: string): string {
-  return TORI_TOOL_LABELS[name] ?? name.replaceAll("_", " ");
+  const key = `trace.${name}`;
+  const translated = i18n.t(key);
+  return translated === key ? name.replaceAll("_", " ") : translated;
 }
 
 function asRecord(value: unknown): Record<string, unknown> | null {
@@ -30,19 +18,15 @@ function itemName(value: unknown): string {
   return typeof name === "string" ? name.trim() : "";
 }
 
-function countLabel(count: number, singular: string, plural: string): string {
-  return count === 1 ? `1 ${singular}` : `${count} ${plural}`;
-}
-
 export function summarizeToriInput(name: string, input: unknown): string {
   const rec = asRecord(input);
   if (!rec) return "";
   if (name === "search_items" && typeof rec.query === "string") return rec.query.trim();
-  if (name === "get_item") return "Saved item";
+  if (name === "get_item") return i18n.t("trace.savedItem");
   if (name === "get_expiring") {
     const days = typeof rec.within_days === "number" ? rec.within_days : 7;
-    if (days === 0) return "Today and overdue";
-    return `Next ${days} days`;
+    if (days === 0) return i18n.t("trace.todayOverdue");
+    return i18n.t("trace.nextDays", { count: days });
   }
   if (name === "items_in_location" && typeof rec.location === "string") return rec.location.trim();
   if (name === "items_with_tag" && typeof rec.tag === "string") return rec.tag.trim();
@@ -58,65 +42,68 @@ export function summarizeToriOutput(name: string, output: unknown): string {
 
   if (name === "search_items") {
     const count = typeof rec.count === "number" ? rec.count : 0;
-    if (count <= 0) return "No matching items";
-    return `Found ${countLabel(count, "item", "items")}`;
+    if (count <= 0) return i18n.t("trace.noMatching");
+    return i18n.t("trace.foundItems", { count });
   }
 
   if (name === "get_item") {
     const named = itemName(rec.item);
-    return named || "Item";
+    return named || i18n.t("trace.item");
   }
 
   if (name === "get_expiring") {
     const count = typeof rec.count === "number" ? rec.count : 0;
-    if (count <= 0) return "Nothing expiring in that window";
-    return countLabel(count, "expiring item", "expiring items");
+    if (count <= 0) return i18n.t("trace.nothingExpiring");
+    return i18n.t("trace.expiringItem", { count });
   }
 
   if (name === "list_locations") {
     const count = typeof rec.count === "number" ? rec.count : 0;
-    return countLabel(count, "location", "locations");
+    return i18n.t("trace.location", { count });
   }
 
   if (name === "items_in_location") {
     const count = typeof rec.count === "number" ? rec.count : 0;
-    const location = typeof rec.location === "string" && rec.location.trim() ? rec.location.trim() : "that location";
-    if (count <= 0) return `No items in ${location}`;
-    return `${countLabel(count, "item", "items")} in ${location}`;
+    const location =
+      typeof rec.location === "string" && rec.location.trim()
+        ? rec.location.trim()
+        : i18n.t("trace.thatLocation");
+    if (count <= 0) return i18n.t("trace.noItemsIn", { location });
+    return i18n.t("trace.itemsIn", { count, location });
   }
 
   if (name === "list_tags") {
     const count = typeof rec.count === "number" ? rec.count : 0;
-    return countLabel(count, "tag", "tags");
+    return i18n.t("trace.tag", { count });
   }
 
   if (name === "items_with_tag") {
     const count = typeof rec.count === "number" ? rec.count : 0;
-    const tag = typeof rec.tag === "string" && rec.tag.trim() ? rec.tag.trim() : "that tag";
-    if (count <= 0) return `No items tagged ${tag}`;
-    return `${countLabel(count, "item", "items")} tagged ${tag}`;
+    const tag =
+      typeof rec.tag === "string" && rec.tag.trim() ? rec.tag.trim() : i18n.t("trace.thatTag");
+    if (count <= 0) return i18n.t("trace.noItemsTagged", { tag });
+    return i18n.t("trace.itemsTagged", { count, tag });
   }
 
   if (name === "get_inventory_value") {
     const pricedCount = typeof rec.pricedCount === "number" ? rec.pricedCount : 0;
-    if (pricedCount <= 0) return "No recorded prices";
+    if (pricedCount <= 0) return i18n.t("trace.noPrices");
     const total = typeof rec.totalValue === "number" ? rec.totalValue : 0;
-    return `Recorded total ${formatMoney(total)} from ${countLabel(pricedCount, "priced item", "priced items")}`;
+    return i18n.t("trace.recordedTotal", { total: formatMoney(total), count: pricedCount });
   }
 
   if (name === "list_folders") {
     const count = typeof rec.count === "number" ? rec.count : 0;
-    return countLabel(count, "folder", "folders");
+    return i18n.t("trace.folder", { count });
   }
 
   if (name === "propose_add_item" || name === "propose_update_item" || name === "propose_delete_item") {
     if (rec.needsConfirmation) {
       const named =
-        itemName(rec.item) ||
-        (typeof rec.itemName === "string" ? rec.itemName.trim() : "");
-      return named ? `Waiting for you to confirm · ${named}` : "Waiting for you to confirm";
+        itemName(rec.item) || (typeof rec.itemName === "string" ? rec.itemName.trim() : "");
+      return named ? i18n.t("trace.waitingNamed", { name: named }) : i18n.t("trace.waiting");
     }
-    return "Proposed change";
+    return i18n.t("trace.proposed");
   }
 
   return "";

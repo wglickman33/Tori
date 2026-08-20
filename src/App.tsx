@@ -17,12 +17,14 @@ import SettingsPage from "./pages/SettingsPage";
 import HelpPage from "./pages/HelpPage";
 import ToriAiPage from "./pages/ToriAiPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import { useTranslation } from "react-i18next";
 import { useAuthStore } from "./store/authStore";
 
 function RootRedirect() {
+  const { t } = useTranslation();
   const isSignedIn = useAuthStore((s) => s.isSignedIn);
   const isLoading = useAuthStore((s) => s.isLoading);
-  if (isLoading) return <div className="route-loading">Loading…</div>;
+  if (isLoading) return <div className="route-loading">{t("common.loading")}</div>;
   if (!isSignedIn) return <Navigate to="/login" replace />;
   return <Navigate to="/inventory" replace />;
 }

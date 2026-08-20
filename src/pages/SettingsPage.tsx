@@ -1,24 +1,21 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { AppShell } from "../components/layout/AppShell";
 import { ConfirmDeleteModal } from "../components/inventory/ConfirmDeleteModal";
 import { Banner } from "../components/ui/Banner";
 import { Button } from "../components/ui/Button";
 import { PasswordField } from "../components/ui/PasswordField";
 import { TextField } from "../components/ui/TextField";
+import { translateError } from "../i18n/apiErrors";
 import { useAuthStore } from "../store/authStore";
 import { useHouseholdStore } from "../store/householdStore";
 import { useInventoryStore } from "../store/inventoryStore";
-import { useSettingsStore, type Theme } from "../store/settingsStore";
+import { useSettingsStore, type Language, type Theme } from "../store/settingsStore";
 import "./SettingsPage.scss";
 
-const THEME_OPTIONS: { value: Theme; label: string }[] = [
-  { value: "light", label: "Light" },
-  { value: "dark", label: "Dark" },
-  { value: "auto", label: "Auto" },
-];
-
 export default function SettingsPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
   const updateProfile = useAuthStore((s) => s.updateProfile);
@@ -27,8 +24,21 @@ export default function SettingsPage() {
   const clearInventory = useInventoryStore((s) => s.clear);
   const household = useHouseholdStore((s) => s.household);
   const theme = useSettingsStore((s) => s.theme);
+  const language = useSettingsStore((s) => s.language);
   const setTheme = useSettingsStore((s) => s.setTheme);
+  const setLanguage = useSettingsStore((s) => s.setLanguage);
   const savePreferences = useSettingsStore((s) => s.savePreferences);
+
+  const themeOptions: { value: Theme; label: string }[] = [
+    { value: "light", label: t("theme.light") },
+    { value: "dark", label: t("theme.dark") },
+    { value: "auto", label: t("theme.auto") },
+  ];
+
+  const languageOptions: { value: Language; label: string }[] = [
+    { value: "en", label: t("language.english") },
+    { value: "es", label: t("language.spanish") },
+  ];
 
   const [displayName, setDisplayName] = useState(user?.displayName ?? "");
   const [email, setEmail] = useState(user?.email ?? "");
@@ -52,7 +62,7 @@ export default function SettingsPage() {
     setError(null);
     setMessage(null);
     if (passwordChangeIncomplete) {
-      setError("Current password is required to set a new password.");
+      setError(t("errors.currentPasswordRequired"));
       return;
     }
     setSaving(true);
@@ -73,9 +83,10 @@ export default function SettingsPage() {
       await updateProfile(body);
       setCurrentPassword("");
       setNewPassword("");
-      setMessage("Profile saved.");
+      setMessage(t("settings.profileSaved"));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not save profile");
+      const raw = err instanceof Error ? err.message : t("errors.saveProfile");
+      setError(translateError(raw, t));
     } finally {
       setSaving(false);
     }
@@ -87,71 +98,71 @@ export default function SettingsPage() {
     setSavingTheme(true);
     try {
       await savePreferences();
-      setMessage("Appearance saved to your account.");
+      setMessage(t("settings.appearanceSaved"));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not save appearance");
+      const raw = err instanceof Error ? err.message : t("errors.saveAppearance");
+      setError(translateError(raw, t));
     } finally {
       setSavingTheme(false);
     }
   };
 
+  const roleLabel = household?.role === "owner" ? t("common.owner") : t("common.member");
+  const memberCountLabel = t("settings.member", { count: household?.memberCount ?? 0 });
+
   return (
     <AppShell>
       <div className="settings-page">
         <header className="settings-page__header">
-          <h1>Settings</h1>
-          <p>Profile, appearance, household, and account.</p>
+          <h1>{t("settings.title")}</h1>
+          <p>{t("settings.subtitle")}</p>
         </header>
 
         {error ? <Banner>{error}</Banner> : null}
         {message ? <Banner tone="success">{message}</Banner> : null}
 
         <section className="settings-page__card">
-          <h2>Profile</h2>
+          <h2>{t("settings.profile")}</h2>
           <form className="settings-page__form" onSubmit={onSaveProfile}>
             <TextField
-              label="Display name"
+              label={t("settings.displayName")}
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               required
             />
             <TextField
-              label="Email"
+              label={t("settings.email")}
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
             <PasswordField
-              label="Current password"
+              label={t("settings.currentPassword")}
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
               autoComplete="current-password"
             />
             <PasswordField
-              label="New password"
+              label={t("settings.newPassword")}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               autoComplete="new-password"
             />
-            <p className="settings-page__hint">
-              Leave password fields blank to keep your current password.
-            </p>
+            <p className="settings-page__hint">{t("settings.passwordHint")}</p>
             <Button type="submit" disabled={saving || !displayName.trim() || !email.trim()}>
-              {saving ? "Saving…" : "Save profile"}
+              {saving ? t("common.saving") : t("settings.saveProfile")}
             </Button>
           </form>
         </section>
 
         <section className="settings-page__card">
-          <h2>Appearance</h2>
-          <p className="settings-page__hint">
-            Changes apply immediately on this device. Save to sync across devices.
-          </p>
+          <h2>{t("settings.appearance")}</h2>
+          <p className="settings-page__hint">{t("settings.appearanceHint")}</p>
           <div className="settings-page__field">
-            <span className="settings-page__label">Theme</span>
-            <div className="settings-page__segmented" role="group" aria-label="Theme">
-              {THEME_OPTIONS.map(({ value, label }) => (
+            <span className="settings-page__label">{t("settings.theme")}</span>
+            <div className="settings-page__segmented" role="group" aria-label={t("settings.theme")}>
+              {themeOptions.map(({ value, label }) => (
                 <button
                   key={value}
                   type="button"
@@ -163,44 +174,60 @@ export default function SettingsPage() {
                 </button>
               ))}
             </div>
-            <p className="settings-page__hint">Auto follows your device&apos;s light or dark setting.</p>
+            <p className="settings-page__hint">{t("settings.autoHint")}</p>
+          </div>
+          <div className="settings-page__field">
+            <span className="settings-page__label">{t("language.label")}</span>
+            <div className="settings-page__segmented" role="group" aria-label={t("language.label")}>
+              {languageOptions.map(({ value, label }) => (
+                <button
+                  key={value}
+                  type="button"
+                  className={`settings-page__segment${language === value ? " settings-page__segment--active" : ""}`}
+                  aria-pressed={language === value}
+                  onClick={() => setLanguage(value)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <p className="settings-page__hint">{t("settings.languageHint")}</p>
           </div>
           <Button type="button" onClick={onSaveAppearance} disabled={savingTheme}>
-            {savingTheme ? "Saving…" : "Save appearance"}
+            {savingTheme ? t("common.saving") : t("settings.saveAppearance")}
           </Button>
         </section>
 
         <section className="settings-page__card">
-          <h2>Household</h2>
+          <h2>{t("settings.household")}</h2>
           <p className="settings-page__hint">
             {household
-              ? `${household.name} · ${household.role === "owner" ? "Owner" : "Member"} · ${household.memberCount} member${
-                  household.memberCount === 1 ? "" : "s"
-                }`
-              : "No household yet."}
+              ? t("settings.householdMeta", {
+                  name: household.name,
+                  role: roleLabel,
+                  count: memberCountLabel,
+                })
+              : t("settings.noHousehold")}
           </p>
           <Link to={household ? "/household" : "/onboarding"} className="settings-page__link">
-            {household ? "Manage household" : "Create or join a household"}
+            {household ? t("settings.manageHousehold") : t("settings.createOrJoin")}
           </Link>
         </section>
 
         <section className="settings-page__card settings-page__card--danger">
-          <h2>Delete account</h2>
-          <p className="settings-page__hint">
-            Permanently deletes your login. If you own a household with other members, remove them
-            first.
-          </p>
+          <h2>{t("settings.deleteAccount")}</h2>
+          <p className="settings-page__hint">{t("settings.deleteHint")}</p>
           <Button type="button" variant="danger" onClick={() => setDeleteOpen(true)}>
-            Delete account
+            {t("settings.deleteAccount")}
           </Button>
         </section>
       </div>
 
       <ConfirmDeleteModal
         isOpen={deleteOpen}
-        title="Delete account"
-        confirmLabel="Delete"
-        message="This cannot be undone. Your credentials and membership will be removed."
+        title={t("settings.deleteAccount")}
+        confirmLabel={t("common.delete")}
+        message={t("settings.deleteConfirm")}
         onClose={() => setDeleteOpen(false)}
         onConfirm={async () => {
           await deleteAccount();

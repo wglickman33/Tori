@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./styles/main.scss";
+import "./i18n";
 import { bootstrapAuthSession } from "./store/authStore";
 import { initThemeSync, waitForSettingsHydration } from "./store/settingsStore";
 import App from "./App";

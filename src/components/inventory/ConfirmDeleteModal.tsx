@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { translateError } from "../../i18n/apiErrors";
 import { Banner } from "../ui/Banner";
 import { Button } from "../ui/Button";
 import { Modal } from "../ui/Modal";
@@ -17,10 +19,11 @@ export function ConfirmDeleteModal({
   isOpen,
   title,
   message,
-  confirmLabel = "Delete",
+  confirmLabel,
   onClose,
   onConfirm,
 }: ConfirmDeleteModalProps) {
+  const { t } = useTranslation();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -37,7 +40,8 @@ export function ConfirmDeleteModal({
       await onConfirm();
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Delete failed");
+      const raw = err instanceof Error ? err.message : t("errors.deleteFailed");
+      setError(translateError(raw, t));
     } finally {
       setLoading(false);
     }
@@ -50,10 +54,10 @@ export function ConfirmDeleteModal({
         {error ? <Banner>{error}</Banner> : null}
         <div className="inventory-form__actions">
           <Button type="button" variant="ghost" onClick={onClose}>
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button type="button" variant="danger" onClick={handleConfirm} disabled={loading}>
-            {loading ? "Working…" : confirmLabel}
+            {loading ? t("common.working") : confirmLabel ?? t("common.delete")}
           </Button>
         </div>
       </div>

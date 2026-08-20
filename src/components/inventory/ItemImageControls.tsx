@@ -1,5 +1,7 @@
 import { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { resolveMediaUrl } from "../../api/client";
+import { translateError } from "../../i18n/apiErrors";
 import { Banner } from "../ui/Banner";
 import { Button } from "../ui/Button";
 import "./ItemImageControls.scss";
@@ -20,6 +22,7 @@ export function ItemImageControls({
   onRemove,
   immediate = false,
 }: ItemImageControlsProps) {
+  const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -31,18 +34,19 @@ export function ItemImageControls({
     if (!file) return;
     setError(null);
     if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
-      setError("Only JPEG, PNG, and WebP images are allowed");
+      setError(t("errors.jpegPngWebp"));
       return;
     }
     if (file.size > MAX_BYTES) {
-      setError("Image must be 5MB or smaller");
+      setError(t("errors.imageTooLarge"));
       return;
     }
     setBusy(true);
     try {
       await onUpload(file);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Upload failed");
+      const raw = err instanceof Error ? err.message : t("errors.uploadFailed");
+      setError(translateError(raw, t));
     } finally {
       setBusy(false);
       if (inputRef.current) inputRef.current.value = "";
@@ -55,7 +59,8 @@ export function ItemImageControls({
     try {
       await onRemove();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not remove photo");
+      const raw = err instanceof Error ? err.message : t("errors.couldNotRemovePhoto");
+      setError(translateError(raw, t));
     } finally {
       setBusy(false);
     }
@@ -63,23 +68,23 @@ export function ItemImageControls({
 
   return (
     <div className="item-image-controls">
-      <h3>Photo</h3>
+      <h3>{t("inventory.photo")}</h3>
       {error ? <Banner>{error}</Banner> : null}
       {preview ? (
-        <img src={preview} alt="Item" className="item-image-controls__preview" />
+        <img src={preview} alt={t("inventory.itemAlt")} className="item-image-controls__preview" />
       ) : (
-        <p className="item-image-controls__empty">Add a photo so you'll recognize this item.</p>
+        <p className="item-image-controls__empty">{t("inventory.photoEmpty")}</p>
       )}
       {immediate ? (
-        <p className="item-image-controls__hint">Photo changes save immediately.</p>
+        <p className="item-image-controls__hint">{t("inventory.photoSavesImmediately")}</p>
       ) : null}
       <div className="item-image-controls__actions">
         <Button type="button" variant="secondary" onClick={pick} disabled={busy}>
-          {preview ? "Replace photo" : "Add photo"}
+          {preview ? t("inventory.replacePhoto") : t("inventory.addPhoto")}
         </Button>
         {preview ? (
           <Button type="button" variant="ghost" onClick={remove} disabled={busy}>
-            Remove photo
+            {t("inventory.removePhoto")}
           </Button>
         ) : null}
       </div>

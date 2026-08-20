@@ -1,4 +1,5 @@
 import type { Folder, Item } from "../api/client";
+import i18n, { currentDateLocale } from "../i18n";
 import { daysUntilExpiration } from "./inventoryFilters";
 import { computeInventoryValue, formatMoney, itemQuantity, lineValue } from "./inventoryValue";
 import { readExpiringThreshold } from "./expiring";
@@ -72,7 +73,7 @@ export async function createInventoryPdf(opts: {
   const footerY = 18;
 
   const exportedAt = new Date();
-  const exportLabel = exportedAt.toLocaleString(undefined, {
+  const exportLabel = exportedAt.toLocaleString(currentDateLocale(), {
     dateStyle: "medium",
     timeStyle: "short",
   });
@@ -110,14 +111,14 @@ export async function createInventoryPdf(opts: {
       height: 4,
       color: color(ACCENT),
     });
-    ctx.page.drawText("Tori · Inventory report", {
+    ctx.page.drawText(i18n.t("export.brandLine"), {
       x: marginX,
       y: pageHeight - 28,
       size: 9,
       font: bold,
       color: color(BRAND),
     });
-    const right = truncate(householdName || "Household", regular, 9, 220);
+    const right = truncate(householdName || i18n.t("export.householdFallback"), regular, 9, 220);
     ctx.page.drawText(right, {
       x: pageWidth - marginX - regular.widthOfTextAtSize(right, 9),
       y: pageHeight - 28,
@@ -228,14 +229,14 @@ export async function createInventoryPdf(opts: {
     height: 56,
     color: color(BRAND),
   });
-  ctx.page.drawText("Tori", {
+  ctx.page.drawText(i18n.t("app.name"), {
     x: marginX + 18,
     y: ctx.y - 24,
     size: 11,
     font: bold,
     color: color(BRAND),
   });
-  ctx.page.drawText("Inventory report", {
+  ctx.page.drawText(i18n.t("export.reportTitle"), {
     x: marginX + 18,
     y: ctx.y - 44,
     size: 22,
@@ -244,44 +245,41 @@ export async function createInventoryPdf(opts: {
   });
   ctx.y -= 72;
 
-  drawTextBlock(householdName || "Household", 14, bold);
-  drawTextBlock(`Exported ${exportLabel}`, 10, regular, { color: MUTED });
-  drawTextBlock(
-    "Recorded value is the sum of unit price × quantity for priced items. Items without a price are listed but excluded from totals.",
-    9,
-    regular,
-    { color: MUTED }
-  );
+  drawTextBlock(householdName || i18n.t("export.householdFallback"), 14, bold);
+  drawTextBlock(i18n.t("export.exportedAt", { when: exportLabel }), 10, regular, { color: MUTED });
+  drawTextBlock(i18n.t("export.valueDisclaimer"), 9, regular, { color: MUTED });
   ctx.y -= 10;
 
   const kpis: { label: string; value: string; hint: string }[] = [
-    { label: "Folders", value: String(folders.length), hint: "Organized groups" },
-    { label: "Items", value: String(items.length), hint: "In this export" },
+    { label: i18n.t("dashboard.folders"), value: String(folders.length), hint: i18n.t("export.foldersHint") },
+    { label: i18n.t("dashboard.items"), value: String(items.length), hint: i18n.t("export.itemsHint") },
     {
-      label: "Quantity",
+      label: i18n.t("dashboard.quantity"),
       value: String(valueSummary.coverage.totalQuantity),
-      hint: "Sum of quantities",
+      hint: i18n.t("export.quantityHint"),
     },
     {
-      label: "Recorded value",
+      label: i18n.t("dashboard.recordedValue"),
       value:
         valueSummary.coverage.pricedCount > 0
           ? formatMoney(valueSummary.coverage.totalValue)
-          : "-",
+          : i18n.t("common.dash"),
       hint:
         valueSummary.coverage.itemCount > 0
-          ? `${Math.round(valueSummary.coverage.pricedShare * 100)}% priced`
-          : "No items yet",
+          ? i18n.t("export.pricedPercent", {
+              percent: Math.round(valueSummary.coverage.pricedShare * 100),
+            })
+          : i18n.t("export.noItemsYet"),
     },
     {
-      label: "Missing price",
+      label: i18n.t("dashboard.missingPrice"),
       value: String(valueSummary.coverage.missingPriceCount),
-      hint: "Not in value total",
+      hint: i18n.t("export.missingPriceHint"),
     },
     {
-      label: "Expiring soon",
+      label: i18n.t("search.expiringSoon"),
       value: String(expiringCount),
-      hint: `Within ${threshold} day${threshold === 1 ? "" : "s"} / overdue`,
+      hint: i18n.t("export.expiringHint", { count: threshold }),
     },
   ];
 
@@ -338,7 +336,7 @@ export async function createInventoryPdf(opts: {
   ctx.y = kpiTop - kpiRows * (cardH + gap) - 4;
 
   ensureSpace(28);
-  drawTextBlock("Folders in this report", 12, bold);
+  drawTextBlock(i18n.t("export.foldersInReport"), 12, bold);
   ctx.y -= 4;
 
   const byFolderMap = new Map<string | null, Item[]>();
@@ -355,7 +353,9 @@ export async function createInventoryPdf(opts: {
       .map((f) => ({
         id: f.id,
         name: f.name,
-        category: f.category || "Uncategorized",
+        category: f.category
+          ? i18n.t(`categories.${f.category}`, { defaultValue: f.category })
+          : i18n.t("inventory.uncategorized"),
         items: (byFolderMap.get(f.id) ?? []).sort((a, b) => a.name.localeCompare(b.name)),
       })),
   ];
@@ -363,18 +363,18 @@ export async function createInventoryPdf(opts: {
   if (independent.length > 0) {
     folderOrder.push({
       id: null,
-      name: "Independent items",
-      category: "Outside folders",
+      name: i18n.t("inventory.independent"),
+      category: i18n.t("export.outsideFolders"),
       items: independent.sort((a, b) => a.name.localeCompare(b.name)),
     });
   }
 
   const indexCols: Col[] = [
-    { label: "Folder", width: contentWidth * 0.34 },
-    { label: "Category", width: contentWidth * 0.28 },
-    { label: "Items", width: contentWidth * 0.12, align: "right" },
-    { label: "Qty", width: contentWidth * 0.12, align: "right" },
-    { label: "Value", width: contentWidth * 0.14, align: "right" },
+    { label: i18n.t("export.colFolder"), width: contentWidth * 0.34 },
+    { label: i18n.t("export.colCategory"), width: contentWidth * 0.28 },
+    { label: i18n.t("export.colItems"), width: contentWidth * 0.12, align: "right" },
+    { label: i18n.t("export.colQty"), width: contentWidth * 0.12, align: "right" },
+    { label: i18n.t("export.colValue"), width: contentWidth * 0.14, align: "right" },
   ];
 
   drawTableHeader(indexCols);
@@ -395,7 +395,7 @@ export async function createInventoryPdf(opts: {
       folder.category,
       String(folder.items.length),
       String(qty),
-      priced > 0 ? formatMoney(value) : "-",
+      priced > 0 ? formatMoney(value) : i18n.t("common.dash"),
     ];
     ensureSpace(16);
     if (idx % 2 === 1) {
@@ -427,14 +427,14 @@ export async function createInventoryPdf(opts: {
 
   if (items.length === 0) {
     ctx.y -= 8;
-    drawTextBlock("No items in this household yet.", 11, regular, { color: MUTED });
+    drawTextBlock(i18n.t("export.noItemsInHousehold"), 11, regular, { color: MUTED });
   }
 
   // Top value concentrations (when useful)
   if (valueSummary.byCategory.length > 0 && valueSummary.coverage.pricedCount > 0) {
     ctx.y -= 12;
     ensureSpace(40);
-    drawTextBlock("Value by category (priced items)", 12, bold);
+    drawTextBlock(i18n.t("export.valueByCategory"), 12, bold);
     ctx.y -= 2;
     const topCats = valueSummary.byCategory.slice(0, 8);
     for (const row of topCats) {
@@ -474,13 +474,13 @@ export async function createInventoryPdf(opts: {
 
   // -- Detail sections --
   const detailCols: Col[] = [
-    { label: "Item", width: contentWidth * 0.26 },
-    { label: "Qty", width: contentWidth * 0.07, align: "right" },
-    { label: "Value", width: contentWidth * 0.12, align: "right" },
-    { label: "Location", width: contentWidth * 0.15 },
-    { label: "Purchased", width: contentWidth * 0.12 },
-    { label: "Expires", width: contentWidth * 0.12 },
-    { label: "Tags", width: contentWidth * 0.16 },
+    { label: i18n.t("export.colItem"), width: contentWidth * 0.26 },
+    { label: i18n.t("export.colQty"), width: contentWidth * 0.07, align: "right" },
+    { label: i18n.t("export.colValue"), width: contentWidth * 0.12, align: "right" },
+    { label: i18n.t("export.colLocation"), width: contentWidth * 0.15 },
+    { label: i18n.t("export.colPurchased"), width: contentWidth * 0.12 },
+    { label: i18n.t("export.colExpires"), width: contentWidth * 0.12 },
+    { label: i18n.t("export.colTags"), width: contentWidth * 0.16 },
   ];
 
   for (const folder of folderOrder) {
@@ -511,9 +511,12 @@ export async function createInventoryPdf(opts: {
       font: bold,
       color: color(BRAND),
     });
-    const meta = `${folder.category} · ${folder.items.length} item${
-      folder.items.length === 1 ? "" : "s"
-    } · qty ${sectionQty} · ${sectionValue > 0 ? formatMoney(sectionValue) : "no priced value"}`;
+    const meta = i18n.t("export.folderMeta", {
+      category: folder.category,
+      items: i18n.t("common.item", { count: folder.items.length }),
+      qty: sectionQty,
+      value: sectionValue > 0 ? formatMoney(sectionValue) : i18n.t("export.noPricedValue"),
+    });
     ctx.page.drawText(truncate(meta, regular, 9, contentWidth - 24), {
       x: marginX + 10,
       y: ctx.y - 30,
@@ -529,18 +532,18 @@ export async function createInventoryPdf(opts: {
       const lv = lineValue(item);
       const days = daysUntilExpiration(item.expirationDate, exportedAt);
       const expLabel = !item.expirationDate
-        ? "-"
+        ? i18n.t("common.dash")
         : days !== null && days < 0
-          ? `${item.expirationDate} (overdue)`
+          ? i18n.t("export.overdueSuffix", { date: item.expirationDate })
           : item.expirationDate;
       const cells = [
         item.name,
         String(itemQuantity(item)),
-        lv === null ? "-" : formatMoney(lv),
-        item.location?.trim() || "-",
-        item.purchaseDate || "-",
+        lv === null ? i18n.t("common.dash") : formatMoney(lv),
+        item.location?.trim() || i18n.t("common.dash"),
+        item.purchaseDate || i18n.t("common.dash"),
         expLabel,
-        item.tags?.length ? item.tags.join(", ") : "-",
+        item.tags?.length ? item.tags.join(", ") : i18n.t("common.dash"),
       ];
 
       const rowH = 15;
@@ -582,14 +585,14 @@ export async function createInventoryPdf(opts: {
   const pages = pdf.getPages();
   const totalPages = pages.length;
   pages.forEach((page, index) => {
-    const label = `Page ${index + 1} of ${totalPages}`;
+    const label = i18n.t("export.pageOf", { current: index + 1, total: totalPages });
     page.drawLine({
       start: { x: marginX, y: footerY + 12 },
       end: { x: marginX + contentWidth, y: footerY + 12 },
       thickness: 0.6,
       color: color(LINE),
     });
-    page.drawText("tori · household inventory", {
+    page.drawText(i18n.t("export.footerBrand"), {
       x: marginX,
       y: footerY,
       size: 8,

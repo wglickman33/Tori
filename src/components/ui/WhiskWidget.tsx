@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import whiskLogo from "../../assets/logos/whiskLogoAmber.svg";
 import { getWhiskUrl } from "../../utils/whiskUrl";
 import "./WhiskWidget.scss";
@@ -6,6 +7,7 @@ import "./WhiskWidget.scss";
 const STORAGE_KEY = "tori_whisk_widget_minimized";
 
 export function WhiskWidget() {
+  const { t } = useTranslation();
   const href = getWhiskUrl();
   const [minimized, setMinimized] = useState(() => {
     try {
@@ -29,7 +31,7 @@ export function WhiskWidget() {
         type="button"
         className="whisk-widget whisk-widget--minimized"
         onClick={() => setMinimized(false)}
-        aria-label="Open Whisk promo"
+        aria-label={t("whisk.openPromo")}
         title="Whisk"
       >
         <img src={whiskLogo} alt="" className="whisk-widget__mark" />
@@ -43,7 +45,7 @@ export function WhiskWidget() {
         <div className="whisk-widget__brand">
           <img src={whiskLogo} alt="" className="whisk-widget__logo" />
           <div>
-            <p className="whisk-widget__eyebrow">Also from us</p>
+            <p className="whisk-widget__eyebrow">{t("apps.alsoFromUs")}</p>
             <p className="whisk-widget__title">Whisk</p>
           </div>
         </div>
@@ -51,16 +53,14 @@ export function WhiskWidget() {
           type="button"
           className="whisk-widget__minimize"
           onClick={() => setMinimized(true)}
-          aria-label="Minimize Whisk promo"
+          aria-label={t("whisk.minimizePromo")}
         >
           −
         </button>
       </div>
-      <p className="whisk-widget__body">
-        Recipes and shopping lists for your kitchen, a sibling app to Tori.
-      </p>
+      <p className="whisk-widget__body">{t("apps.whiskPanel")}</p>
       <a className="whisk-widget__cta" href={href} target="_blank" rel="noopener noreferrer">
-        Open Whisk
+        {t("apps.openWhisk")}
       </a>
     </aside>
   );

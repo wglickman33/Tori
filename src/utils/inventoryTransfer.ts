@@ -1,4 +1,5 @@
 import type { Folder, FolderInput, Item, ItemInput } from "../api/client";
+import i18n, { currentDateLocale } from "../i18n";
 import { downloadBlob, downloadJsonFile, downloadTextFile, slugifyFilename } from "./downloadFile";
 import { createInventoryPdf } from "./inventoryPdf";
 
@@ -31,7 +32,19 @@ export interface ToriInventoryFile {
   items: ToriItemPayload[];
 }
 
-const CSV_HEADERS = [
+const CSV_HEADER_KEYS = [
+  "export.csvName",
+  "export.csvFolder",
+  "export.csvLocation",
+  "export.csvQuantity",
+  "export.csvPrice",
+  "export.csvPurchaseDate",
+  "export.csvExpirationDate",
+  "export.csvTags",
+  "export.csvImageUrl",
+] as const;
+
+const CSV_HEADER_IDS = [
   "name",
   "folder",
   "location",
@@ -109,8 +122,30 @@ export function parseCsv(text: string): string[][] {
 }
 
 function folderNameFor(folders: Folder[], folderId: string | null): string {
-  if (!folderId) return "Independent";
+  if (!folderId) return i18n.t("inventory.independentLabel");
   return folders.find((f) => f.id === folderId)?.name ?? "";
+}
+
+function isIndependentFolderName(value: string): boolean {
+  const normalized = value.trim().toLowerCase();
+  if (!normalized) return true;
+  const labels = [
+    "independent",
+    i18n.t("inventory.independentLabel", { lng: "en" }).toLowerCase(),
+    i18n.t("inventory.independentLabel", { lng: "es" }).toLowerCase(),
+  ];
+  return labels.includes(normalized);
+}
+
+function headerIndex(header: string[], key: (typeof CSV_HEADER_KEYS)[number], id: string): number {
+  const aliases = new Set(
+    [
+      id,
+      i18n.t(key, { lng: "en" }),
+      i18n.t(key, { lng: "es" }),
+    ].map((value) => value.trim().toLowerCase())
+  );
+  return header.findIndex((cell) => aliases.has(cell.trim().toLowerCase()));
 }
 
 export function inventoryToToriFile(
@@ -142,6 +177,7 @@ export function inventoryToToriFile(
 }
 
 export function inventoryToCsv(folders: Folder[], items: Item[]): string {
+  const headers = CSV_HEADER_KEYS.map((key) => csvEscape(i18n.t(key)));
   const rows = items.map((item) =>
     [
       csvEscape(item.name),
@@ -155,7 +191,7 @@ export function inventoryToCsv(folders: Folder[], items: Item[]): string {
       csvEscape(item.imageUrl),
     ].join(",")
   );
-  return `${CSV_HEADERS.join(",")}\n${rows.join("\n")}${rows.length ? "\n" : ""}`;
+  return `${headers.join(",")}\n${rows.join("\n")}${rows.length ? "\n" : ""}`;
 }
 
 export function inventoryToPlainText(
@@ -163,17 +199,20 @@ export function inventoryToPlainText(
   items: Item[],
   householdName?: string | null
 ): string {
+  const independentLabel = i18n.t("inventory.independentLabel");
   const lines: string[] = [
-    "Tori inventory",
-    householdName ? `Household: ${householdName}` : "Household inventory",
-    `Exported: ${new Date().toLocaleString()}`,
-    `Folders: ${folders.length} · Items: ${items.length}`,
+    i18n.t("export.plainTitle"),
+    householdName
+      ? i18n.t("export.plainHousehold", { name: householdName })
+      : i18n.t("export.plainHouseholdInventory"),
+    i18n.t("export.exported", { when: new Date().toLocaleString(currentDateLocale()) }),
+    i18n.t("export.plainCounts", { folders: folders.length, items: items.length }),
     "",
   ];
 
   const byFolder = new Map<string, Item[]>();
   for (const item of items) {
-    const key = folderNameFor(folders, item.folderId) || "Independent";
+    const key = folderNameFor(folders, item.folderId) || independentLabel;
     const list = byFolder.get(key) ?? [];
     list.push(item);
     byFolder.set(key, list);
@@ -181,27 +220,32 @@ export function inventoryToPlainText(
 
   const folderOrder = [
     ...folders.map((f) => f.name),
-    ...(byFolder.has("Independent") ? ["Independent"] : []),
+    ...(byFolder.has(independentLabel) || byFolder.has("Independent") || byFolder.has("Independiente")
+      ? [independentLabel]
+      : []),
   ];
   const seen = new Set<string>();
   for (const name of folderOrder) {
     if (seen.has(name)) continue;
     seen.add(name);
-    const list = byFolder.get(name) ?? [];
+    const list = byFolder.get(name) ?? byFolder.get("Independent") ?? [];
     const folder = folders.find((f) => f.name === name);
-    lines.push(`## ${name}${folder ? ` (${folder.category})` : ""}`);
+    const categoryLabel = folder
+      ? i18n.t(`categories.${folder.category}`, { defaultValue: folder.category })
+      : "";
+    lines.push(`## ${name}${categoryLabel ? ` (${categoryLabel})` : ""}`);
     if (list.length === 0) {
-      lines.push("(no items)");
+      lines.push(i18n.t("export.plainNoItems"));
       lines.push("");
       continue;
     }
     for (const item of list) {
       const bits = [
-        `qty ${item.quantity}`,
+        i18n.t("export.plainQty", { count: item.quantity }),
         item.location || null,
         item.price ? `$${item.price}` : null,
-        item.expirationDate ? `exp ${item.expirationDate}` : null,
-        item.tags?.length ? `tags ${item.tags.join(", ")}` : null,
+        item.expirationDate ? i18n.t("export.plainExp", { date: item.expirationDate }) : null,
+        item.tags?.length ? i18n.t("export.plainTags", { tags: item.tags.join(", ") }) : null,
       ].filter(Boolean);
       lines.push(`- ${item.name}${bits.length ? ` · ${bits.join(" · ")}` : ""}`);
     }
@@ -211,9 +255,9 @@ export function inventoryToPlainText(
   return `${lines.join("\n").trim()}\n`;
 }
 
-function assertString(value: unknown, label: string): string {
+function requireTrimmed(value: unknown, message: string): string {
   if (typeof value !== "string" || !value.trim()) {
-    throw new Error(`${label} is required.`);
+    throw new Error(message);
   }
   return value.trim();
 }
@@ -226,7 +270,7 @@ function optionalString(value: unknown): string | null {
 function parseQuantity(value: unknown): number {
   const n = typeof value === "number" ? value : Number(value);
   if (!Number.isInteger(n) || n < 1) {
-    throw new Error("Quantity must be a whole number of at least 1.");
+    throw new Error(i18n.t("export.quantityWhole"));
   }
   return n;
 }
@@ -246,14 +290,14 @@ function parseTags(value: unknown): string[] {
 
 export function parseToriInventoryFile(raw: unknown): ToriInventoryFile {
   if (!raw || typeof raw !== "object") {
-    throw new Error("Inventory file must be a JSON object.");
+    throw new Error(i18n.t("export.fileMustBeJson"));
   }
   const data = raw as Record<string, unknown>;
   if (data.format !== TORI_INVENTORY_FORMAT) {
-    throw new Error('Unrecognized file. Expected a Tori inventory export (format "tori-inventory").');
+    throw new Error(i18n.t("export.unrecognizedFile"));
   }
   if (data.version !== TORI_INVENTORY_VERSION) {
-    throw new Error(`Unsupported inventory file version: ${String(data.version)}`);
+    throw new Error(i18n.t("export.unsupportedVersion", { version: String(data.version) }));
   }
 
   const foldersRaw = Array.isArray(data.folders) ? data.folders : [];
@@ -261,11 +305,11 @@ export function parseToriInventoryFile(raw: unknown): ToriInventoryFile {
 
   const folders: ToriFolderPayload[] = foldersRaw.map((entry, index) => {
     if (!entry || typeof entry !== "object") {
-      throw new Error(`Folder #${index + 1} is invalid.`);
+      throw new Error(i18n.t("export.folderInvalid", { n: index + 1 }));
     }
     const folder = entry as Record<string, unknown>;
     return {
-      name: assertString(folder.name, `Folder #${index + 1} name`),
+      name: requireTrimmed(folder.name, i18n.t("export.folderNameRequiredN", { n: index + 1 })),
       category: optionalString(folder.category) || "Custom",
       creationDate: optionalString(folder.creationDate),
     };
@@ -273,11 +317,11 @@ export function parseToriInventoryFile(raw: unknown): ToriInventoryFile {
 
   const items: ToriItemPayload[] = itemsRaw.map((entry, index) => {
     if (!entry || typeof entry !== "object") {
-      throw new Error(`Item #${index + 1} is invalid.`);
+      throw new Error(i18n.t("export.itemInvalid", { n: index + 1 }));
     }
     const item = entry as Record<string, unknown>;
     return {
-      name: assertString(item.name, `Item #${index + 1} name`),
+      name: requireTrimmed(item.name, i18n.t("export.itemNameRequiredN", { n: index + 1 })),
       folderName: optionalString(item.folderName),
       location: optionalString(item.location),
       quantity: parseQuantity(item.quantity ?? 1),
@@ -289,7 +333,7 @@ export function parseToriInventoryFile(raw: unknown): ToriInventoryFile {
   });
 
   if (folders.length === 0 && items.length === 0) {
-    throw new Error("Inventory file has no folders or items.");
+    throw new Error(i18n.t("export.emptyFile"));
   }
 
   return {
@@ -305,21 +349,19 @@ export function parseToriInventoryFile(raw: unknown): ToriInventoryFile {
 export function parseInventoryCsv(text: string): ToriInventoryFile {
   const rows = parseCsv(text);
   if (rows.length < 2) {
-    throw new Error("CSV must include a header row and at least one item.");
+    throw new Error(i18n.t("export.csvNeedHeader"));
   }
   const header = rows[0]!.map((h) => h.trim().toLowerCase());
-  const indexOf = (name: string) => header.indexOf(name.toLowerCase());
+  const nameIdx = headerIndex(header, "export.csvName", CSV_HEADER_IDS[0]);
+  if (nameIdx < 0) throw new Error(i18n.t("export.csvMissingName"));
 
-  const nameIdx = indexOf("name");
-  if (nameIdx < 0) throw new Error('CSV is missing a "name" column.');
-
-  const folderIdx = indexOf("folder");
-  const locationIdx = indexOf("location");
-  const quantityIdx = indexOf("quantity");
-  const priceIdx = indexOf("price");
-  const purchaseIdx = indexOf("purchasedate");
-  const expirationIdx = indexOf("expirationdate");
-  const tagsIdx = indexOf("tags");
+  const folderIdx = headerIndex(header, "export.csvFolder", CSV_HEADER_IDS[1]);
+  const locationIdx = headerIndex(header, "export.csvLocation", CSV_HEADER_IDS[2]);
+  const quantityIdx = headerIndex(header, "export.csvQuantity", CSV_HEADER_IDS[3]);
+  const priceIdx = headerIndex(header, "export.csvPrice", CSV_HEADER_IDS[4]);
+  const purchaseIdx = headerIndex(header, "export.csvPurchaseDate", CSV_HEADER_IDS[5]);
+  const expirationIdx = headerIndex(header, "export.csvExpirationDate", CSV_HEADER_IDS[6]);
+  const tagsIdx = headerIndex(header, "export.csvTags", CSV_HEADER_IDS[7]);
 
   const folderNames = new Set<string>();
   const items: ToriItemPayload[] = [];
@@ -328,10 +370,9 @@ export function parseInventoryCsv(text: string): ToriInventoryFile {
     const row = rows[i]!;
     if (row.every((cell) => !cell.trim())) continue;
     const name = row[nameIdx]?.trim();
-    if (!name) throw new Error(`CSV row ${i + 1} is missing a name.`);
+    if (!name) throw new Error(i18n.t("export.csvRowMissingName", { n: i + 1 }));
     const folderNameRaw = folderIdx >= 0 ? row[folderIdx]?.trim() || "" : "";
-    const folderName =
-      !folderNameRaw || folderNameRaw.toLowerCase() === "independent" ? null : folderNameRaw;
+    const folderName = isIndependentFolderName(folderNameRaw) ? null : folderNameRaw;
     if (folderName) folderNames.add(folderName);
 
     items.push({
@@ -346,7 +387,7 @@ export function parseInventoryCsv(text: string): ToriInventoryFile {
     });
   }
 
-  if (items.length === 0) throw new Error("CSV has no item rows.");
+  if (items.length === 0) throw new Error(i18n.t("export.csvNoRows"));
 
   return {
     format: TORI_INVENTORY_FORMAT,
@@ -378,11 +419,11 @@ export async function readInventoryTransferFile(file: File): Promise<ToriInvento
     try {
       raw = JSON.parse(text);
     } catch {
-      throw new Error("Could not parse JSON file.");
+      throw new Error(i18n.t("export.jsonParse"));
     }
     return parseToriInventoryFile(raw);
   }
-  throw new Error("Unsupported file type. Use a .tori.json / .json or .csv export.");
+  throw new Error(i18n.t("export.unsupportedType"));
 }
 
 export interface InventoryImportHandlers {
@@ -478,7 +519,7 @@ export async function downloadInventoryPdf(
   householdName?: string | null
 ): Promise<void> {
   const bytes = await createInventoryPdf({
-    householdName: householdName || "Household",
+    householdName: householdName || i18n.t("export.householdFallback"),
     folders,
     items,
   });

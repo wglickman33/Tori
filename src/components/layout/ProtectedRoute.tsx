@@ -1,7 +1,9 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Navigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuthStore } from "../../store/authStore";
 import { useHouseholdStore } from "../../store/householdStore";
+import { translateError } from "../../i18n/apiErrors";
 import { Button } from "../ui/Button";
 
 interface ProtectedRouteProps {
@@ -23,6 +25,7 @@ export function ProtectedRoute({
   const householdError = useHouseholdStore((s) => s.error);
   const fetchMine = useHouseholdStore((s) => s.fetchMine);
   const [checkingHousehold, setCheckingHousehold] = useState(!hasLoadedMine);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!isSignedIn || isLoading) {
@@ -46,7 +49,7 @@ export function ProtectedRoute({
   }, [fetchMine, hasLoadedMine, isLoading, isSignedIn]);
 
   if (isLoading || checkingHousehold) {
-    return <div className="route-loading">Loading…</div>;
+    return <div className="route-loading">{t("common.loading")}</div>;
   }
 
   if (!isSignedIn) return <Navigate to="/login" replace />;
@@ -56,7 +59,9 @@ export function ProtectedRoute({
     if (!hasLoadedMine && householdError) {
       return (
         <div className="route-loading" style={{ gap: 16, textAlign: "center", padding: 24 }}>
-          <p>Couldn’t load your households. {householdError}</p>
+          <p>
+            {t("errors.loadHouseholds")} {translateError(householdError, t)}
+          </p>
           <Button
             type="button"
             onClick={() => {
@@ -64,7 +69,7 @@ export function ProtectedRoute({
               void fetchMine().finally(() => setCheckingHousehold(false));
             }}
           >
-            Try again
+            {t("common.tryAgain")}
           </Button>
         </div>
       );

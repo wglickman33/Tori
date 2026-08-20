@@ -68,12 +68,15 @@ describe("SettingsPage", () => {
       hasLoadedMine: true,
       error: null,
     });
-    useSettingsStore.setState({ theme: "auto", effectiveTheme: "light" });
+    useSettingsStore.setState({ theme: "auto", language: "en", effectiveTheme: "light" });
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     cleanup();
     vi.clearAllMocks();
+    useSettingsStore.setState({ language: "en" });
+    const i18n = (await import("../i18n")).default;
+    await i18n.changeLanguage("en");
   });
 
   it("saves profile via updateProfile", async () => {
@@ -127,7 +130,7 @@ describe("SettingsPage", () => {
     fireEvent.click(screen.getByRole("button", { name: "Save appearance" }));
 
     await waitFor(() => {
-      expect(authApi.updateProfile).toHaveBeenCalledWith({ theme: "dark" });
+      expect(authApi.updateProfile).toHaveBeenCalledWith({ theme: "dark", language: "en" });
     });
     expect(screen.getByText("Appearance saved to your account.")).toBeTruthy();
   });
@@ -162,5 +165,22 @@ describe("SettingsPage", () => {
     expect(screen.getByRole("link", { name: "Manage household" }).getAttribute("href")).toBe(
       "/household"
     );
+  });
+
+  it("switches appearance language to Spanish", async () => {
+    render(
+      <MemoryRouter>
+        <SettingsPage />
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Spanish" }));
+    await waitFor(() => {
+      expect(screen.getByText("Idioma")).toBeTruthy();
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Inglés" }));
+    await waitFor(() => {
+      expect(screen.getByText("Language")).toBeTruthy();
+    });
   });
 });

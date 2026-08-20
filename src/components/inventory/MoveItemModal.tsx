@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { FOLDER_CATEGORIES } from "../../constants/inventory";
 import type { Folder, FolderInput, Item } from "../../api/client";
+import { translateError } from "../../i18n/apiErrors";
 import { Banner } from "../ui/Banner";
 import { Button } from "../ui/Button";
 import { Modal } from "../ui/Modal";
@@ -24,6 +26,7 @@ export function MoveItemModal({
   onMove,
   onCreateFolder,
 }: MoveItemModalProps) {
+  const { t } = useTranslation();
   const [folderId, setFolderId] = useState("");
   const [creatingFolder, setCreatingFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
@@ -64,12 +67,12 @@ export function MoveItemModal({
         const resolvedCategory =
           newFolderCategory === "Custom" ? customCategory.trim() : newFolderCategory;
         if (!newFolderName.trim()) {
-          setError("Folder name is required");
+          setError(t("errors.folderNameRequired"));
           setLoading(false);
           return;
         }
         if (!resolvedCategory) {
-          setError("Category is required");
+          setError(t("errors.categoryRequired"));
           setLoading(false);
           return;
         }
@@ -87,7 +90,8 @@ export function MoveItemModal({
       await onMove(next);
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not move item");
+      const raw = err instanceof Error ? err.message : t("errors.couldNotMoveItem");
+      setError(translateError(raw, t));
     } finally {
       setLoading(false);
     }
@@ -95,69 +99,67 @@ export function MoveItemModal({
 
   const primaryLabel = creatingFolder
     ? loading
-      ? "Creating…"
-      : "Create & move"
+      ? t("common.creating")
+      : t("inventory.createAndMove")
     : loading
-      ? "Moving…"
-      : "Move item";
+      ? t("common.moving")
+      : t("inventory.moveTitle");
 
   return (
-    <Modal title="Move item" isOpen={isOpen} onClose={onClose}>
+    <Modal title={t("inventory.moveTitle")} isOpen={isOpen} onClose={onClose}>
       <div className="inventory-form">
         {item ? (
-          <p className="inventory-form__intro">
-            Choose where <strong>{item.name}</strong> should live.
-          </p>
+          <p className="inventory-form__intro">{t("inventory.moveIntro", { name: item.name })}</p>
         ) : null}
         {error ? <Banner>{error}</Banner> : null}
 
         {creatingFolder ? (
           <>
             <TextField
-              label="New folder name"
+              label={t("inventory.newFolderName")}
               value={newFolderName}
               onChange={(e) => setNewFolderName(e.target.value)}
               required
               autoFocus
             />
             <label className="inventory-form__field">
-              <span>Category</span>
+              <span>{t("inventory.category")}</span>
               <select
                 value={newFolderCategory}
                 onChange={(e) => setNewFolderCategory(e.target.value)}
               >
                 {FOLDER_CATEGORIES.map((c) => (
                   <option key={c} value={c}>
-                    {c}
+                    {t(`categories.${c}`, { defaultValue: c })}
                   </option>
                 ))}
               </select>
             </label>
             {newFolderCategory === "Custom" ? (
               <TextField
-                label="Custom category"
+                label={t("inventory.customCategory")}
                 value={customCategory}
                 onChange={(e) => setCustomCategory(e.target.value)}
               />
             ) : null}
             <p className="inventory-form__hint">
-              We’ll create this folder, then move the item into it.{" "}
+              {t("inventory.createThenMove")}{" "}
               <button
                 type="button"
                 className="inventory-form__text-btn"
                 onClick={cancelCreateFolder}
                 disabled={loading}
               >
-                Choose an existing folder instead
+                {t("inventory.chooseExisting")}
               </button>
             </p>
           </>
         ) : (
           <>
             <label className="inventory-form__field">
-              <span>Folder</span>
+              <span>{t("inventory.folder")}</span>
               <select value={folderId} onChange={(e) => setFolderId(e.target.value)}>
-                <option value="">Independent item</option>
+                <option value="">{t("inventory.independentItem")}</option>
                 {folders.map((folder) => (
                   <option key={folder.id} value={folder.id}>
                     {folder.name}
@@ -166,14 +168,14 @@ export function MoveItemModal({
               </select>
             </label>
             <p className="inventory-form__hint">
-              Independent items sit outside any folder.{" "}
+              {t("inventory.independentHint")}{" "}
               <button
                 type="button"
                 className="inventory-form__text-btn"
                 onClick={startCreateFolder}
                 disabled={loading}
               >
-                Create a new folder
+                {t("inventory.createNewFolder")}
               </button>
             </p>
           </>
@@ -181,7 +183,7 @@ export function MoveItemModal({
 
         <div className="inventory-form__actions">
           <Button type="button" variant="ghost" onClick={onClose} disabled={loading}>
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button type="button" onClick={() => void handleMove()} disabled={loading || !item}>
             {primaryLabel}

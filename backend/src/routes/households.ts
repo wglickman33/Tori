@@ -9,7 +9,7 @@ import {
   updateHouseholdSchema,
   updateLocationPresetsSchema,
 } from "../utils/validation.js";
-import { DEFAULT_LOCATION_PRESETS, normalizeLocationPresets } from "../constants/locations.js";
+import { DEFAULT_LOCATION_PRESETS, defaultLocationPresetsForLanguage, normalizeLocationPresets } from "../constants/locations.js";
 import { generateInviteCode, normalizeInviteCode } from "../utils/inviteCode.js";
 import { closeUserHouseholdStreams, publishHouseholdEvent } from "../utils/householdEvents.js";
 import { destroyHouseholdData } from "../utils/householdCleanup.js";
@@ -81,11 +81,12 @@ householdsRouter.post("/", async (req: AuthedRequest, res) => {
     inviteCode = generateInviteCode();
   }
 
+  const owner = await User.findByPk(req.userId!);
   const household = await Household.create({
     name: parsed.data.name,
     inviteCode,
     ownerId: req.userId!,
-    locationPresets: [...DEFAULT_LOCATION_PRESETS],
+    locationPresets: defaultLocationPresetsForLanguage(owner?.language),
   });
 
   await HouseholdMember.create({

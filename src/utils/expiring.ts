@@ -1,4 +1,5 @@
 import type { Item } from "../api/client";
+import i18n from "../i18n";
 import { daysUntilExpiration } from "./inventoryFilters";
 
 export const EXPIRING_THRESHOLD_KEY = "tori_expiring_threshold_days";
@@ -26,9 +27,9 @@ export function filterExpiringItems(items: Item[], thresholdDays: number, today 
 
 export function expirationLabel(expirationDate: string | null, today = new Date()): string {
   const days = daysUntilExpiration(expirationDate, today);
-  if (days === null) return "-";
-  if (days < 0) return "Overdue";
-  if (days === 0) return "Today";
-  if (days === 1) return "1 day";
-  return `${days} days`;
+  if (days === null) return i18n.t("common.dash");
+  if (days < 0) return i18n.t("expiry.overdue");
+  if (days === 0) return i18n.t("expiry.today");
+  if (days === 1) return i18n.t("expiry.day");
+  return i18n.t("expiry.days", { count: days });
 }

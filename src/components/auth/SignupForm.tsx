@@ -1,7 +1,9 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { authApi } from "../../api/client";
+import { translateError } from "../../i18n/apiErrors";
 import { useAuthStore } from "../../store/authStore";
 import { Banner } from "../ui/Banner";
 import { Button } from "../ui/Button";
@@ -9,19 +11,8 @@ import { PasswordField } from "../ui/PasswordField";
 import { TextField } from "../ui/TextField";
 import "./SignupForm.scss";
 
-const schema = z
-  .object({
-    displayName: z.string().trim().min(1, "Display name is required"),
-    email: z.string().email("Enter a valid email"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z.string().min(1, "Confirm your password"),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
-
 export function SignupForm() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const signIn = useAuthStore((s) => s.signIn);
   const [displayName, setDisplayName] = useState("");
@@ -31,6 +22,18 @@ export function SignupForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [apiError, setApiError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const schema = z
+    .object({
+      displayName: z.string().trim().min(1, t("errors.displayNameRequired")),
+      email: z.string().email(t("auth.validEmail")),
+      password: z.string().min(8, t("auth.passwordMin")),
+      confirmPassword: z.string().min(1, t("auth.confirmYourPassword")),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: t("auth.passwordsMatch"),
+      path: ["confirmPassword"],
+    });
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -56,7 +59,8 @@ export function SignupForm() {
       signIn(session.user, session.accessToken, session.refreshToken);
       navigate("/onboarding");
     } catch (err) {
-      setApiError(err instanceof Error ? err.message : "Sign up failed");
+      const message = err instanceof Error ? err.message : t("auth.signupFailed");
+      setApiError(translateError(message, t));
     } finally {
       setLoading(false);
     }
@@ -65,19 +69,19 @@ export function SignupForm() {
   return (
     <form className="signup-form" onSubmit={onSubmit} noValidate>
       <header className="signup-form__header">
-        <h1 className="signup-form__title">Create account</h1>
-        <p className="signup-form__subtitle">Start organizing your home inventory.</p>
+        <h1 className="signup-form__title">{t("auth.createAccountTitle")}</h1>
+        <p className="signup-form__subtitle">{t("auth.signupSubtitle")}</p>
       </header>
       {apiError ? <Banner>{apiError}</Banner> : null}
       <TextField
-        label="Display name"
+        label={t("auth.displayName")}
         name="displayName"
         value={displayName}
         onChange={(e) => setDisplayName(e.target.value)}
         error={errors.displayName}
       />
       <TextField
-        label="Email"
+        label={t("auth.email")}
         name="email"
         type="email"
         autoComplete="email"
@@ -86,7 +90,7 @@ export function SignupForm() {
         error={errors.email}
       />
       <PasswordField
-        label="Password"
+        label={t("auth.password")}
         name="password"
         autoComplete="new-password"
         value={password}
@@ -94,7 +98,7 @@ export function SignupForm() {
         error={errors.password}
       />
       <PasswordField
-        label="Confirm password"
+        label={t("auth.confirmPassword")}
         name="confirmPassword"
         autoComplete="new-password"
         value={confirmPassword}
@@ -102,10 +106,10 @@ export function SignupForm() {
         error={errors.confirmPassword}
       />
       <Button type="submit" disabled={loading}>
-        {loading ? "Creating…" : "Create account"}
+        {loading ? t("auth.creating") : t("auth.createAccount")}
       </Button>
       <p className="signup-form__footer">
-        Already have an account? <Link to="/login">Log in</Link>
+        {t("auth.haveAccount")} <Link to="/login">{t("auth.logIn")}</Link>
       </p>
     </form>
   );

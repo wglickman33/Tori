@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { resolveMediaUrl } from "../api/client";
 import { AppShell } from "../components/layout/AppShell";
 import { InventoryTransferBar } from "../components/inventory/InventoryTransferBar";
@@ -28,6 +29,7 @@ const RECENT_LIMIT = 8;
 
 export default function DashboardPage() {
   useEnsureInventory();
+  const { t } = useTranslation();
   const household = useHouseholdStore((s) => s.household);
   const folders = useInventoryStore((s) => s.folders);
   const items = useInventoryStore((s) => s.items);
@@ -53,34 +55,37 @@ export default function DashboardPage() {
 
   const valueHint =
     stats.itemCount === 0
-      ? "Add prices to track worth"
+      ? t("dashboard.hintAddPrices")
       : stats.itemsMissingPrice === stats.itemCount
-        ? "Add prices to see a total"
+        ? t("dashboard.hintSeeTotal")
         : stats.itemsMissingPrice > 0
-          ? `${formatPercent(stats.pricedShare)} priced · ${stats.itemsMissingPrice} missing`
-          : "Unit price × quantity";
+          ? t("dashboard.hintPricedMissing", {
+              priced: formatPercent(stats.pricedShare),
+              missing: stats.itemsMissingPrice,
+            })
+          : t("dashboard.hintUnitTimesQty");
 
   return (
     <AppShell>
       <div className="dashboard-page">
         <header className="dashboard-page__header">
           <div className="dashboard-page__heading">
-            <h1 className="dashboard-page__title">Dashboard</h1>
+            <h1 className="dashboard-page__title">{t("dashboard.title")}</h1>
             <p className="dashboard-page__subtitle">
               {household?.name
-                ? `What needs attention in ${household.name}.`
-                : "What needs attention in your household."}
+                ? t("dashboard.subtitleNamed", { name: household.name })
+                : t("dashboard.subtitle")}
             </p>
           </div>
           <div className="dashboard-page__actions">
             <Link to="/inventory" className="tori-button tori-button--primary">
-              Add item
+              {t("inventory.addItem")}
             </Link>
             <Link to="/inventory" className="tori-button tori-button--secondary">
-              Add folder
+              {t("inventory.addFolder")}
             </Link>
             <Link to="/household" className="tori-button tori-button--ghost">
-              Invite
+              {t("dashboard.invite")}
             </Link>
           </div>
         </header>
@@ -92,81 +97,79 @@ export default function DashboardPage() {
           items={items}
         />
 
-        {isLoading ? <p className="dashboard-page__status">Loading dashboard…</p> : null}
+        {isLoading ? <p className="dashboard-page__status">{t("dashboard.loading")}</p> : null}
 
         {!isLoading && !hasInventory ? (
-          <section className="dashboard-page__empty dashboard-checklist" aria-label="Getting started">
+          <section className="dashboard-page__empty dashboard-checklist" aria-label={t("dashboard.gettingStarted")}>
             <div>
-              <h2 className="dashboard-checklist__title">Get your household set up</h2>
-              <p className="dashboard-checklist__lead">
-                A short path to a useful dashboard: organize, price, track expiry, and share.
-              </p>
+              <h2 className="dashboard-checklist__title">{t("dashboard.setupTitle")}</h2>
+              <p className="dashboard-checklist__lead">{t("dashboard.setupLead")}</p>
             </div>
             <ol className="dashboard-checklist__list">
               <li className={checklist.folder ? "is-done" : undefined}>
-                <span>Create a folder</span>
+                <span>{t("dashboard.stepFolder")}</span>
                 {!checklist.folder ? (
-                  <Link to="/inventory">Open Inventory</Link>
+                  <Link to="/inventory">{t("dashboard.openInventory")}</Link>
                 ) : (
-                  <span className="dashboard-checklist__done">Done</span>
+                  <span className="dashboard-checklist__done">{t("common.done")}</span>
                 )}
               </li>
               <li className={checklist.item ? "is-done" : undefined}>
-                <span>Add an item</span>
+                <span>{t("dashboard.stepItem")}</span>
                 {!checklist.item ? (
-                  <Link to="/inventory">Open Inventory</Link>
+                  <Link to="/inventory">{t("dashboard.openInventory")}</Link>
                 ) : (
-                  <span className="dashboard-checklist__done">Done</span>
+                  <span className="dashboard-checklist__done">{t("common.done")}</span>
                 )}
               </li>
               <li className={checklist.price ? "is-done" : undefined}>
-                <span>Add a price</span>
+                <span>{t("dashboard.stepPrice")}</span>
                 {!checklist.price ? (
-                  <Link to="/value">Open Value</Link>
+                  <Link to="/value">{t("dashboard.openValue")}</Link>
                 ) : (
-                  <span className="dashboard-checklist__done">Done</span>
+                  <span className="dashboard-checklist__done">{t("common.done")}</span>
                 )}
               </li>
               <li className={checklist.expiry ? "is-done" : undefined}>
-                <span>Set an expiration date</span>
+                <span>{t("dashboard.stepExpiry")}</span>
                 {!checklist.expiry ? (
-                  <Link to="/inventory">Open Inventory</Link>
+                  <Link to="/inventory">{t("dashboard.openInventory")}</Link>
                 ) : (
-                  <span className="dashboard-checklist__done">Done</span>
+                  <span className="dashboard-checklist__done">{t("common.done")}</span>
                 )}
               </li>
               <li className={checklist.invite ? "is-done" : undefined}>
-                <span>Invite someone to the household</span>
+                <span>{t("dashboard.stepInvite")}</span>
                 {!checklist.invite ? (
-                  <Link to="/household">Open Household</Link>
+                  <Link to="/household">{t("dashboard.openHousehold")}</Link>
                 ) : (
-                  <span className="dashboard-checklist__done">Done</span>
+                  <span className="dashboard-checklist__done">{t("common.done")}</span>
                 )}
               </li>
             </ol>
           </section>
         ) : null}
 
-        <section className="dashboard-kpis" aria-label="Household totals">
+        <section className="dashboard-kpis" aria-label={t("dashboard.totals")}>
           <Link to="/inventory" className="dashboard-kpi">
-            <span className="dashboard-kpi__label">Folders</span>
+            <span className="dashboard-kpi__label">{t("dashboard.folders")}</span>
             <span className="dashboard-kpi__value">{stats.folderCount}</span>
-            <span className="dashboard-kpi__hint">Open inventory</span>
+            <span className="dashboard-kpi__hint">{t("dashboard.viewInventory")}</span>
           </Link>
           <Link to="/inventory" className="dashboard-kpi">
-            <span className="dashboard-kpi__label">Items</span>
+            <span className="dashboard-kpi__label">{t("dashboard.items")}</span>
             <span className="dashboard-kpi__value">{stats.itemCount}</span>
-            <span className="dashboard-kpi__hint">Open inventory</span>
+            <span className="dashboard-kpi__hint">{t("dashboard.viewInventory")}</span>
           </Link>
           <div className="dashboard-kpi dashboard-kpi--static">
-            <span className="dashboard-kpi__label">Quantity</span>
+            <span className="dashboard-kpi__label">{t("dashboard.quantity")}</span>
             <span className="dashboard-kpi__value">{stats.totalQuantity}</span>
-            <span className="dashboard-kpi__hint">Sum of item quantities</span>
+            <span className="dashboard-kpi__hint">{t("dashboard.quantityHint")}</span>
           </div>
           <Link to="/value" className="dashboard-kpi">
-            <span className="dashboard-kpi__label">Recorded value</span>
+            <span className="dashboard-kpi__label">{t("dashboard.recordedValue")}</span>
             <span className="dashboard-kpi__value dashboard-kpi__value--text">
-              {stats.itemsWithPrice > 0 ? formatMoney(stats.totalValue) : "-"}
+              {stats.itemsWithPrice > 0 ? formatMoney(stats.totalValue) : t("common.dash")}
             </span>
             <span className="dashboard-kpi__hint">{valueHint}</span>
           </Link>
@@ -174,10 +177,10 @@ export default function DashboardPage() {
             to="/expiring"
             className={`dashboard-kpi${attention.length > 0 ? " dashboard-kpi--alert" : ""}`}
           >
-            <span className="dashboard-kpi__label">Expiring</span>
+            <span className="dashboard-kpi__label">{t("dashboard.expiring")}</span>
             <span className="dashboard-kpi__value">{attention.length}</span>
             <span className="dashboard-kpi__hint">
-              Within {threshold} day{threshold === 1 ? "" : "s"} or overdue
+              {t("dashboard.withinOrOverdue", { count: threshold })}
             </span>
           </Link>
         </section>
@@ -186,15 +189,15 @@ export default function DashboardPage() {
           <section className="dashboard-panel" aria-labelledby="dash-attention-title">
             <div className="dashboard-panel__header">
               <h2 id="dash-attention-title" className="dashboard-panel__title">
-                Needs attention
+                {t("dashboard.needsAttention")}
               </h2>
               <Link to="/expiring" className="dashboard-panel__link">
-                View Expiring
+                {t("dashboard.viewExpiring")}
               </Link>
             </div>
             {attention.length === 0 ? (
               <p className="dashboard-panel__empty">
-                Nothing expiring within {threshold} day{threshold === 1 ? "" : "s"}.
+                {t("dashboard.nothingExpiring", { count: threshold })}
               </p>
             ) : (
               <ul className="dashboard-list">
@@ -221,7 +224,7 @@ export default function DashboardPage() {
             )}
             {attention.length > ATTENTION_LIMIT ? (
               <p className="dashboard-panel__more">
-                +{attention.length - ATTENTION_LIMIT} more on Expiring
+                {t("dashboard.moreOnExpiring", { count: attention.length - ATTENTION_LIMIT })}
               </p>
             ) : null}
           </section>
@@ -229,19 +232,19 @@ export default function DashboardPage() {
           <section className="dashboard-panel" aria-labelledby="dash-gaps-title">
             <div className="dashboard-panel__header">
               <h2 id="dash-gaps-title" className="dashboard-panel__title">
-                Data gaps
+                {t("dashboard.dataGaps")}
               </h2>
               <Link to="/value" className="dashboard-panel__link">
-                View Value
+                {t("dashboard.viewValue")}
               </Link>
             </div>
             {!hasInventory ? (
-              <p className="dashboard-panel__empty">Gaps appear once you add items.</p>
+              <p className="dashboard-panel__empty">{t("dashboard.gapsAppear")}</p>
             ) : (
               <ul className="dashboard-gaps">
                 <li>
                   <div className="dashboard-gaps__head">
-                    <span>Missing price</span>
+                    <span>{t("dashboard.missingPrice")}</span>
                     <strong>{gaps.missingPrice.length}</strong>
                   </div>
                   {gaps.missingPrice.length > 0 ? (
@@ -253,12 +256,12 @@ export default function DashboardPage() {
                       ))}
                     </ul>
                   ) : (
-                    <p className="dashboard-gaps__ok">All items have a price.</p>
+                    <p className="dashboard-gaps__ok">{t("dashboard.allHavePrice")}</p>
                   )}
                 </li>
                 <li>
                   <div className="dashboard-gaps__head">
-                    <span>Missing location</span>
+                    <span>{t("dashboard.missingLocation")}</span>
                     <strong>{gaps.missingLocation.length}</strong>
                   </div>
                   {gaps.missingLocation.length > 0 ? (
@@ -270,12 +273,12 @@ export default function DashboardPage() {
                       ))}
                     </ul>
                   ) : (
-                    <p className="dashboard-gaps__ok">All items have a location.</p>
+                    <p className="dashboard-gaps__ok">{t("dashboard.allHaveLocation")}</p>
                   )}
                 </li>
                 <li>
                   <div className="dashboard-gaps__head">
-                    <span>Missing expiration (food)</span>
+                    <span>{t("dashboard.missingExpirationFood")}</span>
                     <strong>{gaps.missingExpiration.length}</strong>
                   </div>
                   {gaps.missingExpiration.length > 0 ? (
@@ -287,7 +290,7 @@ export default function DashboardPage() {
                       ))}
                     </ul>
                   ) : (
-                    <p className="dashboard-gaps__ok">All food items have an expiration date.</p>
+                    <p className="dashboard-gaps__ok">{t("dashboard.allFoodHaveExpiry")}</p>
                   )}
                 </li>
               </ul>
@@ -299,11 +302,11 @@ export default function DashboardPage() {
           <section className="dashboard-panel" aria-labelledby="dash-cat-title">
             <div className="dashboard-panel__header">
               <h2 id="dash-cat-title" className="dashboard-panel__title">
-                By category
+                {t("dashboard.byCategory")}
               </h2>
             </div>
             {categories.length === 0 ? (
-              <p className="dashboard-panel__empty">No categories yet.</p>
+              <p className="dashboard-panel__empty">{t("dashboard.noCategories")}</p>
             ) : (
               <ul className="dashboard-bars">
                 {categories.slice(0, SNAPSHOT_LIMIT).map((row) => (
@@ -311,7 +314,7 @@ export default function DashboardPage() {
                     <div className="dashboard-bars__meta">
                       <span>{row.label}</span>
                       <span>
-                        {row.count} item{row.count === 1 ? "" : "s"}
+                        {t("common.item", { count: row.count })}
                       </span>
                     </div>
                     <div className="dashboard-bars__track" aria-hidden>
@@ -326,14 +329,14 @@ export default function DashboardPage() {
           <section className="dashboard-panel" aria-labelledby="dash-tags-title">
             <div className="dashboard-panel__header">
               <h2 id="dash-tags-title" className="dashboard-panel__title">
-                Top tags
+                {t("dashboard.topTags")}
               </h2>
               <Link to="/tags" className="dashboard-panel__link">
-                View Tags
+                {t("dashboard.viewTags")}
               </Link>
             </div>
             {tags.length === 0 ? (
-              <p className="dashboard-panel__empty">No tags yet.</p>
+              <p className="dashboard-panel__empty">{t("dashboard.noTags")}</p>
             ) : (
               <ul className="dashboard-chips">
                 {tags.map((row) => (
@@ -351,21 +354,21 @@ export default function DashboardPage() {
           <section className="dashboard-panel" aria-labelledby="dash-loc-title">
             <div className="dashboard-panel__header">
               <h2 id="dash-loc-title" className="dashboard-panel__title">
-                Locations
+                {t("dashboard.locations")}
               </h2>
               <Link to="/locations" className="dashboard-panel__link">
-                View Locations
+                {t("dashboard.viewLocations")}
               </Link>
             </div>
             {items.length === 0 ? (
-              <p className="dashboard-panel__empty">No locations yet.</p>
+              <p className="dashboard-panel__empty">{t("dashboard.noLocations")}</p>
             ) : (
               <>
                 <p className="dashboard-panel__note">
-                  {locations.unlocatedCount} without a location
+                  {t("dashboard.withoutLocation", { count: locations.unlocatedCount })}
                 </p>
                 {locations.rows.length === 0 ? (
-                  <p className="dashboard-panel__empty">Every item is unlocated.</p>
+                  <p className="dashboard-panel__empty">{t("dashboard.everyUnlocated")}</p>
                 ) : (
                   <ul className="dashboard-bars">
                     {locations.rows.slice(0, SNAPSHOT_LIMIT).map((row) => (
@@ -393,14 +396,14 @@ export default function DashboardPage() {
           <section className="dashboard-panel" aria-labelledby="dash-recent-title">
             <div className="dashboard-panel__header">
               <h2 id="dash-recent-title" className="dashboard-panel__title">
-                Recent items
+                {t("dashboard.recentItems")}
               </h2>
               <Link to="/inventory" className="dashboard-panel__link">
-                View Inventory
+                {t("dashboard.viewInventory")}
               </Link>
             </div>
             {recent.length === 0 ? (
-              <p className="dashboard-panel__empty">Nothing recent yet.</p>
+              <p className="dashboard-panel__empty">{t("dashboard.nothingRecent")}</p>
             ) : (
               <ul className="dashboard-recent">
                 {recent.map((item) => {
@@ -428,32 +431,35 @@ export default function DashboardPage() {
           <section className="dashboard-panel" aria-labelledby="dash-household-title">
             <div className="dashboard-panel__header">
               <h2 id="dash-household-title" className="dashboard-panel__title">
-                Household
+                {t("household.title")}
               </h2>
               <Link to="/household" className="dashboard-panel__link">
-                Manage
+                {t("household.manage")}
               </Link>
             </div>
             {household ? (
               <div className="dashboard-household">
                 <p className="dashboard-household__name">{household.name}</p>
                 <p className="dashboard-household__meta">
-                  You’re {household.role === "owner" ? "the owner" : "a member"} ·{" "}
-                  {household.memberCount} member{household.memberCount === 1 ? "" : "s"}
+                  {t("household.youAreRole", {
+                    role:
+                      household.role === "owner"
+                        ? t("household.youAreOwner")
+                        : t("household.youAreMember"),
+                  })}{" "}
+                  · {t("common.memberCount", { count: household.memberCount })}
                 </p>
                 {household.memberCount <= 1 ? (
                   <p className="dashboard-household__nudge">
-                    Share the invite code so the house stays in sync.{" "}
-                    <Link to="/household">Copy invite on Household</Link>
+                    {t("household.nudgeShare")}{" "}
+                    <Link to="/household">{t("household.copyInvite")}</Link>
                   </p>
                 ) : (
-                  <p className="dashboard-household__nudge">
-                    Inventory updates live for everyone in this household.
-                  </p>
+                  <p className="dashboard-household__nudge">{t("household.nudgeLive")}</p>
                 )}
               </div>
             ) : (
-              <p className="dashboard-panel__empty">No active household.</p>
+              <p className="dashboard-panel__empty">{t("household.noActive")}</p>
             )}
           </section>
         </div>

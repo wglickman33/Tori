@@ -1,7 +1,10 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import type { Folder, Item, ItemInput } from "../../api/client";
-import { DEFAULT_LOCATION_PRESETS } from "../../constants/inventory";
+import { defaultLocationPresetsForLanguage } from "../../constants/inventory";
+import { currentLanguage } from "../../i18n";
+import { translateError } from "../../i18n/apiErrors";
 import { useHouseholdStore } from "../../store/householdStore";
 import { useInventoryStore } from "../../store/inventoryStore";
 import { buildLocationSelectOptions } from "../../utils/inventoryFilters";
@@ -48,6 +51,7 @@ export function ItemFormModal({
   onUploadImage,
   onRemoveImage,
 }: ItemFormModalProps) {
+  const { t } = useTranslation();
   const items = useInventoryStore((s) => s.items);
   const locationPresets = useHouseholdStore((s) => s.household?.locationPresets);
   const updateLocationPresets = useHouseholdStore((s) => s.updateLocationPresets);
@@ -97,11 +101,11 @@ export function ItemFormModal({
   const onPendingFile = (file: File | undefined) => {
     if (!file) return;
     if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
-      setError("Only JPEG, PNG, and WebP images are allowed");
+      setError(t("errors.jpegPngWebp"));
       return;
     }
     if (file.size > MAX_BYTES) {
-      setError("Image must be 5MB or smaller");
+      setError(t("errors.imageTooLarge"));
       return;
     }
     setError(null);
@@ -114,12 +118,12 @@ export function ItemFormModal({
     e.preventDefault();
     setError(null);
     if (!name.trim()) {
-      setError("Item name is required");
+      setError(t("errors.itemNameRequired"));
       return;
     }
     const qty = Number(quantity);
     if (!Number.isInteger(qty) || qty < 1) {
-      setError("Quantity must be a whole number of at least 1");
+      setError(t("errors.quantityMin"));
       return;
     }
     const resolvedLocation =
@@ -141,7 +145,7 @@ export function ItemFormModal({
       );
       // Keep household location list in sync when Custom introduces a new place.
       if (resolvedLocation) {
-        const current = locationPresets ?? [...DEFAULT_LOCATION_PRESETS];
+        const current = locationPresets ?? defaultLocationPresetsForLanguage(currentLanguage());
         const exists = current.some((loc) => loc.toLowerCase() === resolvedLocation.toLowerCase());
         if (!exists) {
           try {
@@ -153,33 +157,38 @@ export function ItemFormModal({
       }
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not save item");
+      const raw = err instanceof Error ? err.message : t("errors.couldNotSaveItem");
+      setError(translateError(raw, t));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Modal title={item ? "Edit item" : "Add item"} isOpen={isOpen} onClose={onClose}>
+    <Modal
+      title={item ? t("inventory.editItem") : t("inventory.addItem")}
+      isOpen={isOpen}
+      onClose={onClose}
+    >
       <form className="inventory-form" onSubmit={handleSubmit} noValidate>
         {error ? <Banner>{error}</Banner> : null}
-        <TextField label="Name" value={name} onChange={(e) => setName(e.target.value)} required />
+        <TextField label={t("inventory.name")} value={name} onChange={(e) => setName(e.target.value)} required />
         <div className="inventory-form__row">
           <label className="inventory-form__field">
-            <span>Location</span>
+            <span>{t("inventory.location")}</span>
             <select value={location} onChange={(e) => setLocation(e.target.value)}>
-              <option value="">None</option>
+              <option value="">{t("inventory.none")}</option>
               {locationOptions.map((loc) => (
                 <option key={loc} value={loc}>
-                  {loc}
+                  {loc === "Custom" ? t("common.custom") : loc}
                 </option>
               ))}
             </select>
           </label>
           <label className="inventory-form__field">
-            <span>Folder</span>
+            <span>{t("inventory.folder")}</span>
             <select value={folderId} onChange={(e) => setFolderId(e.target.value)}>
-              <option value="">Independent item</option>
+              <option value="">{t("inventory.independentItem")}</option>
               {folders.map((folder) => (
                 <option key={folder.id} value={folder.id}>
                   {folder.name}
@@ -190,12 +199,12 @@ export function ItemFormModal({
         </div>
         <p className="inventory-form__hint">
           <Link to="/locations" className="inventory-form__inline-link">
-            Manage locations
+            {t("inventory.manageLocations")}
           </Link>
         </p>
         {location === "Custom" ? (
           <TextField
-            label="Custom location"
+            label={t("inventory.customLocation")}
             value={customLocation}
             onChange={(e) => setCustomLocation(e.target.value)}
             maxLength={80}
@@ -203,14 +212,14 @@ export function ItemFormModal({
         ) : null}
         <div className="inventory-form__row">
           <TextField
-            label="Quantity"
+            label={t("common.quantity")}
             type="number"
             min={1}
             value={quantity}
             onChange={(e) => setQuantity(e.target.value)}
           />
           <TextField
-            label="Price"
+            label={t("inventory.price")}
             type="number"
             min={0}
             step="0.01"
@@ -220,25 +229,25 @@ export function ItemFormModal({
         </div>
         <div className="inventory-form__row">
           <TextField
-            label="Purchase date"
+            label={t("inventory.purchaseDate")}
             type="date"
             value={purchaseDate}
             onChange={(e) => setPurchaseDate(e.target.value)}
           />
           <TextField
-            label="Expiration date"
+            label={t("inventory.expirationDate")}
             type="date"
             value={expirationDate}
             onChange={(e) => setExpirationDate(e.target.value)}
           />
         </div>
         <TextField
-          label="Tags"
-          placeholder="pantry, snacks"
+          label={t("inventory.tags")}
+          placeholder={t("inventory.tagsPlaceholder")}
           value={tagsText}
           onChange={(e) => setTagsText(e.target.value)}
         />
-        <p className="inventory-form__hint">Separate tags with commas.</p>
+        <p className="inventory-form__hint">{t("inventory.tagsHint")}</p>
         {item && onUploadImage && onRemoveImage ? (
           <ItemImageControls
             imageUrl={item.imageUrl}
@@ -248,13 +257,17 @@ export function ItemFormModal({
           />
         ) : (
           <div className="inventory-form__photo">
-            <span>Photo (optional)</span>
+            <span>{t("inventory.photoOptional")}</span>
             {pendingPreview ? (
-              <img src={pendingPreview} alt="Selected item" className="inventory-form__photo-preview" />
+              <img
+                src={pendingPreview}
+                alt={t("inventory.selectedItemAlt")}
+                className="inventory-form__photo-preview"
+              />
             ) : null}
             <div className="inventory-form__photo-actions">
               <Button type="button" variant="secondary" onClick={() => fileRef.current?.click()}>
-                {pendingImage ? "Change photo" : "Add photo"}
+                {pendingImage ? t("inventory.changePhoto") : t("inventory.addPhoto")}
               </Button>
               {pendingImage ? (
                 <Button
@@ -266,7 +279,7 @@ export function ItemFormModal({
                     setPendingPreview(null);
                   }}
                 >
-                  Clear photo
+                  {t("inventory.clearPhoto")}
                 </Button>
               ) : null}
             </div>
@@ -281,10 +294,10 @@ export function ItemFormModal({
         )}
         <div className="inventory-form__actions">
           <Button type="button" variant="ghost" onClick={onClose}>
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button type="submit" disabled={loading}>
-            {loading ? "Saving…" : item ? "Save changes" : "Add item"}
+            {loading ? t("common.saving") : item ? t("inventory.saveChanges") : t("inventory.addItem")}
           </Button>
         </div>
       </form>

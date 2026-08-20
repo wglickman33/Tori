@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import "./Modal.scss";
 
 interface ModalProps {
@@ -23,6 +24,7 @@ function CloseIcon() {
 }
 
 export function Modal({ title, isOpen, onClose, children }: ModalProps) {
+  const { t } = useTranslation();
   if (!isOpen) return null;
   return (
     <div className="tori-modal-overlay" role="presentation" onClick={onClose}>
@@ -35,7 +37,7 @@ export function Modal({ title, isOpen, onClose, children }: ModalProps) {
       >
         <div className="tori-modal__header">
           <h2 className="tori-modal__title">{title}</h2>
-          <button type="button" className="tori-modal__close" onClick={onClose} aria-label="Close">
+          <button type="button" className="tori-modal__close" onClick={onClose} aria-label={t("common.close")}>
             <CloseIcon />
           </button>
         </div>

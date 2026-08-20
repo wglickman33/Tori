@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { runToriAgent, MAX_TORI_TOOL_ROUNDS, TORI_SYSTEM_PROMPT } from "./toriAgent.js";
+import { runToriAgent, MAX_TORI_TOOL_ROUNDS, TORI_SYSTEM_PROMPT, TORI_SYSTEM_PROMPT_ES } from "./toriAgent.js";
 import type { GroqChatMessage, GroqChatResult } from "./groqChat.js";
 
 const USER_ID = "11111111-1111-1111-1111-111111111111";
@@ -15,6 +15,47 @@ describe("runToriAgent", () => {
     expect(TORI_SYSTEM_PROMPT).toMatch(/propose_add_item/i);
     expect(TORI_SYSTEM_PROMPT).toMatch(/Confirm \/ Not now/);
     expect(MAX_TORI_TOOL_ROUNDS).toBe(6);
+  });
+
+  it("uses a Latin American Spanish system prompt when locale is es", () => {
+    expect(TORI_SYSTEM_PROMPT_ES).toMatch(/español latinoamericano/i);
+    expect(TORI_SYSTEM_PROMPT_ES).toMatch(/nunca inventes/i);
+    expect(TORI_SYSTEM_PROMPT_ES).toMatch(/Confirmar \/ Ahora no/);
+    expect(TORI_SYSTEM_PROMPT_ES).toMatch(/search_items/i);
+  });
+
+  it("refuses Spanish off-topic questions in Spanish without calling Groq", async () => {
+    const fetchGroqChat = vi.fn();
+    const executeTool = vi.fn();
+    const result = await runToriAgent(
+      USER_ID,
+      HOUSEHOLD_ID,
+      [{ role: "user", content: "¿Quién fue el último presidente?" }],
+      { apiKey: "key", fetchGroqChat, executeTool, locale: "es" }
+    );
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.reply).toMatch(/inventario del hogar/i);
+    expect(fetchGroqChat).not.toHaveBeenCalled();
+    expect(executeTool).not.toHaveBeenCalled();
+  });
+
+  it("sends the Spanish system prompt to Groq when locale is es", async () => {
+    const fetchGroqChat = vi.fn().mockResolvedValue({
+      ok: true,
+      kind: "reply",
+      reply: "Consejo general: guarda la leche fría.",
+    });
+
+    await runToriAgent(
+      USER_ID,
+      HOUSEHOLD_ID,
+      [{ role: "user", content: "¿Cómo guardo la leche?" }],
+      { apiKey: "key", fetchGroqChat, locale: "es" }
+    );
+
+    expect(fetchGroqChat).toHaveBeenCalledTimes(1);
+    const [messages] = fetchGroqChat.mock.calls[0] as [GroqChatMessage[]];
+    expect(messages[0]?.content).toBe(TORI_SYSTEM_PROMPT_ES);
   });
 
   it("refuses off-topic questions without calling Groq or tools", async () => {

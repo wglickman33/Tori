@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { IconClear, IconMic, IconSend, IconStop, IconToriAi } from "../ui/SidebarIcons";
 import { Button } from "../ui/Button";
 import {
-  TORI_AI_SUGGESTIONS,
+  getToriAiSuggestions,
   pendingActionConfirming,
   pendingActionDetails,
   pendingActionDone,
@@ -11,6 +12,7 @@ import {
   useToriStore,
   type ChatTurn,
 } from "../../store/toriStore";
+import { translateError } from "../../i18n/apiErrors";
 import { speakText, stopSpeaking } from "../../utils/speech";
 import { useToriVoice } from "../../hooks/useToriVoice";
 import { toastError } from "../../store/toastStore";
@@ -34,6 +36,7 @@ function ToriPendingCard({
   onConfirm: (index: number) => void;
   onDismiss: (index: number) => void;
 }) {
+  const { t } = useTranslation();
   if (!message.pendingAction || !message.pendingStatus || message.pendingStatus === "dismissed") {
     return null;
   }
@@ -43,7 +46,7 @@ function ToriPendingCard({
       <div className="tori-chat__confirm">
         <p className="tori-chat__confirm-done">
           {pendingActionDone(message.pendingAction)}{" "}
-          <Link to="/inventory">View inventory</Link>
+          <Link to="/inventory">{t("ai.viewInventory")}</Link>
         </p>
       </div>
     );
@@ -62,7 +65,7 @@ function ToriPendingCard({
       )}
       <div className="tori-chat__confirm-actions">
         <Button type="button" variant="ghost" onClick={() => onDismiss(index)} disabled={confirming}>
-          Not now
+          {t("ai.notNow")}
         </Button>
         <Button
           type="button"
@@ -70,7 +73,7 @@ function ToriPendingCard({
           onClick={() => onConfirm(index)}
           disabled={confirming}
         >
-          {confirming ? pendingActionConfirming(message.pendingAction) : "Confirm"}
+          {confirming ? pendingActionConfirming(message.pendingAction) : t("ai.confirm")}
         </Button>
       </div>
     </div>
@@ -78,6 +81,7 @@ function ToriPendingCard({
 }
 
 export function ToriChatPane({ variant, inputId }: ToriChatPaneProps) {
+  const { t } = useTranslation();
   const messages = useToriStore((s) => s.messages);
   const draft = useToriStore((s) => s.draft);
   const sending = useToriStore((s) => s.sending);
@@ -172,7 +176,7 @@ export function ToriChatPane({ variant, inputId }: ToriChatPaneProps) {
             disabled={sending}
           >
             <IconClear />
-            Clear chat
+            {t("ai.clearChat")}
           </button>
         </div>
       ) : null}
@@ -189,12 +193,10 @@ export function ToriChatPane({ variant, inputId }: ToriChatPaneProps) {
             <span className="tori-chat__welcome-icon" aria-hidden>
               <IconToriAi />
             </span>
-            <p className="tori-chat__welcome-title">What can I help with?</p>
-            <p className="tori-chat__welcome-copy">
-              Ask what you have, where it is, or what is expiring soon.
-            </p>
+            <p className="tori-chat__welcome-title">{t("ai.welcomeTitle")}</p>
+            <p className="tori-chat__welcome-copy">{t("ai.welcomeBody")}</p>
             <ul className="tori-chat__suggestions">
-              {TORI_AI_SUGGESTIONS.map((prompt) => (
+              {getToriAiSuggestions().map((prompt) => (
                 <li key={prompt}>
                   <button
                     type="button"
@@ -214,7 +216,7 @@ export function ToriChatPane({ variant, inputId }: ToriChatPaneProps) {
             key={`${message.role}-${index}`}
             className={`tori-chat__turn tori-chat__turn--${message.role}`}
           >
-            <p className="tori-chat__role">{message.role === "user" ? "You" : "Tori AI"}</p>
+            <p className="tori-chat__role">{message.role === "user" ? t("ai.you") : t("ai.title")}</p>
             <p
               className={`tori-chat__body${message.role === "user" ? " tori-chat__body--plain" : ""}`}
             >
@@ -238,19 +240,19 @@ export function ToriChatPane({ variant, inputId }: ToriChatPaneProps) {
               <span />
               <span />
             </span>
-            Looking that up...
+            {t("ai.lookingUp")}
           </p>
         )}
         {threadError && (
           <p className="tori-chat__error" role="alert">
-            {threadError}
+            {translateError(threadError, t)}
           </p>
         )}
       </div>
 
       <form className="tori-chat__composer" onSubmit={onSubmit}>
         <label className="tori-chat__label" htmlFor={inputId}>
-          Message
+          {t("ai.message")}
         </label>
         <div className="tori-chat__compose-row">
           <textarea
@@ -267,7 +269,7 @@ export function ToriChatPane({ variant, inputId }: ToriChatPaneProps) {
               setDraft(event.target.value);
             }}
             onKeyDown={onKeyDown}
-            placeholder={listening ? "Listening..." : "Ask about your household inventory..."}
+            placeholder={listening ? t("ai.listening") : t("ai.placeholder")}
             disabled={sending || listening}
             maxLength={4000}
           />
@@ -284,7 +286,7 @@ export function ToriChatPane({ variant, inputId }: ToriChatPaneProps) {
               }}
               disabled={sending}
               aria-pressed={listening}
-              aria-label={listening ? "Stop listening" : "Talk to Tori AI"}
+              aria-label={listening ? t("ai.stopListening") : t("ai.talk")}
             >
               <IconMic />
             </button>
@@ -293,7 +295,9 @@ export function ToriChatPane({ variant, inputId }: ToriChatPaneProps) {
             type={speaking ? "button" : "submit"}
             className={`tori-chat__send${speaking ? " tori-chat__send--stop" : ""}`}
             disabled={sending || (!speaking && !draft.trim())}
-            aria-label={sending ? "Sending" : speaking ? "Stop speaking" : "Send"}
+            aria-label={
+              sending ? t("common.sending") : speaking ? t("ai.stopSpeaking") : t("common.send")
+            }
             onClick={
               speaking
                 ? () => {
@@ -303,7 +307,15 @@ export function ToriChatPane({ variant, inputId }: ToriChatPaneProps) {
                 : undefined
             }
           >
-            {sending ? "Sending..." : speaking ? (compact ? <IconStop /> : "Stop") : compact ? <IconSend /> : "Send"}
+            {sending
+              ? t("common.sending")
+              : speaking
+                ? compact
+                  ? <IconStop />
+                  : t("common.stop")
+                : compact
+                  ? <IconSend />
+                  : t("common.send")}
           </button>
         </div>
       </form>

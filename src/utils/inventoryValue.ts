@@ -1,5 +1,6 @@
 import type { Folder, Item } from "../api/client";
 import { isFoodFolderCategory } from "../constants/inventory";
+import i18n, { currentDateLocale } from "../i18n";
 import { daysUntilExpiration, folderLabel, parsePrice } from "./inventoryFilters";
 import { readExpiringThreshold } from "./expiring";
 
@@ -128,11 +129,13 @@ export function computeInventoryValue(
     pushBreakdown(byFolder, folderKey, folderName, line);
 
     const folder = item.folderId ? folderById.get(item.folderId) : undefined;
-    const category = folder?.category?.trim() || "Uncategorized";
-    pushBreakdown(byCategory, category.toLowerCase(), category, line);
+    const categoryRaw = folder?.category?.trim() || "Uncategorized";
+    const category = i18n.t(`categories.${categoryRaw}`, { defaultValue: categoryRaw });
+    pushBreakdown(byCategory, categoryRaw.toLowerCase(), category, line);
 
-    const location = item.location?.trim() || "No location";
-    pushBreakdown(byLocation, location.toLowerCase(), location, line);
+    const locationRaw = item.location?.trim();
+    const location = locationRaw || i18n.t("inventory.noLocation");
+    pushBreakdown(byLocation, (locationRaw || "__none__").toLowerCase(), location, line);
   }
 
   const itemCount = items.length;
@@ -251,8 +254,10 @@ export function computeCategoryCounts(folders: Folder[], items: Item[]): CountBr
 
   for (const item of items) {
     const folder = item.folderId ? folderById.get(item.folderId) : undefined;
-    const category = folder?.category?.trim() || (item.folderId ? "Uncategorized" : "Independent");
-    const key = category.toLowerCase();
+    const categoryRaw =
+      folder?.category?.trim() || (item.folderId ? "Uncategorized" : "Independent");
+    const category = i18n.t(`categories.${categoryRaw}`, { defaultValue: categoryRaw });
+    const key = categoryRaw.toLowerCase();
     const prev = map.get(key) ?? { label: category, count: 0 };
     prev.count += 1;
     map.set(key, prev);
@@ -281,7 +286,7 @@ export function recentItems(items: Item[], limit = 10): Item[] {
 }
 
 export function formatMoney(value: number): string {
-  return value.toLocaleString(undefined, { style: "currency", currency: "USD" });
+  return value.toLocaleString(currentDateLocale(), { style: "currency", currency: "USD" });
 }
 
 export function formatPercent(share: number): string {
