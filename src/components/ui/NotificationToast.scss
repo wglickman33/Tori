@@ -94,12 +94,29 @@
   transition: background-color 0.4s ease, color 0.4s ease;
 }
 
+.notification-toast__text {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  min-width: 0;
+}
+
 .notification-toast__message {
   color: $darkBlue;
   font-size: 0.875rem;
   font-weight: 600;
   line-height: 1.35;
   transition: color 0.4s ease;
+}
+
+.notification-toast__action {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: $darkBlue;
+
+  &:hover {
+    color: $powderBlue;
+  }
 }
 
 .notification-toast__close {
@@ -201,6 +218,14 @@ html[data-theme="dark"] {
 
   .notification-toast__message {
     color: $paleBlue;
+  }
+
+  .notification-toast__action {
+    color: $powderBlue;
+
+    &:hover {
+      color: $paleBlue;
+    }
   }
 
   .notification-toast__close {

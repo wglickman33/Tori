@@ -21,6 +21,7 @@ import {
   IconTags,
   IconUser,
   IconValue,
+  IconToriAi,
 } from "../ui/SidebarIcons";
 import { ThemeToggle } from "../ui/ThemeToggle";
 import { HouseholdSwitcher } from "./HouseholdSwitcher";
@@ -34,6 +35,7 @@ const MAIN_NAV = [
   { to: "/locations", label: "Locations", icon: IconLocations },
   { to: "/value", label: "Value", icon: IconValue },
   { to: "/expiring", label: "Expiring", icon: IconExpiring },
+  { to: "/ai", label: "Tori AI", icon: IconToriAi },
   { to: "/household", label: "Household", icon: IconHousehold },
 ] as const;
 

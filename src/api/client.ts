@@ -1,3 +1,5 @@
+import { parseSseBuffer } from "../utils/parseSse";
+
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3001";
 
 const ACCESS_KEY = "tori_access_token";
@@ -263,6 +265,129 @@ export const inventoryApi = {
   exportCsvUrl: (householdId: string) => `${API_URL}/api/households/${householdId}/export`,
   eventsUrl: (householdId: string, token: string) =>
     `${API_URL}/api/households/${householdId}/events?token=${encodeURIComponent(token)}`,
+};
+
+export type ToriChatMessage = {
+  role: "user" | "assistant";
+  content: string;
+};
+
+export type ToriProposedItem = {
+  name: string;
+  quantity: number;
+  location: string | null;
+  folderId: string | null;
+  expirationDate: string | null;
+  purchaseDate: string | null;
+  tags: string[];
+  price: string | null;
+};
+
+export type ToriPendingAction =
+  | { type: "add_item"; item: ToriProposedItem }
+  | { type: "update_item"; itemId: string; itemName: string; patch: Partial<ToriProposedItem> }
+  | { type: "delete_item"; itemId: string; itemName: string };
+
+export type ToriChatResponse = {
+  reply: string;
+  pendingAction?: ToriPendingAction;
+};
+
+export type ToriStreamEvent =
+  | { type: "tool.start"; id: string; name: string; input: unknown }
+  | { type: "tool.result"; id: string; name: string; input: unknown; output: unknown }
+  | { type: "reply"; reply: string; pendingAction?: ToriPendingAction }
+  | { type: "error"; error: string; status?: number };
+
+async function fetchToriChatStream(
+  messages: ToriChatMessage[],
+  householdId: string,
+  retry = true
+): Promise<Response> {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    Accept: "text/event-stream",
+  };
+  const token = getAccessToken();
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  const res = await fetch(`${API_URL}/api/tori/chat`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ householdId, messages }),
+  });
+
+  if (res.status === 401 && retry && getRefreshToken()) {
+    const next = await refreshAccessToken();
+    if (next) return fetchToriChatStream(messages, householdId, false);
+  }
+
+  return res;
+}
+
+export const toriApi = {
+  chat: (messages: ToriChatMessage[], householdId: string) =>
+    api<ToriChatResponse>("/api/tori/chat", {
+      method: "POST",
+      body: JSON.stringify({ householdId, messages }),
+    }),
+  chatStream: async (
+    messages: ToriChatMessage[],
+    householdId: string,
+    onEvent?: (event: ToriStreamEvent) => void
+  ): Promise<ToriChatResponse> => {
+    const res = await fetchToriChatStream(messages, householdId);
+    const contentType = res.headers.get("content-type") ?? "";
+
+    if (!contentType.includes("text/event-stream")) {
+      const data = (await res.json().catch(() => ({}))) as ToriChatResponse & { error?: string };
+      if (!res.ok) throw new Error(data.error ?? `Request failed: ${res.status}`);
+      if (!data.reply) throw new Error("Tori AI returned an empty reply. Try again.");
+      onEvent?.({ type: "reply", reply: data.reply, pendingAction: data.pendingAction });
+      return { reply: data.reply, pendingAction: data.pendingAction };
+    }
+
+    if (!res.body) throw new Error("Tori AI could not reply right now. Try again.");
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let reply = "";
+    let pendingAction: ToriPendingAction | undefined;
+    let streamError: string | undefined;
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const parsed = parseSseBuffer(buffer);
+      buffer = parsed.rest;
+      for (const frame of parsed.events) {
+        let data: Record<string, unknown> = {};
+        try {
+          data = JSON.parse(frame.data) as Record<string, unknown>;
+        } catch {
+          continue;
+        }
+        if (frame.event === "tool.start" || frame.event === "tool.result") {
+          onEvent?.(data as unknown as ToriStreamEvent);
+        } else if (frame.event === "reply") {
+          reply = typeof data.reply === "string" ? data.reply : "";
+          pendingAction = data.pendingAction as ToriPendingAction | undefined;
+          onEvent?.({ type: "reply", reply, pendingAction });
+        } else if (frame.event === "error") {
+          streamError =
+            typeof data.error === "string" && data.error.trim()
+              ? data.error
+              : "Tori AI could not reply right now. Try again.";
+        }
+      }
+    }
+
+    if (streamError) throw new Error(streamError);
+    if (!reply) throw new Error("Tori AI returned an empty reply. Try again.");
+    return { reply, pendingAction };
+  },
 };
 
 export function resolveMediaUrl(url: string | null | undefined): string | null {

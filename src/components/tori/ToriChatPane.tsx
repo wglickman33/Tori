@@ -1,0 +1,312 @@
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+import { Link } from "react-router-dom";
+import { IconClear, IconMic, IconSend, IconStop, IconToriAi } from "../ui/SidebarIcons";
+import { Button } from "../ui/Button";
+import {
+  TORI_AI_SUGGESTIONS,
+  pendingActionConfirming,
+  pendingActionDetails,
+  pendingActionDone,
+  pendingActionTitle,
+  useToriStore,
+  type ChatTurn,
+} from "../../store/toriStore";
+import { speakText, stopSpeaking } from "../../utils/speech";
+import { useToriVoice } from "../../hooks/useToriVoice";
+import { toastError } from "../../store/toastStore";
+import "./ToriChatPane.scss";
+
+type ToriChatPaneProps = {
+  variant: "page" | "widget";
+  inputId: string;
+};
+
+function ToriPendingCard({
+  message,
+  index,
+  confirming,
+  onConfirm,
+  onDismiss,
+}: {
+  message: Extract<ChatTurn, { role: "assistant" }>;
+  index: number;
+  confirming: boolean;
+  onConfirm: (index: number) => void;
+  onDismiss: (index: number) => void;
+}) {
+  if (!message.pendingAction || !message.pendingStatus || message.pendingStatus === "dismissed") {
+    return null;
+  }
+
+  if (message.pendingStatus === "done") {
+    return (
+      <div className="tori-chat__confirm">
+        <p className="tori-chat__confirm-done">
+          {pendingActionDone(message.pendingAction)}{" "}
+          <Link to="/inventory">View inventory</Link>
+        </p>
+      </div>
+    );
+  }
+
+  const details = pendingActionDetails(message.pendingAction);
+  return (
+    <div className="tori-chat__confirm">
+      <p className="tori-chat__confirm-title">{pendingActionTitle(message.pendingAction)}</p>
+      {details.length > 0 && (
+        <ul className="tori-chat__confirm-items">
+          {details.map((line) => (
+            <li key={line}>{line}</li>
+          ))}
+        </ul>
+      )}
+      <div className="tori-chat__confirm-actions">
+        <Button type="button" variant="ghost" onClick={() => onDismiss(index)} disabled={confirming}>
+          Not now
+        </Button>
+        <Button
+          type="button"
+          variant={message.pendingAction.type === "delete_item" ? "danger" : "primary"}
+          onClick={() => onConfirm(index)}
+          disabled={confirming}
+        >
+          {confirming ? pendingActionConfirming(message.pendingAction) : "Confirm"}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+export function ToriChatPane({ variant, inputId }: ToriChatPaneProps) {
+  const messages = useToriStore((s) => s.messages);
+  const draft = useToriStore((s) => s.draft);
+  const sending = useToriStore((s) => s.sending);
+  const threadError = useToriStore((s) => s.threadError);
+  const setDraft = useToriStore((s) => s.setDraft);
+  const send = useToriStore((s) => s.send);
+  const confirmAction = useToriStore((s) => s.confirmAction);
+  const dismissAction = useToriStore((s) => s.dismissAction);
+  const resetChat = useToriStore((s) => s.resetChat);
+  const listRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const compact = variant === "widget";
+  const voiceTurnRef = useRef(false);
+  const lastSpokenRef = useRef("");
+  const [speaking, setSpeaking] = useState(false);
+
+  const { supported: voiceSupported, listening, toggle: toggleVoice, stop: stopVoice } =
+    useToriVoice({
+      enabled: !sending,
+      onInterim: setDraft,
+      onFinal: (transcript) => {
+        voiceTurnRef.current = true;
+        void send(transcript);
+      },
+      onError: (message) => toastError(message),
+    });
+
+  useEffect(() => {
+    listRef.current?.scrollTo({ top: listRef.current.scrollHeight });
+  }, [messages, sending, threadError]);
+
+  useEffect(() => {
+    if (sending) stopVoice();
+    else inputRef.current?.focus();
+  }, [sending, stopVoice]);
+
+  useEffect(() => {
+    const last = messages[messages.length - 1];
+    if (!voiceTurnRef.current || last?.role !== "assistant" || !last.content) return;
+    if (lastSpokenRef.current === last.content) return;
+    lastSpokenRef.current = last.content;
+    voiceTurnRef.current = false;
+    setSpeaking(true);
+    speakText(last.content, () => setSpeaking(false));
+  }, [messages]);
+
+  useEffect(() => () => stopSpeaking(), []);
+
+  useEffect(() => {
+    if (messages.length > 0) return;
+    stopSpeaking();
+    setSpeaking(false);
+  }, [messages.length]);
+
+  const onSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    if (speaking) {
+      stopSpeaking();
+      setSpeaking(false);
+      return;
+    }
+    void send();
+  };
+
+  const clearChat = () => {
+    stopSpeaking();
+    setSpeaking(false);
+    stopVoice();
+    resetChat();
+  };
+
+  const onKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      if (speaking) {
+        stopSpeaking();
+        setSpeaking(false);
+        return;
+      }
+      void send();
+    }
+  };
+
+  return (
+    <div className={`tori-chat${compact ? " tori-chat--widget" : ""}`}>
+      {messages.length > 0 ? (
+        <div className="tori-chat__toolbar">
+          <button
+            type="button"
+            className="tori-chat__clear"
+            onClick={clearChat}
+            disabled={sending}
+          >
+            <IconClear />
+            Clear chat
+          </button>
+        </div>
+      ) : null}
+      <div
+        className="tori-chat__thread"
+        ref={listRef}
+        role="log"
+        aria-live="polite"
+        aria-relevant="additions"
+        aria-busy={sending}
+      >
+        {messages.length === 0 && !sending && (
+          <div className="tori-chat__welcome">
+            <span className="tori-chat__welcome-icon" aria-hidden>
+              <IconToriAi />
+            </span>
+            <p className="tori-chat__welcome-title">What can I help with?</p>
+            <p className="tori-chat__welcome-copy">
+              Ask what you have, where it is, or what is expiring soon.
+            </p>
+            <ul className="tori-chat__suggestions">
+              {TORI_AI_SUGGESTIONS.map((prompt) => (
+                <li key={prompt}>
+                  <button
+                    type="button"
+                    className="tori-chat__suggestion"
+                    onClick={() => void send(prompt)}
+                    disabled={sending}
+                  >
+                    {prompt}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {messages.map((message, index) => (
+          <article
+            key={`${message.role}-${index}`}
+            className={`tori-chat__turn tori-chat__turn--${message.role}`}
+          >
+            <p className="tori-chat__role">{message.role === "user" ? "You" : "Tori AI"}</p>
+            <p
+              className={`tori-chat__body${message.role === "user" ? " tori-chat__body--plain" : ""}`}
+            >
+              {message.content}
+            </p>
+            {message.role === "assistant" && (
+              <ToriPendingCard
+                message={message}
+                index={index}
+                confirming={message.pendingStatus === "confirming"}
+                onConfirm={(i) => void confirmAction(i)}
+                onDismiss={dismissAction}
+              />
+            )}
+          </article>
+        ))}
+        {sending && (
+          <p className="tori-chat__status" role="status">
+            <span className="tori-chat__dots" aria-hidden>
+              <span />
+              <span />
+              <span />
+            </span>
+            Looking that up...
+          </p>
+        )}
+        {threadError && (
+          <p className="tori-chat__error" role="alert">
+            {threadError}
+          </p>
+        )}
+      </div>
+
+      <form className="tori-chat__composer" onSubmit={onSubmit}>
+        <label className="tori-chat__label" htmlFor={inputId}>
+          Message
+        </label>
+        <div className="tori-chat__compose-row">
+          <textarea
+            id={inputId}
+            ref={inputRef}
+            className="tori-chat__input"
+            rows={compact ? 2 : 3}
+            value={draft}
+            onChange={(event) => {
+              if (speaking) {
+                stopSpeaking();
+                setSpeaking(false);
+              }
+              setDraft(event.target.value);
+            }}
+            onKeyDown={onKeyDown}
+            placeholder={listening ? "Listening..." : "Ask about your household inventory..."}
+            disabled={sending || listening}
+            maxLength={4000}
+          />
+          {voiceSupported ? (
+            <button
+              type="button"
+              className={`tori-chat__mic${listening ? " tori-chat__mic--listening" : ""}`}
+              onClick={() => {
+                if (speaking) {
+                  stopSpeaking();
+                  setSpeaking(false);
+                }
+                toggleVoice();
+              }}
+              disabled={sending}
+              aria-pressed={listening}
+              aria-label={listening ? "Stop listening" : "Talk to Tori AI"}
+            >
+              <IconMic />
+            </button>
+          ) : null}
+          <button
+            type={speaking ? "button" : "submit"}
+            className={`tori-chat__send${speaking ? " tori-chat__send--stop" : ""}`}
+            disabled={sending || (!speaking && !draft.trim())}
+            aria-label={sending ? "Sending" : speaking ? "Stop speaking" : "Send"}
+            onClick={
+              speaking
+                ? () => {
+                    stopSpeaking();
+                    setSpeaking(false);
+                  }
+                : undefined
+            }
+          >
+            {sending ? "Sending..." : speaking ? (compact ? <IconStop /> : "Stop") : compact ? <IconSend /> : "Send"}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
