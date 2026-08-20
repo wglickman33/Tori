@@ -291,15 +291,27 @@ export type ToriPendingAction =
   | { type: "update_item"; itemId: string; itemName: string; patch: Partial<ToriProposedItem> }
   | { type: "delete_item"; itemId: string; itemName: string };
 
+export type ToriMatchedItem = {
+  id: string;
+  name: string;
+  location: string | null;
+  quantity: number;
+  price: string | null;
+  folderName: string | null;
+  tags: string[];
+  expirationDate?: string | null;
+};
+
 export type ToriChatResponse = {
   reply: string;
   pendingAction?: ToriPendingAction;
+  matchedItems?: ToriMatchedItem[];
 };
 
 export type ToriStreamEvent =
   | { type: "tool.start"; id: string; name: string; input: unknown }
   | { type: "tool.result"; id: string; name: string; input: unknown; output: unknown }
-  | { type: "reply"; reply: string; pendingAction?: ToriPendingAction }
+  | { type: "reply"; reply: string; pendingAction?: ToriPendingAction; matchedItems?: ToriMatchedItem[] }
   | { type: "error"; error: string; status?: number };
 
 async function fetchToriChatStream(
@@ -346,8 +358,8 @@ export const toriApi = {
       const data = (await res.json().catch(() => ({}))) as ToriChatResponse & { error?: string };
       if (!res.ok) throw new Error(data.error ?? `Request failed: ${res.status}`);
       if (!data.reply) throw new Error("Tori AI returned an empty reply. Try again.");
-      onEvent?.({ type: "reply", reply: data.reply, pendingAction: data.pendingAction });
-      return { reply: data.reply, pendingAction: data.pendingAction };
+      onEvent?.({ type: "reply", reply: data.reply, pendingAction: data.pendingAction, matchedItems: data.matchedItems });
+      return { reply: data.reply, pendingAction: data.pendingAction, matchedItems: data.matchedItems };
     }
 
     if (!res.body) throw new Error("Tori AI could not reply right now. Try again.");
@@ -357,6 +369,7 @@ export const toriApi = {
     let buffer = "";
     let reply = "";
     let pendingAction: ToriPendingAction | undefined;
+    let matchedItems: ToriMatchedItem[] | undefined;
     let streamError: string | undefined;
 
     while (true) {
@@ -377,7 +390,10 @@ export const toriApi = {
         } else if (frame.event === "reply") {
           reply = typeof data.reply === "string" ? data.reply : "";
           pendingAction = data.pendingAction as ToriPendingAction | undefined;
-          onEvent?.({ type: "reply", reply, pendingAction });
+          matchedItems = Array.isArray(data.matchedItems)
+            ? (data.matchedItems as ToriMatchedItem[])
+            : undefined;
+          onEvent?.({ type: "reply", reply, pendingAction, matchedItems });
         } else if (frame.event === "error") {
           streamError =
             typeof data.error === "string" && data.error.trim()
@@ -389,7 +405,7 @@ export const toriApi = {
 
     if (streamError) throw new Error(streamError);
     if (!reply) throw new Error("Tori AI returned an empty reply. Try again.");
-    return { reply, pendingAction };
+    return { reply, pendingAction, matchedItems };
   },
 };
 

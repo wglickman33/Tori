@@ -20,5 +20,5 @@ export function dateLocale(language: Language): string {
 }
 
 export function speechLocale(language: Language): string {
-  return language === "es" ? "es-US" : "en-US";
+  return language === "es" ? "es-MX" : "en-US";
 }

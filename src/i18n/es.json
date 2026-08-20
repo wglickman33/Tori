@@ -516,7 +516,13 @@
     "joinToConfirm": "Únete a un hogar para confirmar este cambio.",
     "couldNotSaveChange": "No se pudo guardar ese cambio.",
     "alreadyFullView": "Ya estás en la vista completa de Tori AI.",
-    "useWidgetInventory": "Usar el widget en Inventario"
+    "useWidgetInventory": "Usar el widget en Inventario",
+    "itemLocation": "Ubicación",
+    "itemPriceEach": "Precio (c/u)",
+    "swipeToCompare": "Desliza para comparar coincidencias",
+    "moreInInventory": "Mostrando {{count}} coincidencias",
+    "scrollPrev": "Artículo anterior",
+    "scrollNext": "Artículo siguiente"
   },
   "errors": {
     "invalidCredentials": "Correo o contraseña no válidos",

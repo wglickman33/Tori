@@ -109,7 +109,10 @@ describe("Tori voice", () => {
       );
       expect(screen.getByText("Milk is in the fridge.")).toBeTruthy();
     });
-    expect(speakText).toHaveBeenCalledWith("Milk is in the fridge.", expect.any(Function));
+    expect(speakText).toHaveBeenCalledWith("Milk is in the fridge.", {
+      language: "en",
+      onEnd: expect.any(Function),
+    });
   });
 
   it("turns Send into Stop while Tori AI is speaking", async () => {

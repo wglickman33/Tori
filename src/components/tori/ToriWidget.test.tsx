@@ -8,6 +8,7 @@ import { NotificationToastContainer } from "../ui/NotificationToast";
 import { useToriStore } from "../../store/toriStore";
 import { useHouseholdStore } from "../../store/householdStore";
 import { useToastStore } from "../../store/toastStore";
+import { useSettingsStore } from "../../store/settingsStore";
 import type { ToriStreamEvent } from "../../api/client";
 
 const chatStream = vi.fn();
@@ -84,7 +85,14 @@ async function mockStream(reply: string, events: ToriStreamEvent[] = [{ type: "r
   chatStream.mockImplementation(
     async (_messages: unknown, _householdId: unknown, onEvent?: (event: ToriStreamEvent) => void) => {
       for (const event of events) onEvent?.(event);
-      return { reply };
+      const replyEvent = events.find(
+        (event): event is Extract<ToriStreamEvent, { type: "reply" }> => event.type === "reply"
+      );
+      return {
+        reply,
+        matchedItems: replyEvent?.matchedItems,
+        pendingAction: replyEvent?.pendingAction,
+      };
     }
   );
 }
@@ -96,6 +104,7 @@ afterEach(() => {
   useToriStore.getState().closeWidget();
   useHouseholdStore.setState({ household: null, households: [] });
   useToastStore.setState({ items: [] });
+  useSettingsStore.getState().setLanguage("en");
 });
 
 describe("ToriWidget", () => {
@@ -163,6 +172,78 @@ describe("ToriWidget", () => {
       expect(screen.getByText("Milk is in the fridge.")).toBeTruthy();
     });
     expect(screen.queryByText("Inventory page")).toBeTruthy();
+  });
+
+  it("renders item cards when Tori returns matched inventory", async () => {
+    setHousehold();
+    await mockStream("Found two chargers.", [
+      {
+        type: "reply",
+        reply: "Found two chargers.",
+        matchedItems: [
+          {
+            id: "a",
+            name: "iPhone Charger",
+            location: "Desk",
+            quantity: 1,
+            price: null,
+            folderName: "Tech",
+            tags: [],
+          },
+          {
+            id: "b",
+            name: "Computer Charger",
+            location: "Desk",
+            quantity: 1,
+            price: "19.99",
+            folderName: "Tech",
+            tags: [],
+          },
+        ],
+      },
+    ]);
+    useToriStore.getState().openWidget();
+    renderWidget();
+
+    fireEvent.click(screen.getByRole("button", { name: /what's expiring this week/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText("iPhone Charger")).toBeTruthy();
+      expect(screen.getByText("Computer Charger")).toBeTruthy();
+      expect(screen.getByText(/swipe to compare/i)).toBeTruthy();
+    });
+  });
+
+  it("renders Spanish item card labels when the app language is Spanish", async () => {
+    setHousehold();
+    useSettingsStore.getState().setLanguage("es");
+    await mockStream("Encontré dos cargadores.", [
+      {
+        type: "reply",
+        reply: "Encontré dos cargadores.",
+        matchedItems: [
+          {
+            id: "a",
+            name: "iPhone Charger",
+            location: "Desk",
+            quantity: 1,
+            price: "19.99",
+            folderName: "Tech",
+            tags: [],
+          },
+        ],
+      },
+    ]);
+    useToriStore.getState().openWidget();
+    renderWidget();
+
+    fireEvent.click(screen.getByRole("button", { name: /qué vence esta semana/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Ubicación")).toBeTruthy();
+      expect(screen.getByText("Cantidad")).toBeTruthy();
+      expect(screen.getByText("Precio (c/u)")).toBeTruthy();
+    });
   });
 
   it("closes from the header button", () => {

@@ -516,7 +516,13 @@
     "joinToConfirm": "Join a household to confirm this change.",
     "couldNotSaveChange": "Could not save that change.",
     "alreadyFullView": "You're already in the full Tori AI view.",
-    "useWidgetInventory": "Use widget on Inventory"
+    "useWidgetInventory": "Use widget on Inventory",
+    "itemLocation": "Location",
+    "itemPriceEach": "Price (each)",
+    "swipeToCompare": "Swipe to compare matches",
+    "moreInInventory": "Showing {{count}} matches",
+    "scrollPrev": "Previous item",
+    "scrollNext": "Next item"
   },
   "errors": {
     "invalidCredentials": "Invalid email or password",

@@ -3,6 +3,7 @@ import {
   toriApi,
   type ItemInput,
   type ToriChatMessage,
+  type ToriMatchedItem,
   type ToriPendingAction,
   type ToriProposedItem,
   type ToriStreamEvent,
@@ -29,6 +30,7 @@ export type ChatTurn =
   | {
       role: "assistant";
       content: string;
+      matchedItems?: ToriMatchedItem[];
       pendingAction?: ToriPendingAction;
       pendingStatus?: PendingStatus;
     };
@@ -178,7 +180,7 @@ export const useToriStore = create<ToriAiState>((set, get) => ({
     }
 
     try {
-      const { reply, pendingAction } = await toriApi.chatStream(
+      const { reply, pendingAction, matchedItems } = await toriApi.chatStream(
         toApiMessages(nextMessages),
         householdId,
         (event: ToriStreamEvent) => {
@@ -191,6 +193,7 @@ export const useToriStore = create<ToriAiState>((set, get) => ({
           {
             role: "assistant",
             content: reply,
+            matchedItems,
             pendingAction,
             pendingStatus: pendingAction ? "idle" : undefined,
           },

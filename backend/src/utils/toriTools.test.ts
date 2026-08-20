@@ -69,6 +69,31 @@ describe("toriTools", () => {
         expirationDate: "2026-07-01",
         quantity: 1,
       });
+    await request(app)
+      .post(`/api/households/${householdId}/items`)
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({
+        name: "Water Bottle",
+        location: "Pantry",
+        quantity: 6,
+        price: "12.99",
+      });
+    await request(app)
+      .post(`/api/households/${householdId}/items`)
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({
+        name: "iPhone Charger",
+        location: "Desk",
+        quantity: 1,
+      });
+    await request(app)
+      .post(`/api/households/${householdId}/items`)
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({
+        name: "Computer Charger",
+        location: "Desk",
+        quantity: 1,
+      });
 
     const outsider = await request(app).post("/api/auth/register").send({
       displayName: "Outsider",
@@ -94,6 +119,22 @@ describe("toriTools", () => {
     const byFolder = JSON.parse(await searchItems(userId, householdId, "dairy"));
     expect(byFolder.count).toBe(1);
     expect(byFolder.items[0].name).toBe("Milk");
+  });
+
+  it("search_items matches plurals and partial names", async () => {
+    const plural = JSON.parse(await searchItems(userId, householdId, "water bottles"));
+    expect(plural.count).toBeGreaterThanOrEqual(1);
+    expect(plural.items.some((item: { name: string }) => item.name === "Water Bottle")).toBe(true);
+
+    const singularToken = JSON.parse(await searchItems(userId, householdId, "bottles"));
+    expect(singularToken.items.some((item: { name: string }) => item.name === "Water Bottle")).toBe(true);
+
+    const chargers = JSON.parse(await searchItems(userId, householdId, "charger"));
+    expect(chargers.count).toBe(2);
+    expect(chargers.items.map((item: { name: string }) => item.name).sort()).toEqual([
+      "Computer Charger",
+      "iPhone Charger",
+    ]);
   });
 
   it("search_items returns an empty list when nothing matches", async () => {
@@ -156,7 +197,7 @@ describe("toriTools", () => {
     expect(folders.folders[0].name).toBe("Dairy");
 
     const value = JSON.parse(await executeToriTool(userId, householdId, "get_inventory_value", "{}"));
-    expect(value.itemCount).toBe(3);
+    expect(value.itemCount).toBe(6);
     expect(value.pricedCount).toBe(0);
     expect(value.totalValue).toBe(0);
   });

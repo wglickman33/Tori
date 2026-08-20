@@ -82,6 +82,7 @@ router.post("/chat", async (req: AuthRequest, res) => {
       writeSse(res, "reply", {
         reply: result.reply,
         ...(result.pendingAction ? { pendingAction: result.pendingAction } : {}),
+        ...(result.matchedItems?.length ? { matchedItems: result.matchedItems } : {}),
       });
       res.end();
       return;
@@ -92,8 +93,12 @@ router.post("/chat", async (req: AuthRequest, res) => {
       return;
     }
 
-    if (result.pendingAction) {
-      res.json({ reply: result.reply, pendingAction: result.pendingAction });
+    if (result.pendingAction || result.matchedItems?.length) {
+      res.json({
+        reply: result.reply,
+        ...(result.pendingAction ? { pendingAction: result.pendingAction } : {}),
+        ...(result.matchedItems?.length ? { matchedItems: result.matchedItems } : {}),
+      });
       return;
     }
 

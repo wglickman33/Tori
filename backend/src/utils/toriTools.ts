@@ -2,13 +2,18 @@ import { Folder, Item } from "../models/index.js";
 import { getMembership } from "./householdAccess.js";
 import type { GroqToolDefinition } from "./groqChat.js";
 import {
+  buildInventorySearchIndex,
+  searchInventoryDocIds,
+  type InventorySearchDoc,
+} from "./inventorySearch.js";
+import {
   formatZodError,
   isValidUuid,
   itemSchema,
   itemUpdateSchema,
 } from "./validation.js";
 
-const SEARCH_LIMIT = 20;
+const SEARCH_LIMIT = 50;
 const DEFAULT_EXPIRING_DAYS = 7;
 const MAX_EXPIRING_DAYS = 365;
 const WRITE_NOTE =
@@ -29,6 +34,52 @@ export type ToriPendingAction =
   | { type: "add_item"; item: ToriProposedItem }
   | { type: "update_item"; itemId: string; itemName: string; patch: Partial<ToriProposedItem> }
   | { type: "delete_item"; itemId: string; itemName: string };
+
+export type ToriMatchedItem = {
+  id: string;
+  name: string;
+  location: string | null;
+  quantity: number;
+  price: string | null;
+  folderName: string | null;
+  tags: string[];
+  expirationDate?: string | null;
+};
+
+const LISTING_TOOLS = new Set([
+  "search_items",
+  "items_in_location",
+  "items_with_tag",
+  "get_expiring",
+]);
+
+export function extractMatchedItems(toolName: string, output: unknown): ToriMatchedItem[] | undefined {
+  if (!LISTING_TOOLS.has(toolName)) return undefined;
+  if (!output || typeof output !== "object" || Array.isArray(output)) return undefined;
+  const record = output as Record<string, unknown>;
+  if (!Array.isArray(record.items)) return undefined;
+
+  const items: ToriMatchedItem[] = [];
+  for (const raw of record.items) {
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) continue;
+    const row = raw as Record<string, unknown>;
+    if (typeof row.id !== "string" || typeof row.name !== "string") continue;
+    items.push({
+      id: row.id,
+      name: row.name,
+      location: typeof row.location === "string" ? row.location : null,
+      quantity: typeof row.quantity === "number" ? row.quantity : 1,
+      price: row.price === null || row.price === undefined ? null : String(row.price),
+      folderName: typeof row.folderName === "string" ? row.folderName : null,
+      tags: Array.isArray(row.tags) ? row.tags.filter((tag): tag is string => typeof tag === "string") : [],
+      expirationDate:
+        row.expirationDate === null || typeof row.expirationDate === "string"
+          ? (row.expirationDate as string | null)
+          : undefined,
+    });
+  }
+  return items.slice(0, SEARCH_LIMIT);
+}
 
 export const TORI_TOOLS: GroqToolDefinition[] = [
   {
@@ -241,14 +292,26 @@ function summarizeItem(item: Item, folderName: string | null): ItemRow {
   };
 }
 
-function matchesQuery(item: ItemRow, query: string): boolean {
-  const q = query.trim().toLowerCase();
-  if (!q) return true;
-  if (item.name.toLowerCase().includes(q)) return true;
-  if (item.location?.toLowerCase().includes(q)) return true;
-  if (item.folderName?.toLowerCase().includes(q)) return true;
-  if (item.tags.some((tag) => tag.toLowerCase().includes(q))) return true;
-  return false;
+function toSearchDoc(item: ItemRow): InventorySearchDoc {
+  return {
+    id: item.id,
+    name: item.name,
+    tags: item.tags.join(" "),
+    folderName: item.folderName ?? "",
+    category: "",
+    location: item.location?.trim() ?? "",
+    price: item.price ?? "",
+  };
+}
+
+function rankItemsByQuery(items: ItemRow[], query: string): ItemRow[] {
+  const trimmed = query.trim();
+  if (!trimmed) return items;
+
+  const byId = new Map(items.map((item) => [item.id, item]));
+  const index = buildInventorySearchIndex(items.map(toSearchDoc));
+  const ids = searchInventoryDocIds(index, trimmed);
+  return ids.map((id) => byId.get(id)).filter((item): item is ItemRow => Boolean(item));
 }
 
 function locationKey(location: string | null): string {
@@ -298,8 +361,11 @@ export async function searchItems(userId: string, householdId: string, query: st
   if (denied) return denied;
 
   const items = await loadHouseholdItems(householdId);
-  const matches = items.filter((item) => matchesQuery(item, query)).slice(0, SEARCH_LIMIT);
-  return JSON.stringify({ query: query.trim(), count: matches.length, items: matches });
+  const trimmed = query.trim();
+  const matches = trimmed
+    ? rankItemsByQuery(items, trimmed).slice(0, SEARCH_LIMIT)
+    : items.slice(0, SEARCH_LIMIT);
+  return JSON.stringify({ query: trimmed, count: matches.length, items: matches });
 }
 
 export async function getItem(userId: string, householdId: string, itemId: string): Promise<string> {

@@ -14,6 +14,8 @@ describe("runToriAgent", () => {
     expect(TORI_SYSTEM_PROMPT).toMatch(/get_expiring/i);
     expect(TORI_SYSTEM_PROMPT).toMatch(/propose_add_item/i);
     expect(TORI_SYSTEM_PROMPT).toMatch(/Confirm \/ Not now/);
+    expect(TORI_SYSTEM_PROMPT).toMatch(/do not list items in markdown tables/i);
+    expect(TORI_SYSTEM_PROMPT_ES).toMatch(/no listes artículos en tablas markdown/i);
     expect(MAX_TORI_TOOL_ROUNDS).toBe(6);
   });
 
@@ -154,7 +156,22 @@ describe("runToriAgent", () => {
       { apiKey: "key", fetchGroqChat, executeTool }
     );
 
-    expect(result).toEqual({ ok: true, reply: "Milk is in the fridge." });
+    expect(result).toEqual({
+      ok: true,
+      reply: "Milk is in the fridge.",
+      matchedItems: [
+        {
+          id: "item-1",
+          name: "Milk",
+          location: "Fridge",
+          quantity: 1,
+          price: null,
+          folderName: null,
+          tags: [],
+          expirationDate: undefined,
+        },
+      ],
+    });
     expect(executeTool).toHaveBeenCalledTimes(1);
     expect(executeTool).toHaveBeenCalledWith(USER_ID, HOUSEHOLD_ID, "search_items", '{"query":"milk"}');
     expect(fetchGroqChat).toHaveBeenCalledTimes(2);
@@ -260,6 +277,61 @@ describe("runToriAgent", () => {
 
     expect(result).toEqual({ ok: true, reply: "I could not find saffron in this household." });
     expect(executeTool).toHaveBeenCalledTimes(1);
+  });
+
+  it("returns matchedItems from the last listing tool", async () => {
+    const fetchGroqChat = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        kind: "tool_calls",
+        message: {
+          role: "assistant",
+          content: null,
+          tool_calls: [
+            {
+              id: "call_1",
+              type: "function",
+              function: { name: "search_items", arguments: '{"query":"charger"}' },
+            },
+          ],
+        },
+        toolCalls: [
+          {
+            id: "call_1",
+            type: "function",
+            function: { name: "search_items", arguments: '{"query":"charger"}' },
+          },
+        ],
+      } satisfies GroqChatResult)
+      .mockResolvedValueOnce({
+        ok: true,
+        kind: "reply",
+        reply: "Found two chargers.",
+      } satisfies GroqChatResult);
+
+    const executeTool = vi.fn().mockResolvedValue(
+      JSON.stringify({
+        count: 2,
+        items: [
+          { id: "a", name: "iPhone Charger", location: "Desk", quantity: 1, price: null, folderName: null, tags: [] },
+          { id: "b", name: "Computer Charger", location: "Desk", quantity: 1, price: null, folderName: null, tags: [] },
+        ],
+      })
+    );
+
+    const result = await runToriAgent(
+      USER_ID,
+      HOUSEHOLD_ID,
+      [{ role: "user", content: "Where are my chargers?" }],
+      { apiKey: "key", fetchGroqChat, executeTool }
+    );
+
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.matchedItems).toHaveLength(2);
+      expect(result.matchedItems?.[0]?.name).toBe("iPhone Charger");
+    }
   });
 
   it("stops after MAX_TORI_TOOL_ROUNDS", async () => {

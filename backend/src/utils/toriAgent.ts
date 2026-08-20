@@ -4,7 +4,7 @@ import {
   type GroqChatMessage,
 } from "./groqChat.js";
 import { isToriOffTopic, toriOffTopicReply, type ToriLocale } from "./toriGuardrails.js";
-import { executeToriTool, parseToriPendingAction, TORI_TOOLS, type ToriPendingAction } from "./toriTools.js";
+import { executeToriTool, extractMatchedItems, parseToriPendingAction, TORI_TOOLS, type ToriMatchedItem, type ToriPendingAction } from "./toriTools.js";
 import { parseJsonValue } from "./sse.js";
 
 export const TORI_SYSTEM_PROMPT = `You are Tori AI, Tori's household inventory assistant. Stay with the household. Follow the user's latest request exactly.
@@ -15,7 +15,7 @@ Scope
 
 Intent
 - Resolve "this one", "that item", and "yeah that one" from the recent thread. Do not drop the original ask when they confirm.
-- "Do we have / where is / what's in inventory" → search_items. Use get_item for one id.
+- "Do we have / where is / what's in inventory" → search_items with the user's exact words. Search normalizes plurals server-side. Use get_item for one id.
 - "What's expiring / going bad / overdue" → get_expiring.
 - Locations, tags, folders, or recorded value → list_locations, items_in_location, list_tags, items_with_tag, list_folders, get_inventory_value.
 - Add / update / delete inventory → propose_add_item, propose_update_item, or propose_delete_item. Search first when they want to add only if missing.
@@ -27,7 +27,7 @@ Tools vs invention
 - Propose tools never write. The chat shows Confirm / Not now. Never say you already added, updated, or deleted items.
 
 Replies
-- Answer the asked-for task first. Keep replies short. Use a compact markdown table when listing items.`;
+- Answer the asked-for task first. Keep replies to one or two short sentences. The UI renders item cards from tool data — do not list items in markdown tables, bullet lists, or numbered lists.`;
 
 export const TORI_SYSTEM_PROMPT_ES = `Eres Tori AI, el asistente de inventario del hogar de Tori. Quédate en el hogar. Sigue exactamente la última petición de la persona.
 
@@ -39,7 +39,7 @@ Alcance
 
 Intención
 - Resuelve "este", "ese artículo" y "sí, ese" con el hilo reciente. No sueltes la petición original cuando confirmen.
-- "Tenemos / dónde está / qué hay en el inventario" → search_items. Usa get_item para un id.
+- "Tenemos / dónde está / qué hay en el inventario" → search_items con las palabras exactas de la persona. La búsqueda normaliza plurales en el servidor. Usa get_item para un id.
 - "Qué vence / se está echando a perder / está vencido" → get_expiring.
 - Ubicaciones, etiquetas, carpetas o valor registrado → list_locations, items_in_location, list_tags, items_with_tag, list_folders, get_inventory_value.
 - Agregar / actualizar / eliminar inventario → propose_add_item, propose_update_item o propose_delete_item. Busca primero si quieren agregar solo si falta.
@@ -51,7 +51,7 @@ Herramientas vs invención
 - Las herramientas de propuesta nunca escriben. El chat muestra Confirmar / Ahora no. Nunca digas que ya agregaste, actualizaste o eliminaste artículos.
 
 Respuestas
-- Responde primero la tarea pedida. Mantén las respuestas cortas. Usa una tabla markdown compacta cuando listes artículos.`;
+- Responde primero la tarea pedida. Mantén las respuestas en una o dos frases cortas. La interfaz muestra tarjetas de artículos desde los datos de las herramientas — no listes artículos en tablas markdown, viñetas ni listas numeradas.`;
 
 export function toriSystemPrompt(locale: ToriLocale = "en"): string {
   return locale === "es" ? TORI_SYSTEM_PROMPT_ES : TORI_SYSTEM_PROMPT;
@@ -67,6 +67,7 @@ export type ToriAgentSuccess = {
   ok: true;
   reply: string;
   pendingAction?: ToriPendingAction;
+  matchedItems?: ToriMatchedItem[];
 };
 export type ToriAgentResult = ToriAgentSuccess | GroqChatFailure;
 
@@ -100,6 +101,7 @@ export async function runToriAgent(
   }
 
   let pendingAction: ToriPendingAction | undefined;
+  let matchedItems: ToriMatchedItem[] | undefined;
 
   for (let round = 0; round < MAX_TORI_TOOL_ROUNDS; round += 1) {
     const result = await callGroq(messages, {
@@ -109,9 +111,10 @@ export async function runToriAgent(
     if (!result.ok) return result;
 
     if (result.kind === "reply") {
-      return pendingAction
-        ? { ok: true, reply: result.reply, pendingAction }
-        : { ok: true, reply: result.reply };
+      const payload: ToriAgentSuccess = { ok: true, reply: result.reply };
+      if (pendingAction) payload.pendingAction = pendingAction;
+      if (matchedItems?.length) payload.matchedItems = matchedItems;
+      return payload;
     }
 
     messages.push(result.message);
@@ -134,6 +137,8 @@ export async function runToriAgent(
       });
       const proposed = parseToriPendingAction(call.function.name, content);
       if (proposed) pendingAction = proposed;
+      const listed = extractMatchedItems(call.function.name, output);
+      if (listed?.length) matchedItems = listed;
       messages.push({
         role: "tool",
         tool_call_id: call.id,

@@ -13,9 +13,13 @@ import {
   type ChatTurn,
 } from "../../store/toriStore";
 import { translateError } from "../../i18n/apiErrors";
+import { useSettingsStore } from "../../store/settingsStore";
 import { speakText, stopSpeaking } from "../../utils/speech";
 import { useToriVoice } from "../../hooks/useToriVoice";
 import { toastError } from "../../store/toastStore";
+import { ToriMessageBody } from "./ToriMessageBody";
+import { ToriItemResults } from "./ToriItemResults";
+import "./ToriItemResults.scss";
 import "./ToriChatPane.scss";
 
 type ToriChatPaneProps = {
@@ -91,6 +95,7 @@ export function ToriChatPane({ variant, inputId }: ToriChatPaneProps) {
   const confirmAction = useToriStore((s) => s.confirmAction);
   const dismissAction = useToriStore((s) => s.dismissAction);
   const resetChat = useToriStore((s) => s.resetChat);
+  const language = useSettingsStore((s) => s.language);
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const compact = variant === "widget";
@@ -125,8 +130,8 @@ export function ToriChatPane({ variant, inputId }: ToriChatPaneProps) {
     lastSpokenRef.current = last.content;
     voiceTurnRef.current = false;
     setSpeaking(true);
-    speakText(last.content, () => setSpeaking(false));
-  }, [messages]);
+    speakText(last.content, { language, onEnd: () => setSpeaking(false) });
+  }, [messages, language]);
 
   useEffect(() => () => stopSpeaking(), []);
 
@@ -217,11 +222,16 @@ export function ToriChatPane({ variant, inputId }: ToriChatPaneProps) {
             className={`tori-chat__turn tori-chat__turn--${message.role}`}
           >
             <p className="tori-chat__role">{message.role === "user" ? t("ai.you") : t("ai.title")}</p>
-            <p
-              className={`tori-chat__body${message.role === "user" ? " tori-chat__body--plain" : ""}`}
-            >
-              {message.content}
-            </p>
+            {message.role === "user" ? (
+              <p className="tori-chat__body tori-chat__body--plain">{message.content}</p>
+            ) : (
+              <>
+                <ToriMessageBody content={message.content} />
+                {message.matchedItems?.length ? (
+                  <ToriItemResults items={message.matchedItems} variant={variant} />
+                ) : null}
+              </>
+            )}
             {message.role === "assistant" && (
               <ToriPendingCard
                 message={message}

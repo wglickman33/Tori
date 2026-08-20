@@ -202,6 +202,11 @@
 
   &--assistant {
     align-self: flex-start;
+    max-width: min(100%, 28rem);
+
+    .tori-item-results {
+      width: 100%;
+    }
   }
 }
 
