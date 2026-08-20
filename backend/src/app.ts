@@ -9,6 +9,7 @@ import { itemsRouter } from "./routes/items.js";
 import { eventsRouter } from "./routes/events.js";
 import { exportRouter } from "./routes/export.js";
 import { itemImagesRouter } from "./routes/itemImages.js";
+import { toriRouter } from "./routes/tori.js";
 import { UPLOADS_DIR } from "./utils/imageStorage.js";
 import "./models/index.js";
 
@@ -69,6 +70,14 @@ export function createApp() {
     message: { error: "Too many requests. Try again later." },
   });
 
+  const toriLimiter = rateLimit({
+    windowMs: 60 * 1000,
+    max: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: "Too many chat requests. Try again in a minute." },
+  });
+
   app.get("/api/health", (_req, res) => {
     res.json({ ok: true });
   });
@@ -95,6 +104,7 @@ export function createApp() {
     "/api/households/:householdId/export",
     ...(isTest ? [exportRouter] : [apiLimiter, exportRouter])
   );
+  app.use("/api/tori", ...(isTest ? [toriRouter] : [toriLimiter, toriRouter]));
   app.use("/uploads", express.static(UPLOADS_DIR));
 
   app.use((err: Error, _req: express.Request, res: express.Response, next: express.NextFunction) => {

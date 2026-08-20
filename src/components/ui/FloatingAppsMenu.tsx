@@ -1,7 +1,10 @@
 import { useEffect, useId, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 import whiskLogo from "../../assets/logos/whiskLogoAmber.svg";
 import logo from "../../assets/logos/website-logo.png";
 import { getWhiskUrl } from "../../utils/whiskUrl";
+import { useToriStore } from "../../store/toriStore";
+import { toastInfo } from "../../store/toastStore";
 import "./FloatingAppsMenu.scss";
 
 function FabPlusIcon() {
@@ -37,7 +40,9 @@ export function FloatingAppsMenu() {
   const togglerId = useId();
   const rootRef = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(false);
-  const [panel, setPanel] = useState<"none" | "whisk" | "tori">("none");
+  const [panel, setPanel] = useState<"none" | "whisk">("none");
+  const openWidget = useToriStore((s) => s.openWidget);
+  const location = useLocation();
 
   useEffect(() => {
     if (!open && panel === "none") return;
@@ -101,31 +106,6 @@ export function FloatingAppsMenu() {
         </aside>
       ) : null}
 
-      {panel === "tori" ? (
-        <aside className="floating-apps__panel" aria-label="Tori AI">
-          <div className="floating-apps__panel-top">
-            <div className="floating-apps__panel-brand">
-              <span className="floating-apps__panel-logo-wrap">
-                <img src={logo} alt="" className="floating-apps__panel-logo" />
-              </span>
-              <div>
-                <p className="floating-apps__panel-eyebrow">Coming soon</p>
-                <p className="floating-apps__panel-title">Tori AI</p>
-              </div>
-            </div>
-            <button type="button" className="floating-apps__panel-close" onClick={closeAll} aria-label="Close">
-              <FabCloseIcon />
-            </button>
-          </div>
-          <p className="floating-apps__panel-body">
-            Your household assistant will live here. Ask about inventory, expiry, and more.
-          </p>
-          <button type="button" className="floating-apps__panel-cta" disabled>
-            Agent placeholder
-          </button>
-        </aside>
-      ) : null}
-
       <input
         type="checkbox"
         id={togglerId}
@@ -162,10 +142,19 @@ export function FloatingAppsMenu() {
             type="button"
             className="floating-apps__bubble floating-apps__bubble--tori"
             data-tooltip="Tori AI"
-            aria-label="Open Tori AI placeholder"
+            aria-label="Open Tori AI"
             onClick={() => {
-              setPanel("tori");
+              setPanel("none");
               setOpen(false);
+              if (location.pathname === "/ai") {
+                toastInfo("You're already in the full Tori AI view.", {
+                  actionLabel: "Use widget on Inventory",
+                  actionHref: "/inventory",
+                  onAction: openWidget,
+                });
+                return;
+              }
+              openWidget();
             }}
           >
             <span className="floating-apps__bubble-mark">

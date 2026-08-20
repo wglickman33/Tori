@@ -4,6 +4,7 @@ import { useWindowWidth } from "../../hooks/useWindowWidth";
 import { useSidebarStore } from "../../store/sidebarStore";
 import { FloatingAppsMenu } from "../ui/FloatingAppsMenu";
 import { NotificationToastContainer } from "../ui/NotificationToast";
+import { ToriWidget } from "../tori/ToriWidget";
 import { IconSidebar } from "./IconSidebar";
 import { MobileHeader } from "./MobileHeader";
 import { Sidebar } from "./Sidebar";
@@ -52,6 +53,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       </div>
 
       <FloatingAppsMenu />
+      <ToriWidget />
       <NotificationToastContainer />
     </div>
   );

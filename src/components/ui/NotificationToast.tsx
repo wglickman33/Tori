@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useToastStore, type ToastItem as ToastItemData } from "../../store/toastStore";
 import "./NotificationToast.scss";
 
@@ -49,7 +50,21 @@ function ToastCard({ item, onClose }: { item: ToastItemData; onClose: () => void
         <span className="notification-toast__icon" aria-hidden>
           {icon}
         </span>
-        <span className="notification-toast__message">{item.message}</span>
+        <div className="notification-toast__text">
+          <span className="notification-toast__message">{item.message}</span>
+          {item.actionHref && item.actionLabel ? (
+            <Link
+              to={item.actionHref}
+              className="notification-toast__action"
+              onClick={() => {
+                item.onAction?.();
+                dismiss();
+              }}
+            >
+              {item.actionLabel}
+            </Link>
+          ) : null}
+        </div>
       </div>
       <button type="button" className="notification-toast__close" onClick={dismiss} aria-label="Dismiss">
         <CloseIcon />

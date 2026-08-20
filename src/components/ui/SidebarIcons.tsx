@@ -129,3 +129,55 @@ export function IconUser({ className }: IconProps) {
     </svg>
   );
 }
+
+export function IconToriAi({ className }: IconProps) {
+  return (
+    <svg {...baseProps(className)}>
+      <path d="M12 8V4H8" />
+      <rect width="16" height="12" x="4" y="8" rx="2" />
+      <path d="M2 14h2" />
+      <path d="M20 14h2" />
+      <path d="M9 13v2" />
+      <path d="M15 13v2" />
+    </svg>
+  );
+}
+
+export function IconMic({ className }: IconProps) {
+  return (
+    <svg {...baseProps(className)}>
+      <path d="M12 3a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z" />
+      <path d="M19 10v1a7 7 0 0 1-14 0v-1" />
+      <path d="M12 18v3" />
+    </svg>
+  );
+}
+
+export function IconStop({ className }: IconProps) {
+  return (
+    <svg {...baseProps(className)} fill="currentColor" stroke="none">
+      <rect x="7" y="7" width="10" height="10" rx="1.5" />
+    </svg>
+  );
+}
+
+export function IconSend({ className }: IconProps) {
+  return (
+    <svg {...baseProps(className)}>
+      <path d="M5 12h14" />
+      <path d="m12 5 7 7-7 7" />
+    </svg>
+  );
+}
+
+export function IconClear({ className }: IconProps) {
+  return (
+    <svg {...baseProps(className)}>
+      <path d="M3 6h18" />
+      <path d="M8 6V4h8v2" />
+      <path d="M19 6l-1 14H6L5 6" />
+      <path d="M10 11v6" />
+      <path d="M14 11v6" />
+    </svg>
+  );
+}

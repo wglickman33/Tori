@@ -1,0 +1,220 @@
+@use "../../styles/tokens" as *;
+
+.tori-widget {
+  position: fixed;
+  right: max(#{$space-3}, env(safe-area-inset-right, 0px));
+  bottom: calc(56px + #{$space-3} + max(#{$space-3}, env(safe-area-inset-bottom, 0px)));
+  z-index: 34;
+  display: flex;
+  flex-direction: column;
+  width: min(22.5rem, calc(100vw - 1.5rem));
+  height: min(34rem, calc(100dvh - 8.5rem));
+  border: $border-subtle;
+  border-radius: $radius-md;
+  background: rgba(252, 252, 252, 0.96);
+  box-shadow: $shadow-card;
+  overflow: hidden;
+
+  @include tablet-up {
+    right: max(#{$space-4}, env(safe-area-inset-right, 0px));
+    bottom: calc(56px + #{$space-3} + max(#{$space-4}, env(safe-area-inset-bottom, 0px)));
+  }
+}
+
+.tori-widget__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-2;
+  padding: $space-2 $space-3;
+  border-bottom: $border-subtle;
+  background: $lightCream;
+}
+
+.tori-widget__brand {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  min-width: 0;
+
+  h2 {
+    margin: 0;
+    font-family: $font-ui;
+    font-size: 1rem;
+    color: $darkBlue;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.75rem;
+    color: $text-muted;
+  }
+}
+
+.tori-widget__icon {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+  border-radius: $radius-pill;
+  background: rgba(169, 169, 255, 0.28);
+  color: $darkBlue;
+
+  svg {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+}
+
+.tori-widget__close {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  padding: 0;
+  border: $border-subtle;
+  border-radius: $radius-sm;
+  background: transparent;
+  color: $text-muted;
+  cursor: pointer;
+  transition: $transition-ui;
+
+  &:hover {
+    background: $paleBlue;
+    color: $darkBlue;
+    border-color: $powderBlue;
+  }
+}
+
+.tori-widget__guest {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  padding: $space-4 $space-3;
+  text-align: center;
+
+  p:first-child {
+    margin: 0;
+    font-weight: 600;
+    color: $text-secondary;
+  }
+
+  p:nth-child(2) {
+    margin: 0;
+    max-width: 18em;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: $text-muted;
+  }
+}
+
+.tori-widget__cta {
+  margin-top: $space-2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 $space-4;
+  border-radius: $radius-md;
+  background: $powderBlue;
+  color: $darkBlue;
+  font-family: $font-ui;
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover {
+    background: $darkBlue;
+    color: $lightCream;
+  }
+}
+
+.tori-widget__footer {
+  padding: $space-2 $space-3;
+  border-top: $border-subtle;
+}
+
+.tori-widget__full {
+  display: inline-flex;
+  min-height: 0;
+  padding: $space-1 0;
+  align-items: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: $darkBlue;
+  text-decoration: none;
+
+  &:hover {
+    color: $powderBlue;
+  }
+}
+
+.tori-widget .tori-chat {
+  flex: 1;
+  min-height: 0;
+}
+
+html[data-theme="dark"] {
+  .tori-widget {
+    background: rgba(28, 28, 46, 0.96);
+    border-color: rgba(169, 169, 255, 0.22);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+  }
+
+  .tori-widget__header,
+  .tori-widget__footer {
+    background: #161625;
+    border-color: rgba(169, 169, 255, 0.18);
+  }
+
+  .tori-widget__brand h2 {
+    color: $paleBlue;
+  }
+
+  .tori-widget__brand p,
+  .tori-widget__guest p:nth-child(2) {
+    color: #a8a8c4;
+  }
+
+  .tori-widget__icon {
+    background: rgba(169, 169, 255, 0.18);
+    color: $powderBlue;
+  }
+
+  .tori-widget__close {
+    color: #a8a8c4;
+    border-color: rgba(169, 169, 255, 0.28);
+
+    &:hover {
+      background: rgba(169, 169, 255, 0.14);
+      color: $paleBlue;
+      border-color: $powderBlue;
+    }
+  }
+
+  .tori-widget__guest p:first-child {
+    color: #ececf5;
+  }
+
+  .tori-widget__cta {
+    background: $powderBlue;
+    color: #12121f;
+
+    &:hover {
+      background: $paleBlue;
+      color: #12121f;
+    }
+  }
+
+  .tori-widget__full {
+    color: $powderBlue;
+
+    &:hover {
+      color: $paleBlue;
+    }
+  }
+}

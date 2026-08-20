@@ -15,6 +15,7 @@ import ValuePage from "./pages/ValuePage";
 import HouseholdPage from "./pages/HouseholdPage";
 import SettingsPage from "./pages/SettingsPage";
 import HelpPage from "./pages/HelpPage";
+import ToriAiPage from "./pages/ToriAiPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import { useAuthStore } from "./store/authStore";
 
@@ -120,6 +121,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <SettingsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ai"
+          element={
+            <ProtectedRoute requireHousehold>
+              <ToriAiPage />
             </ProtectedRoute>
           }
         />

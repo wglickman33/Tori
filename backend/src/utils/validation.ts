@@ -121,3 +121,65 @@ export const itemUpdateSchema = itemSchema.partial().refine((v) => Object.keys(v
 export function formatZodError(error: z.ZodError): string {
   return error.issues[0]?.message ?? "Invalid request";
 }
+
+export const TORI_CHAT_LIMITS = {
+  messageMax: 4000,
+  maxMessages: 40,
+};
+
+const TORI_CHAT_ROLES = new Set(["user", "assistant"]);
+
+export type ToriChatMessage = { role: "user" | "assistant"; content: string };
+
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+export function isValidUuid(value: string): boolean {
+  return UUID_RE.test(value);
+}
+
+export function validateToriChatBody(
+  body: Record<string, unknown>
+): { error: string } | { householdId: string; messages: ToriChatMessage[] } {
+  if (typeof body.householdId !== "string" || !isValidUuid(body.householdId.trim())) {
+    return { error: "A household is required." };
+  }
+  const householdId = body.householdId.trim();
+  if (!Array.isArray(body.messages)) {
+    return { error: "Messages must be an array." };
+  }
+  if (body.messages.length === 0) {
+    return { error: "At least one message is required." };
+  }
+  if (body.messages.length > TORI_CHAT_LIMITS.maxMessages) {
+    return { error: `Too many messages (max ${TORI_CHAT_LIMITS.maxMessages}).` };
+  }
+
+  const messages: ToriChatMessage[] = [];
+  for (const item of body.messages) {
+    if (!item || typeof item !== "object" || Array.isArray(item)) {
+      return { error: "Each message must be an object." };
+    }
+    const raw = item as Record<string, unknown>;
+    if (typeof raw.role !== "string" || !TORI_CHAT_ROLES.has(raw.role)) {
+      return { error: "Each message role must be user or assistant." };
+    }
+    if (typeof raw.content !== "string") {
+      return { error: "Each message must include text." };
+    }
+    const content = raw.content.trim();
+    if (!content) {
+      return { error: "Message text cannot be empty." };
+    }
+    if (content.length > TORI_CHAT_LIMITS.messageMax) {
+      return { error: `Message text must be at most ${TORI_CHAT_LIMITS.messageMax} characters.` };
+    }
+    messages.push({ role: raw.role as "user" | "assistant", content });
+  }
+
+  if (messages[messages.length - 1].role !== "user") {
+    return { error: "The last message must come from the user." };
+  }
+
+  return { householdId, messages };
+}

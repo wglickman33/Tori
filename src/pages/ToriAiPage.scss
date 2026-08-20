@@ -1,0 +1,232 @@
+@use "../styles/tokens" as *;
+
+.app-shell__content:has(.tori-ai-page) {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: max(#{$space-3}, calc(env(safe-area-inset-bottom, 0px) + 4.5rem));
+
+  @include tablet-up {
+    padding-bottom: $space-4;
+  }
+}
+
+.tori-ai-page {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  max-width: 72rem;
+  gap: $space-3;
+}
+
+.tori-ai-page__header {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  padding-bottom: $space-3;
+  border-bottom: $border-subtle;
+
+  h1 {
+    margin: 0;
+    color: $darkBlue;
+    font-family: $font-ui;
+    font-size: clamp(1.35rem, 4vw, 1.85rem);
+    font-weight: 700;
+    line-height: 1.15;
+  }
+
+  p {
+    margin: 0;
+    color: $text-muted;
+    font-size: clamp(0.8125rem, 2.6vw, 0.9375rem);
+    line-height: 1.45;
+  }
+}
+
+.tori-ai-page__workspace {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: minmax(0, 1fr) minmax(7.5rem, 30%);
+  grid-template-areas:
+    "chat"
+    "trace";
+  gap: $space-3;
+  overflow: hidden;
+}
+
+.tori-ai-page__chat {
+  grid-area: chat;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border: $border-subtle;
+  border-radius: $radius-md;
+  background: rgba(252, 252, 252, 0.96);
+  box-shadow: $shadow-card;
+  overflow: hidden;
+
+  .tori-chat {
+    height: 100%;
+    min-height: 0;
+  }
+}
+
+.tori-ai-page__trace {
+  grid-area: trace;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: $border-subtle;
+  border-radius: $radius-md;
+  background: rgba(252, 252, 252, 0.96);
+  box-shadow: $shadow-card;
+  overflow: hidden;
+}
+
+.tori-ai-page__trace-head {
+  flex-shrink: 0;
+  padding: $space-2 $space-3;
+  border-bottom: $border-subtle;
+
+  h2 {
+    margin: 0;
+    font-family: $font-ui;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: $darkBlue;
+  }
+
+  p {
+    margin: $space-1 0 0;
+    font-size: 0.8rem;
+    line-height: 1.35;
+    color: $text-muted;
+  }
+}
+
+.tori-ai-page__trace-body {
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: $space-3;
+}
+
+.tori-ai-page__trace-empty {
+  margin: 0;
+  color: $text-muted;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.tori-ai-page__steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.tori-ai-page__step {
+  padding: $space-2 $space-3;
+  border: $border-subtle;
+  border-radius: $radius-sm;
+  background: $lightCream;
+
+  &--running {
+    border-color: $powderBlue;
+  }
+}
+
+.tori-ai-page__step-label {
+  margin: 0;
+  font-family: $font-ui;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: $text-secondary;
+}
+
+.tori-ai-page__step-detail,
+.tori-ai-page__step-status {
+  margin: $space-1 0 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: $text-muted;
+}
+
+.tori-ai-page__step-status {
+  color: $darkBlue;
+  font-weight: 600;
+}
+
+@include tablet-up {
+  .tori-ai-page__workspace {
+    grid-template-columns: minmax(0, 1.35fr) 20rem;
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-areas: "chat trace";
+  }
+}
+
+html[data-theme="dark"] {
+  .tori-ai-page__header {
+    border-bottom-color: rgba(169, 169, 255, 0.18);
+
+    h1 {
+      color: $paleBlue;
+    }
+
+    p {
+      color: #a8a8c4;
+    }
+  }
+
+  .tori-ai-page__chat,
+  .tori-ai-page__trace {
+    background: rgba(28, 28, 46, 0.92);
+    border-color: rgba(169, 169, 255, 0.22);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+  }
+
+  .tori-ai-page__trace-head {
+    border-bottom-color: rgba(169, 169, 255, 0.18);
+
+    h2 {
+      color: $paleBlue;
+    }
+
+    p {
+      color: #a8a8c4;
+    }
+  }
+
+  .tori-ai-page__trace-empty,
+  .tori-ai-page__step-detail {
+    color: #a8a8c4;
+  }
+
+  .tori-ai-page__step {
+    background: #161625;
+    border-color: rgba(169, 169, 255, 0.22);
+
+    &--running {
+      border-color: $powderBlue;
+    }
+  }
+
+  .tori-ai-page__step-label {
+    color: #ececf5;
+  }
+
+  .tori-ai-page__step-status {
+    color: $powderBlue;
+  }
+}

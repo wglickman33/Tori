@@ -1,0 +1,542 @@
+@use "../../styles/tokens" as *;
+
+.tori-chat {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+}
+
+.tori-chat__toolbar {
+  display: flex;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  padding: $space-1 $space-3;
+  border-bottom: $border-subtle;
+  background: rgba(252, 252, 252, 0.96);
+}
+
+.tori-chat__clear {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  min-height: 40px;
+  padding: 0 $space-2;
+  border: none;
+  border-radius: $radius-sm;
+  background: transparent;
+  color: $text-muted;
+  font-family: $font-ui;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: $transition-ui;
+
+  svg {
+    display: block;
+    width: 1rem;
+    height: 1rem;
+  }
+
+  &:hover:not(:disabled) {
+    color: $darkBlue;
+    background: rgba(169, 169, 255, 0.18);
+  }
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+}
+
+.tori-chat__thread {
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  padding: $space-3;
+}
+
+.tori-chat__welcome {
+  margin: auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: $space-2;
+  padding: $space-2 0;
+  width: min(28rem, 100%);
+  align-self: center;
+}
+
+.tori-chat__welcome-icon {
+  display: grid;
+  place-items: center;
+  align-self: flex-start;
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: $space-1;
+  border-radius: $radius-pill;
+  background: rgba(169, 169, 255, 0.28);
+  color: $darkBlue;
+
+  svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}
+
+.tori-chat__welcome-title {
+  margin: 0;
+  font-family: $font-ui;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: $darkBlue;
+}
+
+.tori-chat__welcome-copy {
+  margin: 0 0 $space-2;
+  color: $text-muted;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.tori-chat__suggestions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.tori-chat__suggestion {
+  width: 100%;
+  min-height: 44px;
+  padding: $space-3;
+  border: $border-subtle;
+  border-radius: $radius-md;
+  background: $lightCream;
+  color: $text-secondary;
+  font: inherit;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  text-align: left;
+  cursor: pointer;
+  transition: $transition-ui;
+
+  &:hover:not(:disabled) {
+    background: rgba(169, 169, 255, 0.18);
+    border-color: $powderBlue;
+  }
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+}
+
+.tori-chat__status {
+  margin: 0;
+  color: $text-muted;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+}
+
+.tori-chat__dots {
+  display: inline-flex;
+  gap: 0.2rem;
+
+  span {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: $radius-pill;
+    background: $text-muted;
+    opacity: 0.35;
+    animation: tori-chat-dot 1.2s ease-in-out infinite;
+
+    &:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+  }
+}
+
+@keyframes tori-chat-dot {
+  0%,
+  80%,
+  100% {
+    opacity: 0.35;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tori-chat__dots span {
+    animation: none;
+    opacity: 0.7;
+  }
+}
+
+.tori-chat__turn {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  max-width: 92%;
+
+  &--user {
+    align-self: flex-end;
+    align-items: flex-end;
+  }
+
+  &--assistant {
+    align-self: flex-start;
+  }
+}
+
+.tori-chat__role {
+  margin: 0;
+  font-family: $font-ui;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: $text-muted;
+}
+
+.tori-chat__body {
+  margin: 0;
+  padding: $space-2 $space-3;
+  border-radius: $radius-md;
+  background: $lightCream;
+  border: $border-subtle;
+  color: $text-secondary;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+
+  &--plain {
+    background: rgba(169, 169, 255, 0.22);
+    border-color: transparent;
+  }
+}
+
+.tori-chat__confirm {
+  width: 100%;
+  margin-top: $space-1;
+  padding: $space-3;
+  border: $border-subtle;
+  border-radius: $radius-md;
+  background: $lightCream;
+}
+
+.tori-chat__confirm-title,
+.tori-chat__confirm-done {
+  margin: 0 0 $space-2;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: $text-secondary;
+}
+
+.tori-chat__confirm-done {
+  margin-bottom: 0;
+  font-weight: 500;
+
+  a {
+    color: $darkBlue;
+    font-weight: 600;
+
+    &:hover {
+      color: $powderBlue;
+    }
+  }
+}
+
+.tori-chat__confirm-items {
+  margin: 0 0 $space-3;
+  padding-left: 1.2rem;
+  color: $text-secondary;
+  font-size: 0.9rem;
+  line-height: 1.45;
+
+  li + li {
+    margin-top: $space-1;
+  }
+}
+
+.tori-chat__confirm-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: $space-2;
+}
+
+.tori-chat__error {
+  margin: 0;
+  padding: $space-2 $space-3;
+  border-radius: $radius-md;
+  background: rgba(210, 45, 45, 0.1);
+  color: $errorRed;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.tori-chat__composer {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: $space-1;
+  padding: $space-3;
+  border-top: $border-subtle;
+  background: rgba(252, 252, 252, 0.96);
+}
+
+.tori-chat__label {
+  font-family: $font-ui;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: $text-muted;
+}
+
+.tori-chat__compose-row {
+  display: flex;
+  align-items: flex-end;
+  gap: $space-2;
+}
+
+.tori-chat__input {
+  flex: 1;
+  width: 100%;
+  min-height: 3.5rem;
+  padding: $space-2 $space-3;
+  border: $border-subtle;
+  border-radius: $radius-md;
+  background: $lightCream;
+  color: $text-secondary;
+  font: inherit;
+  resize: none;
+  transition: $transition-ui;
+
+  &:focus {
+    outline: none;
+    border-color: $darkBlue;
+    box-shadow: 0 0 0 3px rgba(169, 169, 255, 0.45);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+  }
+}
+
+.tori-chat__send,
+.tori-chat__mic {
+  flex-shrink: 0;
+  min-height: 44px;
+  min-width: 44px;
+  padding: $space-2 $space-3;
+  border: none;
+  border-radius: $radius-md;
+  font-family: $font-ui;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: $transition-ui;
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+}
+
+.tori-chat__mic {
+  padding: 0;
+  border: $border-subtle;
+  background: $lightCream;
+  color: $text-secondary;
+
+  &:hover:not(:disabled) {
+    background: $paleBlue;
+    border-color: $powderBlue;
+    color: $darkBlue;
+  }
+
+  &--listening {
+    border-color: $powderBlue;
+    background: rgba(169, 169, 255, 0.28);
+    color: $darkBlue;
+  }
+
+  svg {
+    display: block;
+  }
+}
+
+.tori-chat__send {
+  background: $powderBlue;
+  color: $darkBlue;
+
+  &:hover:not(:disabled) {
+    background: $darkBlue;
+    color: $lightCream;
+  }
+
+  &--stop {
+    background: $errorRed;
+    color: #fff;
+
+    &:hover:not(:disabled) {
+      background: $errorRed;
+      color: #fff;
+    }
+  }
+}
+
+.tori-chat--widget {
+  .tori-chat__input {
+    min-height: 2.75rem;
+  }
+
+  .tori-chat__send,
+  .tori-chat__mic {
+    border-radius: $radius-pill;
+    padding: 0;
+  }
+}
+
+html[data-theme="dark"] {
+  .tori-chat__toolbar,
+  .tori-chat__composer {
+    background: rgba(28, 28, 46, 0.92);
+    border-color: rgba(169, 169, 255, 0.18);
+  }
+
+  .tori-chat__clear {
+    color: #a8a8c4;
+
+    &:hover:not(:disabled) {
+      color: $paleBlue;
+      background: rgba(169, 169, 255, 0.14);
+    }
+  }
+
+  .tori-chat__welcome-icon {
+    background: rgba(169, 169, 255, 0.18);
+    color: $powderBlue;
+  }
+
+  .tori-chat__welcome-title {
+    color: $paleBlue;
+  }
+
+  .tori-chat__welcome-copy,
+  .tori-chat__status,
+  .tori-chat__role,
+  .tori-chat__label {
+    color: #a8a8c4;
+  }
+
+  .tori-chat__suggestion {
+    background: #161625;
+    border-color: rgba(169, 169, 255, 0.28);
+    color: #ececf5;
+
+    &:hover:not(:disabled) {
+      background: rgba(169, 169, 255, 0.14);
+      border-color: $powderBlue;
+    }
+  }
+
+  .tori-chat__body {
+    background: #161625;
+    border-color: rgba(169, 169, 255, 0.22);
+    color: #ececf5;
+
+    &--plain {
+      background: rgba(169, 169, 255, 0.16);
+      border-color: transparent;
+    }
+  }
+
+  .tori-chat__confirm {
+    background: #161625;
+    border-color: rgba(169, 169, 255, 0.22);
+  }
+
+  .tori-chat__confirm-title,
+  .tori-chat__confirm-done,
+  .tori-chat__confirm-items {
+    color: #ececf5;
+  }
+
+  .tori-chat__confirm-done a {
+    color: $powderBlue;
+
+    &:hover {
+      color: $paleBlue;
+    }
+  }
+
+  .tori-chat__input {
+    background: #161625;
+    border-color: rgba(169, 169, 255, 0.28);
+    color: #ececf5;
+
+    &:focus {
+      border-color: $powderBlue;
+      box-shadow: 0 0 0 3px rgba(169, 169, 255, 0.28);
+    }
+  }
+
+  .tori-chat__mic {
+    background: #161625;
+    border-color: rgba(169, 169, 255, 0.28);
+    color: #ececf5;
+
+    &:hover:not(:disabled) {
+      background: rgba(169, 169, 255, 0.14);
+      border-color: $powderBlue;
+      color: $paleBlue;
+    }
+
+    &--listening {
+      border-color: $powderBlue;
+      background: rgba(169, 169, 255, 0.18);
+      color: $powderBlue;
+    }
+  }
+
+  .tori-chat__send {
+    background: $powderBlue;
+    color: #12121f;
+
+    &:hover:not(:disabled) {
+      background: $paleBlue;
+      color: #12121f;
+    }
+
+    &--stop {
+      background: $errorRed;
+      color: #fff;
+
+      &:hover:not(:disabled) {
+        background: $errorRed;
+        color: #fff;
+      }
+    }
+  }
+}
