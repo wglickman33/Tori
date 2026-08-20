@@ -6,14 +6,14 @@
   font-size: 0.9375rem;
 
   &--error {
-    background: rgba(210, 45, 45, 0.1);
-    color: $errorRed;
-    border: 1px solid rgba(210, 45, 45, 0.25);
+    background: var(--error-muted);
+    color: var(--error);
+    border: 1px solid var(--error-border);
   }
 
   &--success {
-    background: rgba(46, 158, 91, 0.12);
-    color: $successGreen;
-    border: 1px solid rgba(46, 158, 91, 0.25);
+    background: var(--success-muted);
+    color: var(--success);
+    border: 1px solid var(--success-border);
   }
 }

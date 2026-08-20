@@ -30,7 +30,7 @@
     font-family: $font-ui;
     font-size: 0.875rem;
     font-weight: 600;
-    color: $darkBlue;
+    color: var(--heading);
     min-width: 0;
 
     select {
@@ -39,7 +39,7 @@
       border-radius: $radius-sm;
       border: $border-subtle;
       padding: 0 $space-3;
-      background: $lightCream;
+      background: var(--surface);
       color: $text-secondary;
       font: inherit;
       font-weight: 400;
@@ -47,14 +47,14 @@
       transition: $transition-ui;
 
       &:hover {
-        border-color: $powderBlue;
-        background: rgba(219, 219, 255, 0.35);
+        border-color: var(--border-hover);
+        background: var(--surface-hover);
       }
 
       &:focus {
-        border-color: $darkBlue;
-        background: $lightCream;
-        box-shadow: 0 0 0 3px rgba(169, 169, 255, 0.45);
+        border-color: var(--accent);
+        background: var(--surface);
+        box-shadow: var(--focus-ring);
       }
     }
   }
@@ -67,13 +67,13 @@
   }
 
   &__inline-link {
-    color: $darkBlue;
+    color: var(--accent);
     font-weight: 700;
     text-decoration: none;
     transition: color 0.4s ease;
 
     &:hover {
-      color: #3333c4;
+      color: var(--accent-hover);
     }
   }
 
@@ -83,7 +83,7 @@
     margin: 0;
     border: none;
     background: none;
-    color: $darkBlue;
+    color: var(--accent);
     font: inherit;
     font-weight: 700;
     text-decoration: underline;
@@ -92,7 +92,7 @@
     transition: color 0.4s ease;
 
     &:hover:not(:disabled) {
-      color: #3333c4;
+      color: var(--accent-hover);
     }
 
     &:disabled {
@@ -108,11 +108,11 @@
     font-family: $font-ui;
     font-size: 0.875rem;
     font-weight: 600;
-    color: $darkBlue;
+    color: var(--heading);
     padding: $space-3;
     border: $border-subtle;
     border-radius: $radius-sm;
-    background: rgba(219, 219, 255, 0.22);
+    background: var(--accent-muted);
   }
 
   &__photo-preview {
@@ -145,71 +145,6 @@
       @media (min-width: 420px) {
         flex: 0 0 auto;
       }
-    }
-  }
-}
-
-html[data-theme="dark"] {
-  .inventory-form {
-    &__intro,
-    &__hint {
-      color: #a8a8c4;
-    }
-
-    &__inline-link {
-      color: $powderBlue;
-
-      &:hover {
-        color: $paleBlue;
-      }
-    }
-
-    &__text-btn {
-      color: $powderBlue;
-
-      &:hover:not(:disabled) {
-        color: $paleBlue;
-      }
-    }
-
-    &__field {
-      color: $powderBlue;
-
-      select {
-        background: #161625;
-        border-color: rgba(169, 169, 255, 0.28);
-        color: #ececf5;
-
-        &:hover {
-          border-color: rgba(169, 169, 255, 0.45);
-          background: #1a1a2c;
-        }
-
-        &:focus {
-          border-color: $powderBlue;
-          background: #161625;
-          box-shadow: 0 0 0 3px rgba(169, 169, 255, 0.28);
-        }
-
-        option {
-          background: #161625;
-          color: #ececf5;
-        }
-      }
-    }
-
-    &__photo {
-      color: $powderBlue;
-      background: rgba(169, 169, 255, 0.08);
-      border-color: rgba(169, 169, 255, 0.22);
-    }
-
-    &__photo-preview {
-      border-color: rgba(169, 169, 255, 0.28);
-    }
-
-    &__actions {
-      border-top-color: rgba(169, 169, 255, 0.18);
     }
   }
 }

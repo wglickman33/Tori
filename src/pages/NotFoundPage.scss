@@ -13,7 +13,9 @@
     max(#{$space-4}, env(safe-area-inset-bottom, 0px))
     max(#{$space-4}, env(safe-area-inset-left, 0px));
   background:
-    linear-gradient(160deg, $paleBlue 0%, $lightCream 42%, rgba(169, 169, 255, 0.35) 100%);
+    radial-gradient(ellipse 80% 50% at 8% -8%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 55%),
+    radial-gradient(ellipse 65% 40% at 100% 0%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 50%),
+    var(--bg);
   transition: $transition-ui;
 
   &__panel {
@@ -26,7 +28,7 @@
     padding: $space-5 $space-4;
     border: $border-strong;
     border-radius: $radius-md;
-    background: $lightCream;
+    background: var(--surface);
     box-shadow: $shadow-card;
     animation: not-found-enter 0.55s ease both;
   }
@@ -36,8 +38,8 @@
     height: 72px;
     border-radius: 50%;
     overflow: hidden;
-    background: $darkBlue;
-    box-shadow: 0 0 0 5px rgba(169, 169, 255, 0.4);
+    background: var(--brand-navy);
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 40%, transparent);
     animation: not-found-logo 0.7s ease 0.08s both;
   }
 
@@ -54,7 +56,7 @@
     font-size: 1.35rem;
     font-weight: 700;
     letter-spacing: -0.02em;
-    color: $darkBlue;
+    color: var(--heading);
     line-height: 1;
   }
 
@@ -65,7 +67,7 @@
     font-weight: 800;
     letter-spacing: -0.04em;
     line-height: 0.9;
-    color: $powderBlue;
+    color: var(--accent);
     animation: not-found-code 0.65s ease 0.12s both;
   }
 
@@ -74,7 +76,7 @@
     font-family: $font-ui;
     font-size: clamp(1.35rem, 4vw, 1.65rem);
     font-weight: 700;
-    color: $darkBlue;
+    color: var(--heading);
     line-height: 1.2;
   }
 
@@ -137,38 +139,6 @@
     &__logo-wrap,
     &__code {
       animation: none;
-    }
-  }
-}
-
-html[data-theme="dark"] {
-  .not-found-page {
-    background:
-      radial-gradient(ellipse 80% 50% at 8% -8%, rgba(0, 0, 171, 0.45), transparent 55%),
-      radial-gradient(ellipse 65% 40% at 100% 0%, rgba(169, 169, 255, 0.18), transparent 50%),
-      linear-gradient(165deg, #12121f 0%, #171728 50%, #1a1a30 100%);
-
-    &__panel {
-      background: rgba(28, 28, 46, 0.94);
-      border-color: rgba(169, 169, 255, 0.32);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
-    }
-
-    &__logo-wrap {
-      box-shadow: 0 0 0 5px rgba(169, 169, 255, 0.28);
-    }
-
-    &__brand,
-    &__title {
-      color: $paleBlue;
-    }
-
-    &__code {
-      color: rgba(169, 169, 255, 0.72);
-    }
-
-    &__copy {
-      color: #a8a8c4;
     }
   }
 }

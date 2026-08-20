@@ -11,7 +11,7 @@
   height: min(34rem, calc(100dvh - 8.5rem));
   border: $border-subtle;
   border-radius: $radius-md;
-  background: rgba(252, 252, 252, 0.96);
+  background: var(--surface);
   box-shadow: $shadow-card;
   overflow: hidden;
 
@@ -28,7 +28,7 @@
   gap: $space-2;
   padding: $space-2 $space-3;
   border-bottom: $border-subtle;
-  background: $lightCream;
+  background: var(--bg-elevated);
 }
 
 .tori-widget__brand {
@@ -41,7 +41,7 @@
     margin: 0;
     font-family: $font-ui;
     font-size: 1rem;
-    color: $darkBlue;
+    color: var(--heading);
   }
 
   p {
@@ -58,8 +58,8 @@
   height: 2.25rem;
   flex-shrink: 0;
   border-radius: $radius-pill;
-  background: rgba(169, 169, 255, 0.28);
-  color: $darkBlue;
+  background: var(--accent-muted);
+  color: var(--heading);
 
   svg {
     width: 1.15rem;
@@ -82,9 +82,9 @@
   transition: $transition-ui;
 
   &:hover {
-    background: $paleBlue;
-    color: $darkBlue;
-    border-color: $powderBlue;
+    background: var(--accent-muted);
+    color: var(--heading);
+    border-color: var(--border-hover);
   }
 }
 
@@ -121,15 +121,16 @@
   min-height: 44px;
   padding: 0 $space-4;
   border-radius: $radius-md;
-  background: $powderBlue;
-  color: $darkBlue;
+  background: var(--accent);
+  color: var(--on-accent);
   font-family: $font-ui;
   font-weight: 600;
   text-decoration: none;
+  transition: $transition-ui;
 
   &:hover {
-    background: $darkBlue;
-    color: $lightCream;
+    background: var(--accent-hover);
+    color: var(--on-accent);
   }
 }
 
@@ -145,76 +146,16 @@
   align-items: center;
   font-size: 0.85rem;
   font-weight: 600;
-  color: $darkBlue;
+  color: var(--accent);
   text-decoration: none;
+  transition: $transition-ui;
 
   &:hover {
-    color: $powderBlue;
+    color: var(--accent-hover);
   }
 }
 
 .tori-widget .tori-chat {
   flex: 1;
   min-height: 0;
-}
-
-html[data-theme="dark"] {
-  .tori-widget {
-    background: rgba(28, 28, 46, 0.96);
-    border-color: rgba(169, 169, 255, 0.22);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
-  }
-
-  .tori-widget__header,
-  .tori-widget__footer {
-    background: #161625;
-    border-color: rgba(169, 169, 255, 0.18);
-  }
-
-  .tori-widget__brand h2 {
-    color: $paleBlue;
-  }
-
-  .tori-widget__brand p,
-  .tori-widget__guest p:nth-child(2) {
-    color: #a8a8c4;
-  }
-
-  .tori-widget__icon {
-    background: rgba(169, 169, 255, 0.18);
-    color: $powderBlue;
-  }
-
-  .tori-widget__close {
-    color: #a8a8c4;
-    border-color: rgba(169, 169, 255, 0.28);
-
-    &:hover {
-      background: rgba(169, 169, 255, 0.14);
-      color: $paleBlue;
-      border-color: $powderBlue;
-    }
-  }
-
-  .tori-widget__guest p:first-child {
-    color: #ececf5;
-  }
-
-  .tori-widget__cta {
-    background: $powderBlue;
-    color: #12121f;
-
-    &:hover {
-      background: $paleBlue;
-      color: #12121f;
-    }
-  }
-
-  .tori-widget__full {
-    color: $powderBlue;
-
-    &:hover {
-      color: $paleBlue;
-    }
-  }
 }

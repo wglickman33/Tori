@@ -34,7 +34,7 @@
     font-size: clamp(1.35rem, 2.8vw, 1.85rem);
     font-weight: 700;
     line-height: 1.15;
-    color: $darkBlue;
+    color: var(--heading);
   }
 
   &__subtitle {
@@ -62,7 +62,7 @@
       min-height: 48px;
       border-radius: $radius-md;
       border: $border-subtle;
-      background: rgba(252, 252, 252, 0.96);
+      background: var(--surface);
       box-shadow: $shadow-card;
       padding: 0 2.75rem 0 $space-3;
       font-family: $font-ui;
@@ -84,12 +84,12 @@
       }
 
       &:hover {
-        border-color: $powderBlue;
+        border-color: var(--border-hover);
       }
 
       &:focus {
-        border-color: $darkBlue;
-        box-shadow: 0 0 0 3px rgba(169, 169, 255, 0.45);
+        border-color: var(--heading);
+        box-shadow: var(--focus-ring);
       }
     }
   }
@@ -124,8 +124,8 @@
     transition: color 0.4s ease, background-color 0.4s ease;
 
     &:hover {
-      color: $darkBlue;
-      background: rgba(219, 219, 255, 0.55);
+      color: var(--heading);
+      background: var(--accent-muted);
     }
   }
 
@@ -147,7 +147,7 @@
     border-radius: $radius-pill;
     border: $border-subtle;
     background: rgba(219, 219, 255, 0.45);
-    color: $darkBlue;
+    color: var(--heading);
     font-size: 0.8125rem;
     font-weight: 600;
     cursor: pointer;
@@ -161,15 +161,15 @@
     }
 
     &:hover {
-      background: $paleBlue;
-      border-color: $powderBlue;
+      background: var(--accent-muted);
+      border-color: var(--border-hover);
     }
   }
 
   &__chips-clear {
     border: none;
     background: none;
-    color: $darkBlue;
+    color: var(--heading);
     font-size: 0.8125rem;
     font-weight: 700;
     cursor: pointer;
@@ -177,7 +177,7 @@
     transition: color 0.4s ease;
 
     &:hover {
-      color: #3333c4;
+      color: var(--accent-hover);
     }
   }
 
@@ -196,8 +196,8 @@
     padding: 0 $space-3;
     border-radius: $radius-sm;
     border: $border-subtle;
-    background: rgba(252, 252, 252, 0.96);
-    color: $darkBlue;
+    background: var(--surface);
+    color: var(--heading);
     font-family: $font-ui;
     font-weight: 700;
     font-size: 0.875rem;
@@ -205,8 +205,8 @@
     transition: $transition-ui;
 
     &:hover {
-      background: rgba(219, 219, 255, 0.55);
-      border-color: $powderBlue;
+      background: var(--accent-muted);
+      border-color: var(--border-hover);
     }
   }
 
@@ -235,7 +235,7 @@
     padding: $space-3;
     border: $border-subtle;
     border-radius: $radius-md;
-    background: rgba(252, 252, 252, 0.96);
+    background: var(--surface);
     box-shadow: $shadow-card;
     min-width: 0;
     width: 100%;
@@ -317,7 +317,7 @@
     input {
       margin-top: 2px;
       flex-shrink: 0;
-      accent-color: $darkBlue;
+      accent-color: var(--heading);
     }
   }
 
@@ -335,8 +335,8 @@
     padding: 0 $space-3;
     border-radius: $radius-pill;
     border: $border-subtle;
-    background: rgba(219, 219, 255, 0.28);
-    color: $darkBlue;
+    background: var(--accent-muted);
+    color: var(--heading);
     font-size: 0.8125rem;
     font-weight: 600;
     cursor: pointer;
@@ -347,14 +347,14 @@
     white-space: nowrap;
 
     &:hover {
-      background: rgba(219, 219, 255, 0.55);
-      border-color: $powderBlue;
+      background: var(--accent-muted);
+      border-color: var(--border-hover);
     }
 
     &.is-on {
-      background: $darkBlue;
-      border-color: $darkBlue;
-      color: $lightCream;
+      background: var(--accent);
+      border-color: var(--heading);
+      color: var(--surface);
     }
   }
 
@@ -392,7 +392,7 @@
     max-width: 100%;
     border-radius: $radius-sm;
     border: $border-subtle;
-    background: $lightCream;
+    background: var(--surface);
     color: $text-secondary;
     padding: 0 $space-2;
     font: inherit;
@@ -401,13 +401,13 @@
     transition: $transition-ui;
 
     &:hover {
-      border-color: $powderBlue;
+      border-color: var(--border-hover);
     }
 
     &:focus {
       outline: none;
-      border-color: $darkBlue;
-      box-shadow: 0 0 0 3px rgba(169, 169, 255, 0.45);
+      border-color: var(--heading);
+      box-shadow: var(--focus-ring);
     }
   }
 
@@ -427,7 +427,7 @@
     padding: $space-3;
     border: $border-subtle;
     border-radius: $radius-md;
-    background: rgba(252, 252, 252, 0.96);
+    background: var(--surface);
     box-shadow: $shadow-card;
 
     @include tablet-up {
@@ -476,7 +476,7 @@
       min-height: 40px;
       border-radius: $radius-sm;
       border: $border-subtle;
-      background: $lightCream;
+      background: var(--surface);
       color: $text-secondary;
       padding: 0 $space-3;
       font: inherit;
@@ -485,13 +485,13 @@
       transition: $transition-ui;
 
       &:hover {
-        border-color: $powderBlue;
+        border-color: var(--border-hover);
       }
 
       &:focus {
         outline: none;
-        border-color: $darkBlue;
-        box-shadow: 0 0 0 3px rgba(169, 169, 255, 0.45);
+        border-color: var(--heading);
+        box-shadow: var(--focus-ring);
       }
     }
   }
@@ -519,7 +519,7 @@
     border-radius: $radius-sm;
     border: $border-subtle;
     background: rgba(219, 219, 255, 0.45);
-    color: $darkBlue;
+    color: var(--heading);
     font-family: $font-ui;
     font-weight: 700;
     font-size: 0.875rem;
@@ -528,8 +528,8 @@
     transition: $transition-ui;
 
     &:hover {
-      background: $paleBlue;
-      border-color: $powderBlue;
+      background: var(--accent-muted);
+      border-color: var(--border-hover);
     }
   }
 
@@ -570,11 +570,11 @@
 
     &:hover {
       background: rgba(219, 219, 255, 0.45);
-      border-color: $powderBlue;
+      border-color: var(--border-hover);
     }
 
     &:focus-visible {
-      outline: 2px solid $powderBlue;
+      outline: 2px solid var(--accent);
       outline-offset: 2px;
     }
   }
@@ -586,7 +586,7 @@
     margin-top: 2px;
     border-radius: $radius-sm;
     border: $border-subtle;
-    background: rgba(219, 219, 255, 0.4);
+    background: var(--surface-hover);
     overflow: hidden;
     flex-shrink: 0;
 
@@ -615,7 +615,7 @@
     font-family: $font-ui;
     font-weight: 700;
     line-height: 1.3;
-    color: $darkBlue;
+    color: var(--heading);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -640,8 +640,8 @@
       font-size: 0.7rem;
       font-weight: 600;
       line-height: 1.3;
-      color: $darkBlue;
-      background: rgba(219, 219, 255, 0.55);
+      color: var(--heading);
+      background: var(--accent-muted);
       border-radius: $radius-pill;
       padding: 3px $space-2;
       max-width: 100%;
@@ -671,12 +671,12 @@
     }
 
     &.is-soon {
-      color: $darkBlue;
+      color: var(--heading);
       background: rgba(235, 235, 57, 0.35);
     }
 
     &.is-overdue {
-      color: #fff;
+      color: var(--on-accent);
       background: $errorRed;
     }
 
@@ -690,8 +690,8 @@
       padding: 0;
       border-radius: 50%;
       color: $text-muted;
-      background: rgba(219, 219, 255, 0.55);
-      border: 1px solid rgba(0, 0, 171, 0.12);
+      background: var(--accent-muted);
+      border: $border-subtle;
 
       &::after {
         content: attr(data-tooltip);
@@ -702,7 +702,7 @@
         padding: 4px 8px;
         border-radius: $radius-sm;
         background: rgba(18, 18, 31, 0.92);
-        color: #fff;
+        color: var(--on-accent);
         font-family: $font-ui;
         font-size: 0.75rem;
         font-weight: 600;
@@ -722,215 +722,5 @@
 
   &__expiry-icon {
     display: block;
-  }
-}
-
-html[data-theme="dark"] {
-  .search-page {
-    &__header {
-      border-bottom-color: rgba(169, 169, 255, 0.18);
-    }
-
-    &__title {
-      color: $paleBlue;
-    }
-
-    &__subtitle,
-    &__muted,
-    &__count {
-      color: #a8a8c4;
-    }
-
-    &__query input {
-      background: rgba(28, 28, 46, 0.92);
-      border-color: rgba(169, 169, 255, 0.22);
-      color: #ececf5;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
-
-      &::placeholder {
-        color: #a8a8c4;
-      }
-
-      &:hover {
-        border-color: rgba(169, 169, 255, 0.4);
-      }
-
-      &:focus {
-        border-color: $powderBlue;
-        box-shadow: 0 0 0 3px rgba(169, 169, 255, 0.28);
-      }
-    }
-
-    &__query-clear {
-      color: #a8a8c4;
-
-      &:hover {
-        color: $paleBlue;
-        background: rgba(169, 169, 255, 0.14);
-      }
-    }
-
-    &__chip {
-      background: rgba(169, 169, 255, 0.12);
-      border-color: rgba(169, 169, 255, 0.28);
-      color: $paleBlue;
-
-      &:hover {
-        background: rgba(169, 169, 255, 0.22);
-        border-color: rgba(169, 169, 255, 0.45);
-      }
-    }
-
-    &__chips-clear {
-      color: $powderBlue;
-
-      &:hover {
-        color: $paleBlue;
-      }
-    }
-
-    &__filters-toggle {
-      background: rgba(28, 28, 46, 0.92);
-      border-color: rgba(169, 169, 255, 0.28);
-      color: $paleBlue;
-
-      &:hover {
-        background: rgba(169, 169, 255, 0.14);
-        border-color: rgba(169, 169, 255, 0.45);
-      }
-    }
-
-    &__filters,
-    &__results {
-      background: rgba(28, 28, 46, 0.92);
-      border-color: rgba(169, 169, 255, 0.22);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
-    }
-
-    &__filters h2 {
-      color: #a8a8c4;
-    }
-
-    &__check {
-      color: #c8c8e0;
-
-      input {
-        accent-color: $powderBlue;
-      }
-    }
-
-    &__tag-chip {
-      background: rgba(169, 169, 255, 0.1);
-      border-color: rgba(169, 169, 255, 0.28);
-      color: $paleBlue;
-
-      &:hover {
-        background: rgba(169, 169, 255, 0.18);
-      }
-
-      &.is-on {
-        background: $powderBlue;
-        border-color: $powderBlue;
-        color: #12121f;
-      }
-    }
-
-    &__select select,
-    &__sort select {
-      background: #161625;
-      border-color: rgba(169, 169, 255, 0.28);
-      color: #ececf5;
-
-      &:hover {
-        border-color: rgba(169, 169, 255, 0.45);
-      }
-
-      &:focus {
-        border-color: $powderBlue;
-        box-shadow: 0 0 0 3px rgba(169, 169, 255, 0.28);
-      }
-
-      option {
-        background: #161625;
-        color: #ececf5;
-      }
-    }
-
-    &__sort {
-      color: #a8a8c4;
-    }
-
-    &__empty {
-      color: #c8c8e0;
-    }
-
-    &__cta {
-      background: rgba(169, 169, 255, 0.12);
-      border-color: rgba(169, 169, 255, 0.28);
-      color: $paleBlue;
-
-      &:hover {
-        background: rgba(169, 169, 255, 0.22);
-        border-color: rgba(169, 169, 255, 0.45);
-      }
-    }
-
-    &__row {
-      background: rgba(169, 169, 255, 0.08);
-      border-color: rgba(169, 169, 255, 0.2);
-
-      &:hover {
-        background: rgba(169, 169, 255, 0.16);
-        border-color: rgba(169, 169, 255, 0.4);
-      }
-
-      &:focus-visible {
-        outline-color: $powderBlue;
-      }
-    }
-
-    &__thumb {
-      background: rgba(169, 169, 255, 0.14);
-      border-color: rgba(169, 169, 255, 0.28);
-    }
-
-    &__row-name {
-      color: #ececf5;
-    }
-
-    &__row-meta {
-      color: #a8a8c4;
-    }
-
-    &__row-tags span {
-      color: $paleBlue;
-      background: rgba(169, 169, 255, 0.16);
-    }
-
-    &__expiry {
-      color: #a8a8c4;
-      background: rgba(169, 169, 255, 0.14);
-
-      &.is-soon {
-        color: #12121f;
-        background: rgba(235, 235, 57, 0.55);
-      }
-
-      &.is-overdue {
-        color: #12121f;
-        background: #ef5a5a;
-      }
-
-      &.is-none {
-        color: #a8a8c4;
-        background: rgba(169, 169, 255, 0.16);
-        border-color: rgba(169, 169, 255, 0.28);
-
-        &::after {
-          background: rgba(12, 12, 22, 0.96);
-          color: #f2f2fa;
-        }
-      }
-    }
   }
 }

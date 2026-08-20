@@ -3,7 +3,7 @@
 .tori-sidebar {
   display: none;
   flex-direction: column;
-  background: rgba(252, 252, 252, 0.98);
+  background: var(--bg);
   border-right: $border-subtle;
   transition: width 0.25s ease, transform 0.25s ease, padding 0.25s ease;
   overflow: visible;
@@ -65,7 +65,7 @@
       z-index: 201;
       padding: $space-3 $space-2;
       transform: translateX(-100%);
-      background: $lightCream;
+      background: var(--bg);
       box-shadow: none;
     }
   }
@@ -73,7 +73,7 @@
   &--overlay-open {
     @media (max-width: 1110px) {
       transform: translateX(0);
-      box-shadow: 8px 0 28px rgba(0, 0, 171, 0.16);
+      box-shadow: 8px 0 28px color-mix(in srgb, var(--text) 16%, transparent);
     }
   }
 
@@ -113,8 +113,8 @@
     height: 36px;
     border-radius: 50%;
     overflow: hidden;
-    background: $darkBlue;
-    box-shadow: 0 0 0 2px rgba(169, 169, 255, 0.45);
+    background: var(--brand-navy);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 45%, transparent);
     flex-shrink: 0;
   }
 
@@ -135,7 +135,7 @@
     font-family: $font-ui;
     font-weight: 700;
     font-size: 1.5rem;
-    color: $darkBlue;
+    color: var(--heading);
     line-height: 1.15;
   }
 
@@ -146,14 +146,16 @@
     place-items: center;
     border: $border-subtle;
     border-radius: $radius-sm;
-    background: $paleBlue;
-    color: $darkBlue;
+    background: transparent;
+    color: var(--heading);
     cursor: pointer;
     flex-shrink: 0;
     align-self: center;
+    transition: $transition-ui;
 
     &:hover {
-      background: $powderBlue;
+      background: var(--surface-hover);
+      border-color: var(--border-hover);
     }
   }
 
@@ -194,20 +196,20 @@
     padding: 0 $space-3;
     border-radius: $radius-sm;
     text-decoration: none;
-    color: $text-secondary;
+    color: var(--text-secondary);
     font-family: $font-ui;
     font-weight: 600;
     font-size: 0.9375rem;
     transition: $transition-ui;
 
     &:hover {
-      background: $paleBlue;
-      color: $darkBlue;
+      background: var(--surface-hover);
+      color: var(--heading);
     }
 
     &.is-active {
-      background: $powderBlue;
-      color: $darkBlue;
+      background: var(--accent-muted);
+      color: var(--heading);
     }
   }
 
@@ -246,9 +248,9 @@
     min-height: 40px;
     padding: 0 $space-3;
     border-radius: $radius-sm;
-    border: 1px solid rgba(210, 45, 45, 0.35);
-    background: rgba(210, 45, 45, 0.1);
-    color: $errorRed;
+    border: 1px solid var(--error-border);
+    background: transparent;
+    color: var(--error);
     font-family: $font-ui;
     font-weight: 600;
     font-size: 0.875rem;
@@ -257,9 +259,9 @@
     transition: $transition-ui;
 
     &:hover {
-      background: $errorRed;
-      color: #fff;
-      border-color: $errorRed;
+      background: var(--error-muted);
+      color: var(--error);
+      border-color: var(--error);
     }
   }
 
@@ -276,71 +278,16 @@
     border-radius: 50%;
     display: grid;
     place-items: center;
-    background: $paleBlue;
-    color: $darkBlue;
+    background: var(--surface-hover);
+    color: var(--heading);
     flex-shrink: 0;
   }
 
   &__user-name {
     font-size: 0.8125rem;
-    color: $text-secondary;
+    color: var(--text-secondary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-}
-
-html[data-theme="dark"] {
-  .tori-sidebar {
-    background: rgba(18, 18, 31, 0.98);
-    border-right-color: rgba(169, 169, 255, 0.22);
-
-    &--overlay {
-      @media (max-width: 1110px) {
-        background: #161625;
-      }
-    }
-
-    &__title {
-      color: $paleBlue;
-    }
-
-    &__user-name {
-      color: #a8a8c4;
-    }
-
-    &__toggle {
-      background: rgba(169, 169, 255, 0.14);
-      border-color: rgba(169, 169, 255, 0.28);
-      color: $paleBlue;
-
-      &:hover {
-        background: rgba(169, 169, 255, 0.24);
-      }
-    }
-
-    &__link {
-      color: #c8c8e0;
-
-      &:hover {
-        background: rgba(169, 169, 255, 0.14);
-        color: $paleBlue;
-      }
-
-      &.is-active {
-        background: rgba(169, 169, 255, 0.22);
-        color: $paleBlue;
-      }
-    }
-
-    &__list--meta,
-    &__footer {
-      border-top-color: rgba(169, 169, 255, 0.18);
-    }
-
-    &__avatar {
-      background: rgba(169, 169, 255, 0.18);
-      color: $paleBlue;
-    }
   }
 }

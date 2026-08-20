@@ -7,13 +7,13 @@
   padding: $space-3;
   border: $border-subtle;
   border-radius: $radius-sm;
-  background: rgba(219, 219, 255, 0.22);
+  background: var(--accent-muted);
 
   h3 {
     margin: 0;
     font-size: 0.9375rem;
     font-family: $font-ui;
-    color: $darkBlue;
+    color: var(--heading);
   }
 
   &__preview {
@@ -22,7 +22,7 @@
     object-fit: cover;
     border-radius: $radius-md;
     border: $border-subtle;
-    background: $paleBlue;
+    background: var(--accent-muted);
   }
 
   &__empty {
@@ -42,26 +42,5 @@
     display: flex;
     flex-wrap: wrap;
     gap: $space-2;
-  }
-}
-
-html[data-theme="dark"] {
-  .item-image-controls {
-    background: rgba(169, 169, 255, 0.08);
-    border-color: rgba(169, 169, 255, 0.22);
-
-    h3 {
-      color: $powderBlue;
-    }
-
-    &__preview {
-      border-color: rgba(169, 169, 255, 0.28);
-      background: #161625;
-    }
-
-    &__empty,
-    &__hint {
-      color: #a8a8c4;
-    }
   }
 }

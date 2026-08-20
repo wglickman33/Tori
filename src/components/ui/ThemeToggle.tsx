@@ -19,7 +19,7 @@ export function ThemeToggle({ variant = "floating" }: ThemeToggleProps) {
         checked={isDark}
         onChange={(checked) => setTheme(checked ? "dark" : "light")}
         size={variant === "header" ? 20 : 22}
-        sunColor="#0000ab"
+        sunColor="#25275a"
         moonColor="#dbdbff"
         aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
       />

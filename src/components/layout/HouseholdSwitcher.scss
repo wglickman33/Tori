@@ -15,8 +15,8 @@
     padding: 0 $space-3;
     border-radius: $radius-pill;
     border: $border-subtle;
-    background: rgba(219, 219, 255, 0.55);
-    color: $darkBlue;
+    background: var(--surface-hover);
+    color: var(--heading);
     font-family: $font-ui;
     font-weight: 600;
     font-size: 0.8125rem;
@@ -25,8 +25,8 @@
 
     &:hover,
     &[aria-expanded="true"] {
-      background: $powderBlue;
-      border-color: $powderBlue;
+      background: var(--accent-muted);
+      border-color: var(--border-hover);
     }
   }
 
@@ -43,7 +43,7 @@
     place-items: center;
     width: 1.25rem;
     height: 1.25rem;
-    color: $darkBlue;
+    color: var(--heading);
     opacity: 0.9;
     transition: transform 0.4s ease, opacity 0.4s ease;
 
@@ -70,7 +70,7 @@
     padding: $space-1;
     border-radius: $radius-md;
     border: $border-subtle;
-    background: $lightCream;
+    background: var(--surface);
     box-shadow: $shadow-card;
     max-height: 240px;
     overflow: auto;
@@ -93,26 +93,27 @@
     border: 0;
     border-radius: $radius-sm;
     background: transparent;
-    color: $text-secondary;
+    color: var(--text-secondary);
     font-family: $font-ui;
     font-weight: 600;
     font-size: 0.8125rem;
     text-align: left;
     text-decoration: none;
     cursor: pointer;
+    transition: $transition-ui;
 
     &:hover {
-      background: $paleBlue;
-      color: $darkBlue;
+      background: var(--surface-hover);
+      color: var(--heading);
     }
 
     &.is-active {
-      background: $powderBlue;
-      color: $darkBlue;
+      background: var(--accent-selected);
+      color: var(--heading);
     }
 
     &--add {
-      color: $darkBlue;
+      color: var(--accent);
       border-top: $border-subtle;
       margin-top: $space-1;
       border-radius: 0 0 $radius-sm $radius-sm;
@@ -124,7 +125,7 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: $text-muted;
+    color: var(--text-muted);
   }
 
   &--collapsed {
@@ -138,65 +139,18 @@
     height: 40px;
     border-radius: 50%;
     border: $border-subtle;
-    background: $paleBlue;
-    color: $darkBlue;
+    background: var(--surface-hover);
+    color: var(--heading);
     font-family: $font-ui;
     font-weight: 700;
     cursor: pointer;
     display: grid;
     place-items: center;
-  }
-}
+    transition: $transition-ui;
 
-html[data-theme="dark"] {
-  .household-switcher {
-    &__pill {
-      background: rgba(169, 169, 255, 0.14);
-      border-color: rgba(169, 169, 255, 0.28);
-      color: $paleBlue;
-
-      &:hover,
-      &[aria-expanded="true"] {
-        background: rgba(169, 169, 255, 0.24);
-      }
-    }
-
-    &__menu {
-      background: #1c1c2e;
-      border-color: rgba(169, 169, 255, 0.28);
-    }
-
-    &__option {
-      color: #c8c8e0;
-
-      &:hover {
-        background: rgba(169, 169, 255, 0.14);
-        color: $paleBlue;
-      }
-
-      &.is-active {
-        background: rgba(169, 169, 255, 0.22);
-        color: $paleBlue;
-      }
-
-      &--add {
-        border-top-color: rgba(169, 169, 255, 0.18);
-        color: $powderBlue;
-      }
-    }
-
-    &__role {
-      color: #a8a8c4;
-    }
-
-    &__chevron {
-      color: $paleBlue;
-    }
-
-    &__avatar {
-      background: rgba(169, 169, 255, 0.18);
-      border-color: rgba(169, 169, 255, 0.28);
-      color: $paleBlue;
+    &:hover {
+      background: var(--accent-muted);
+      border-color: var(--border-hover);
     }
   }
 }

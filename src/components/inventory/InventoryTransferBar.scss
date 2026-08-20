@@ -41,7 +41,7 @@
     padding: $space-1;
     border-radius: $radius-md;
     border: $border-subtle;
-    background: $lightCream;
+    background: var(--surface);
     box-shadow: $shadow-card;
 
     button {
@@ -60,8 +60,8 @@
       transition: background-color 0.4s ease, color 0.4s ease;
 
       &:hover:not(:disabled) {
-        background: $paleBlue;
-        color: $darkBlue;
+        background: var(--surface-hover);
+        color: var(--heading);
       }
 
       &:disabled {
@@ -92,33 +92,7 @@
   }
 
   &__status {
-    color: $darkBlue;
+    color: var(--heading);
     font-weight: 600;
-  }
-}
-
-html[data-theme="dark"] {
-  .inventory-transfer {
-    &__menu {
-      background: #1c1c2e;
-      border-color: rgba(169, 169, 255, 0.28);
-
-      button {
-        color: #c8c8e0;
-
-        &:hover:not(:disabled) {
-          background: rgba(169, 169, 255, 0.14);
-          color: $paleBlue;
-        }
-      }
-    }
-
-    &__hint {
-      color: #a8a8c4;
-    }
-
-    &__status {
-      color: $powderBlue;
-    }
   }
 }

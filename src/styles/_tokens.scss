@@ -1,10 +1,7 @@
+// Brand marks and Whisk islands still use these literal hues.
 $darkBlue: #0000ab;
 $powderBlue: #a9a9ff;
 $paleBlue: #dbdbff;
-$lightCream: #fcfcfc;
-$errorRed: #d22d2d;
-$successGreen: #2e9e5b;
-$expiringYellow: #ebeb39;
 
 $space-1: 4px;
 $space-2: 8px;
@@ -19,12 +16,14 @@ $radius-pill: 999px;
 $font-ui: "Plus Jakarta Sans", system-ui, sans-serif;
 $font-body: "Inter", system-ui, sans-serif;
 
-$shadow-card: 0 8px 24px rgba(0, 0, 171, 0.08);
-$border-subtle: 1px solid rgba(0, 0, 171, 0.12);
-$border-strong: 1px solid $powderBlue;
+$shadow-card: var(--shadow);
+$border-subtle: 1px solid var(--border);
+$border-strong: 1px solid var(--accent);
 
-$text-muted: #55557a;
-$text-secondary: #3a3a5c;
+$text-muted: var(--text-muted);
+$text-secondary: var(--text-secondary);
+$errorRed: var(--error);
+$successGreen: var(--success);
 
 $transition-ui: color 0.4s ease, background-color 0.4s ease, border-color 0.4s ease,
   box-shadow 0.4s ease;

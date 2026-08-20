@@ -1,0 +1,87 @@
+// Pale periwinkle room (Tori), Whisk layering. Dark values stay as they were.
+:root {
+  color-scheme: light;
+
+  // Whisk structure, Tori hue: paleBlue room, powder CTAs, navy logo only.
+  // Whisk sand #e8dfd2 / peach #e5c9b3 / terracotta #c96b3a
+  // maps to paleBlue #dbdbff / muted powder / deeper periwinkle.
+  --bg: #e4e6fb;
+  --bg-elevated: #e8e9fd;
+  --surface: #e9ebfd;
+  --surface-hover: #d5d7f6;
+  --text: #25275a;
+  --heading: #25275a;
+  --text-secondary: #3e4270;
+  --text-muted: #5c6090;
+  --placeholder: #6e72a0;
+  --accent: #7a7ef0;
+  --accent-hover: #686ce6;
+  --accent-muted: #d2d4ff;
+  --accent-muted-hover: #c4c6f8;
+  --accent-selected: #d2d4ff;
+  --border: #c5c8ee;
+  --border-hover: #b0b3e4;
+  --focus-ring: 0 0 0 3px rgba(122, 126, 240, 0.35);
+  --shadow: 0 2px 12px rgba(37, 39, 90, 0.08);
+  --shadow-lg: 0 8px 32px rgba(37, 39, 90, 0.12);
+  --success: #2d7a52;
+  --success-muted: rgba(45, 122, 82, 0.12);
+  --success-border: rgba(45, 122, 82, 0.28);
+  --error: #b84a4a;
+  --error-muted: rgba(184, 74, 74, 0.1);
+  --error-muted-hover: rgba(184, 74, 74, 0.16);
+  --error-border: rgba(184, 74, 74, 0.32);
+  --warning: #9a7a24;
+  --expiring: #a05a00;
+  --on-accent: #f7f7ff;
+  --overlay: rgba(18, 18, 31, 0.45);
+  --modal-overlay: rgba(10, 10, 30, 0.55);
+  --brand-navy: #0000ab;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #12121f;
+  --bg-elevated: #161625;
+  --surface: #1c1c2e;
+  --surface-hover: rgba(169, 169, 255, 0.14);
+  --text: #ececf5;
+  --heading: #dbdbff;
+  --text-secondary: #c8c8e0;
+  --text-muted: #a8a8c4;
+  --placeholder: #7e7e9a;
+  --accent: #a9a9ff;
+  --accent-hover: #dbdbff;
+  --accent-muted: rgba(169, 169, 255, 0.14);
+  --accent-muted-hover: rgba(169, 169, 255, 0.28);
+  --accent-selected: rgba(169, 169, 255, 0.22);
+  --border: rgba(169, 169, 255, 0.22);
+  --border-hover: rgba(169, 169, 255, 0.45);
+  --focus-ring: 0 0 0 3px rgba(169, 169, 255, 0.28);
+  --shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.45);
+  --success: #2e9e5b;
+  --success-muted: rgba(46, 158, 91, 0.14);
+  --success-border: rgba(60, 188, 114, 0.35);
+  --error: #ff8f8f;
+  --error-muted: rgba(210, 45, 45, 0.18);
+  --error-muted-hover: rgba(210, 45, 45, 0.28);
+  --error-border: rgba(210, 45, 45, 0.45);
+  --warning: #c9a227;
+  --expiring: #e0a050;
+  --on-accent: #12121f;
+  --overlay: rgba(18, 18, 31, 0.55);
+  --modal-overlay: rgba(0, 0, 0, 0.62);
+  --brand-navy: #0000ab;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

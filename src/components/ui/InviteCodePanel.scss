@@ -5,7 +5,7 @@
   padding: $space-4;
   border: $border-subtle;
   border-radius: $radius-md;
-  background: rgba(252, 252, 252, 0.96);
+  background: var(--surface);
   box-shadow: $shadow-card;
   display: flex;
   flex-direction: column;
@@ -28,12 +28,12 @@
     font-family: $font-ui;
     font-size: 1.125rem;
     font-weight: 700;
-    color: $darkBlue;
+    color: var(--heading);
   }
 
   &__copy {
     margin: 0;
-    color: $text-muted;
+    color: var(--text-muted);
     font-size: 0.875rem;
     line-height: 1.45;
   }
@@ -43,7 +43,7 @@
     font-size: clamp(1.1rem, 4.5vw, 1.5rem);
     font-weight: 700;
     letter-spacing: 0.08em;
-    color: $darkBlue;
+    color: var(--heading);
     word-break: break-all;
     overflow-wrap: anywhere;
 
@@ -69,28 +69,6 @@
         width: auto;
         flex: 0 0 auto;
       }
-    }
-  }
-}
-
-html[data-theme="dark"] {
-  .invite-code-panel {
-    &:not(.invite-code-panel--embedded) {
-      background: rgba(28, 28, 46, 0.92);
-      border-color: rgba(169, 169, 255, 0.22);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
-    }
-
-    &__title {
-      color: $paleBlue;
-    }
-
-    &__copy {
-      color: #a8a8c4;
-    }
-
-    &__code {
-      color: $paleBlue;
     }
   }
 }

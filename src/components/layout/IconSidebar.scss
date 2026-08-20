@@ -1,6 +1,5 @@
 @use "../../styles/tokens" as *;
 
-/* Visible only 641-1110px (mkd / Whisk tablet rail). */
 .tori-icon-sidebar {
   display: none;
   position: fixed;
@@ -11,7 +10,7 @@
   align-items: center;
   padding: $space-2 0;
   border-right: $border-subtle;
-  background: rgba(252, 252, 252, 0.98);
+  background: var(--bg);
   transition: opacity 0.2s ease;
 
   @media (min-width: 641px) and (max-width: 1110px) {
@@ -33,12 +32,14 @@
     margin-bottom: $space-2;
     border: $border-subtle;
     border-radius: $radius-sm;
-    background: $paleBlue;
-    color: $darkBlue;
+    background: transparent;
+    color: var(--heading);
     cursor: pointer;
+    transition: $transition-ui;
 
     &:hover {
-      background: $powderBlue;
+      background: var(--surface-hover);
+      border-color: var(--border-hover);
     }
   }
 
@@ -73,53 +74,18 @@
     display: grid;
     place-items: center;
     border-radius: $radius-sm;
-    color: $text-secondary;
+    color: var(--text-secondary);
     text-decoration: none;
     transition: $transition-ui;
 
     &:hover {
-      background: $paleBlue;
-      color: $darkBlue;
+      background: var(--surface-hover);
+      color: var(--heading);
     }
 
     &.is-active {
-      background: $powderBlue;
-      color: $darkBlue;
-    }
-  }
-}
-
-html[data-theme="dark"] {
-  .tori-icon-sidebar {
-    background: rgba(18, 18, 31, 0.98);
-    border-right-color: rgba(169, 169, 255, 0.22);
-
-    &__hamburger {
-      background: rgba(169, 169, 255, 0.14);
-      border-color: rgba(169, 169, 255, 0.28);
-      color: $paleBlue;
-
-      &:hover {
-        background: rgba(169, 169, 255, 0.24);
-      }
-    }
-
-    &__list--meta {
-      border-top-color: rgba(169, 169, 255, 0.18);
-    }
-
-    &__link {
-      color: #c8c8e0;
-
-      &:hover {
-        background: rgba(169, 169, 255, 0.14);
-        color: $paleBlue;
-      }
-
-      &.is-active {
-        background: rgba(169, 169, 255, 0.22);
-        color: $paleBlue;
-      }
+      background: var(--accent-muted);
+      color: var(--heading);
     }
   }
 }

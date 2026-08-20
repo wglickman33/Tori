@@ -8,7 +8,7 @@
   padding: clamp(#{$space-4}, 3vw, #{$space-5});
   border: $border-strong;
   border-radius: $radius-md;
-  background: rgba(219, 219, 255, 0.55);
+  background: var(--accent-muted);
   box-shadow: $shadow-card;
   backdrop-filter: blur(10px);
   transition: $transition-ui;
@@ -33,7 +33,7 @@
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: $darkBlue;
+    color: var(--heading);
   }
 
   &__title {
@@ -61,25 +61,5 @@
   &__submit {
     width: 100%;
     margin-top: auto;
-  }
-}
-
-html[data-theme="dark"] {
-  .household-join-card {
-    background: rgba(169, 169, 255, 0.1);
-    border-color: rgba(169, 169, 255, 0.32);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
-
-    &__eyebrow {
-      color: $powderBlue;
-    }
-
-    &__title {
-      color: #ececf5;
-    }
-
-    &__copy {
-      color: #a8a8c4;
-    }
   }
 }

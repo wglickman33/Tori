@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useToastStore, type ToastItem as ToastItemData } from "../../store/toastStore";
 import "./NotificationToast.scss";
@@ -22,8 +22,13 @@ function CloseIcon() {
 
 function ToastCard({ item, onClose }: { item: ToastItemData; onClose: () => void }) {
   const [exiting, setExiting] = useState(false);
+  const onCloseRef = useRef(onClose);
+  const exitingRef = useRef(false);
   const icon =
     item.type === "success" ? "✓" : item.type === "error" ? "✕" : item.type === "warning" ? "!" : "i";
+
+  onCloseRef.current = onClose;
+  exitingRef.current = exiting;
 
   const dismiss = useCallback(() => {
     setExiting(true);
@@ -36,9 +41,15 @@ function ToastCard({ item, onClose }: { item: ToastItemData; onClose: () => void
 
   useEffect(() => {
     if (!exiting) return;
-    const timer = window.setTimeout(onClose, EXIT_ANIMATION_MS);
+    const timer = window.setTimeout(() => onCloseRef.current(), EXIT_ANIMATION_MS);
     return () => window.clearTimeout(timer);
-  }, [exiting, onClose]);
+  }, [exiting]);
+
+  useEffect(() => {
+    return () => {
+      if (exitingRef.current) onCloseRef.current();
+    };
+  }, []);
 
   return (
     <div
@@ -58,7 +69,7 @@ function ToastCard({ item, onClose }: { item: ToastItemData; onClose: () => void
               className="notification-toast__action"
               onClick={() => {
                 item.onAction?.();
-                dismiss();
+                onClose();
               }}
             >
               {item.actionLabel}

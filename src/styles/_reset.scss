@@ -13,10 +13,14 @@ body,
   min-height: 100%;
 }
 
+html {
+  color-scheme: light;
+}
+
 body {
   font-family: $font-body;
-  background: $lightCream;
-  color: #12122a;
+  background: var(--bg);
+  color: var(--text);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -26,6 +30,7 @@ h3,
 h4 {
   font-family: $font-ui;
   margin: 0;
+  color: var(--heading);
 }
 
 p {
@@ -38,5 +43,9 @@ input {
 }
 
 a {
-  color: $darkBlue;
+  color: var(--accent);
+
+  &:hover {
+    color: var(--accent-hover);
+  }
 }

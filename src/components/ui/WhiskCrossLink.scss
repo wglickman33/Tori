@@ -1,5 +1,12 @@
 @use "../../styles/tokens" as *;
 
+$whisk-accent: #c96b3a;
+$whisk-accent-hover: #b85c2e;
+$whisk-surface: #ebe4d8;
+$whisk-text: #2c251f;
+$whisk-muted: #5c5045;
+$whisk-border: #d4c9bb;
+
 .whisk-cross-link {
   &--card {
     display: flex;
@@ -11,13 +18,13 @@
     padding: $space-4;
     border: $border-subtle;
     border-radius: $radius-md;
-    background: rgba(252, 252, 252, 0.96);
+    background: var(--surface);
     box-shadow: $shadow-card;
     transition: $transition-ui;
 
     &:hover {
-      background: rgba(219, 219, 255, 0.4);
-      border-color: $powderBlue;
+      background: var(--surface-hover);
+      border-color: var(--border-hover);
     }
   }
 
@@ -44,13 +51,13 @@
     font-family: $font-ui;
     font-size: 1.2rem;
     font-weight: 700;
-    color: $darkBlue;
+    color: var(--heading);
     margin: 0;
   }
 
   &__body {
     margin: $space-2 0 0;
-    color: $text-muted;
+    color: var(--text-muted);
     max-width: 36rem;
     font-size: 0.9375rem;
     line-height: 1.45;
@@ -63,17 +70,17 @@
     min-height: 44px;
     padding: 0 $space-4;
     border-radius: $radius-md;
-    border: 1px solid $darkBlue;
-    background: $darkBlue;
-    color: $lightCream;
+    border: 1px solid $whisk-accent;
+    background: $whisk-accent;
+    color: #fff8f2;
     text-decoration: none;
     font-family: $font-ui;
     font-weight: 600;
     transition: $transition-ui;
 
     &:hover {
-      background: #1a1acc;
-      border-color: #1a1acc;
+      background: $whisk-accent-hover;
+      border-color: $whisk-accent-hover;
     }
   }
 
@@ -83,7 +90,7 @@
     gap: $space-2;
     min-height: 44px;
     padding: 0 $space-2;
-    color: $darkBlue;
+    color: $whisk-accent;
     font-family: $font-ui;
     font-weight: 600;
     font-size: 0.875rem;
@@ -92,52 +99,8 @@
     transition: $transition-ui;
 
     &:hover {
-      background: rgba(219, 219, 255, 0.55);
-      color: $darkBlue;
-    }
-  }
-}
-
-html[data-theme="dark"] {
-  .whisk-cross-link {
-    &--card {
-      background: rgba(28, 28, 46, 0.92);
-      border-color: rgba(169, 169, 255, 0.22);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
-
-      &:hover {
-        background: rgba(169, 169, 255, 0.12);
-        border-color: rgba(169, 169, 255, 0.4);
-      }
-    }
-
-    &__title {
-      color: $paleBlue;
-    }
-
-    &__body {
-      color: #a8a8c4;
-    }
-
-    &__cta {
-      background: $powderBlue;
-      border-color: $powderBlue;
-      color: #12121f;
-
-      &:hover {
-        background: $paleBlue;
-        border-color: $paleBlue;
-        color: #12121f;
-      }
-    }
-
-    &--inline {
-      color: $powderBlue;
-
-      &:hover {
-        background: rgba(169, 169, 255, 0.14);
-        color: $paleBlue;
-      }
+      background: color-mix(in srgb, $whisk-accent 12%, transparent);
+      color: $whisk-accent-hover;
     }
   }
 }

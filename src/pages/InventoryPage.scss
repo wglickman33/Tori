@@ -38,8 +38,7 @@
     min-width: 0;
     border: $border-subtle;
     border-radius: $radius-md;
-    background: rgba(252, 252, 252, 0.96);
-    box-shadow: $shadow-card;
+    background: var(--surface);
     padding: $space-3;
 
     @include tablet-up {
@@ -85,7 +84,7 @@
     font-family: $font-ui;
     font-size: clamp(1.4rem, 2.8vw, 1.85rem);
     line-height: 1.15;
-    color: $darkBlue;
+    color: var(--heading);
   }
 
   &__subtitle {
@@ -109,7 +108,7 @@
 
     &:hover,
     &:focus-visible {
-      color: $darkBlue;
+      color: var(--heading);
       text-decoration: underline;
       text-underline-offset: 3px;
     }
@@ -160,7 +159,7 @@
       margin: 0;
       font-family: $font-ui;
       font-size: clamp(1.15rem, 2.4vw, 1.35rem);
-      color: $darkBlue;
+      color: var(--heading);
     }
 
     p {
@@ -198,12 +197,12 @@
 .inventory-folder {
   border: $border-subtle;
   border-radius: $radius-md;
-  background: rgba(219, 219, 255, 0.28);
+  background: transparent;
   min-width: 0;
   overflow: hidden;
 
   &--independent {
-    background: rgba(252, 252, 252, 0.7);
+    background: transparent;
   }
 
   &__row {
@@ -213,6 +212,7 @@
     justify-content: space-between;
     gap: $space-2;
     padding: $space-2 $space-3;
+    background: var(--surface-hover);
   }
 
   &__toggle {
@@ -238,7 +238,7 @@
     width: 18px;
     height: 18px;
     flex-shrink: 0;
-    color: $darkBlue;
+    color: var(--heading);
     transition: transform 0.4s ease;
 
     &.is-open {
@@ -256,7 +256,7 @@
   &__name {
     font-family: $font-ui;
     font-weight: 700;
-    color: $darkBlue;
+    color: var(--heading);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -280,7 +280,7 @@
   &__control {
     border: none;
     background: transparent;
-    color: $darkBlue;
+    color: var(--heading);
     font-family: $font-ui;
     font-weight: 600;
     font-size: 0.8125rem;
@@ -291,14 +291,14 @@
     transition: background-color 0.4s ease, color 0.4s ease;
 
     &:hover {
-      background: rgba(169, 169, 255, 0.35);
+      background: var(--bg);
     }
 
     &--danger {
       color: $errorRed;
 
       &:hover {
-        background: rgba(210, 45, 45, 0.12);
+        background: var(--error-muted-hover);
         color: $errorRed;
       }
     }
@@ -308,11 +308,14 @@
 .inventory-item-list {
   list-style: none;
   margin: 0;
-  padding: 0 $space-2 $space-2;
+  padding: 0;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: $space-1;
+
+  > li {
+    min-width: 0;
+  }
 
   &__empty {
     padding: $space-3;
@@ -324,7 +327,7 @@
       border: none;
       background: none;
       padding: 0;
-      color: $darkBlue;
+      color: var(--heading);
       font: inherit;
       font-weight: 700;
       cursor: pointer;
@@ -334,7 +337,7 @@
 
       &:hover,
       &:focus-visible {
-        color: $powderBlue;
+        color: var(--accent);
       }
     }
   }
@@ -344,19 +347,19 @@
   display: flex;
   align-items: stretch;
   gap: $space-1;
-  border-radius: $radius-sm;
-  background: $lightCream;
+  border-radius: 0;
+  background: transparent;
   min-width: 0;
   overflow: hidden;
   transition: background-color 0.4s ease, box-shadow 0.4s ease;
 
   &.is-active {
-    background: $powderBlue;
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 171, 0.2);
+    background: var(--accent-muted);
+    box-shadow: inset 0 0 0 1px var(--border-hover);
   }
 
   &:hover:not(.is-active) {
-    background: rgba(219, 219, 255, 0.55);
+    background: var(--surface-hover);
   }
 
   &__main {
@@ -365,13 +368,21 @@
     display: flex;
     align-items: center;
     gap: $space-3;
+    appearance: none;
     border: none;
+    border-radius: 0;
     background: transparent;
     padding: $space-2 $space-3;
     cursor: pointer;
     text-align: left;
     color: inherit;
     font: inherit;
+
+    &:hover,
+    &:focus,
+    &:focus-visible {
+      background: transparent;
+    }
   }
 
   &__thumb {
@@ -380,7 +391,7 @@
     border-radius: $radius-sm;
     overflow: hidden;
     flex-shrink: 0;
-    background: $paleBlue;
+    background: var(--surface-hover);
     border: $border-subtle;
 
     img {
@@ -396,7 +407,7 @@
     width: 100%;
     height: 100%;
     background:
-      linear-gradient(135deg, rgba(169, 169, 255, 0.45), rgba(219, 219, 255, 0.2));
+      linear-gradient(135deg, var(--surface-hover), var(--bg));
   }
 
   &__copy {
@@ -409,7 +420,7 @@
   &__name {
     font-family: $font-ui;
     font-weight: 600;
-    color: $darkBlue;
+    color: var(--heading);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -434,7 +445,7 @@
     }
 
     &--soon {
-      color: #a05a00;
+      color: var(--expiring);
     }
 
     &--overdue {
@@ -443,12 +454,13 @@
   }
 
   &__move {
+    appearance: none;
     flex-shrink: 0;
     align-self: center;
     margin-right: $space-2;
     border: none;
     background: transparent;
-    color: $darkBlue;
+    color: var(--accent);
     font-family: $font-ui;
     font-weight: 700;
     font-size: 0.75rem;
@@ -456,10 +468,11 @@
     min-height: 32px;
     padding: 0 $space-2;
     border-radius: $radius-sm;
-    transition: background-color 0.4s ease;
+    transition: background-color 0.4s ease, color 0.4s ease;
 
     &:hover {
-      background: rgba(0, 0, 171, 0.1);
+      background: var(--accent-muted-hover);
+      color: var(--accent-hover);
     }
   }
 }
@@ -479,7 +492,7 @@
   }
 
   &__back {
-    color: $darkBlue;
+    color: var(--heading);
     font-family: $font-ui;
     font-weight: 600;
     text-decoration: none;
@@ -509,7 +522,7 @@
   &__name {
     margin: 0;
     font-size: clamp(1.35rem, 3vw, 2rem);
-    color: $darkBlue;
+    color: var(--heading);
     word-break: break-word;
   }
 
@@ -541,7 +554,7 @@
   &__tags {
     h3 {
       margin: 0 0 $space-2;
-      color: $darkBlue;
+      color: var(--heading);
     }
 
     p {
@@ -559,175 +572,12 @@
     }
 
     li {
-      background: $paleBlue;
-      color: $darkBlue;
+      background: var(--accent-muted);
+      color: var(--heading);
       border-radius: $radius-pill;
       padding: $space-1 $space-3;
       font-size: 0.875rem;
       font-weight: 600;
-    }
-  }
-}
-
-html[data-theme="dark"] {
-  .inventory-page {
-    &__list,
-    &__detail {
-      background: rgba(28, 28, 46, 0.92);
-      border-color: rgba(169, 169, 255, 0.22);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
-    }
-
-    &__toolbar {
-      border-bottom-color: rgba(169, 169, 255, 0.18);
-    }
-
-    &__title,
-    &__empty h2,
-    &__detail-empty h2 {
-      color: $paleBlue;
-    }
-
-    &__subtitle,
-    &__status,
-    &__empty p,
-    &__detail-empty p {
-      color: #a8a8c4;
-    }
-
-    &__household-link {
-      color: #a8a8c4;
-
-      &:hover,
-      &:focus-visible {
-        color: $paleBlue;
-      }
-    }
-  }
-
-  .inventory-folder {
-    background: rgba(169, 169, 255, 0.1);
-    border-color: rgba(169, 169, 255, 0.22);
-
-    &--independent {
-      background: rgba(22, 22, 37, 0.7);
-    }
-
-    &__chevron,
-    &__name {
-      color: #ececf5;
-    }
-
-    &__meta {
-      color: #a8a8c4;
-    }
-
-    &__control {
-      color: $powderBlue;
-
-      &:hover {
-        background: rgba(169, 169, 255, 0.16);
-        color: $paleBlue;
-      }
-
-      &--danger {
-        color: #ff8f8f;
-
-        &:hover {
-          background: rgba(210, 45, 45, 0.18);
-          color: #ffb0b0;
-        }
-      }
-    }
-  }
-
-  .inventory-item {
-    background: #161625;
-
-    &.is-active {
-      background: rgba(169, 169, 255, 0.28);
-      box-shadow: inset 0 0 0 1px rgba(169, 169, 255, 0.35);
-    }
-
-    &:hover:not(.is-active) {
-      background: rgba(169, 169, 255, 0.14);
-    }
-
-    &__thumb {
-      background: rgba(169, 169, 255, 0.14);
-      border-color: rgba(169, 169, 255, 0.28);
-    }
-
-    &__name {
-      color: #ececf5;
-    }
-
-    &__meta {
-      color: #a8a8c4;
-    }
-
-    &__expiry--ok {
-      color: #a8a8c4;
-    }
-
-    &__expiry--soon {
-      color: #ffc26b;
-    }
-
-    &__expiry--overdue {
-      color: #ff8f8f;
-    }
-
-    &__move {
-      color: $powderBlue;
-
-      &:hover {
-        background: rgba(169, 169, 255, 0.16);
-        color: $paleBlue;
-      }
-    }
-  }
-
-  .inventory-item-list__empty {
-    color: #a8a8c4;
-
-    button {
-      color: $powderBlue;
-      transition: color 0.4s ease;
-
-      &:hover,
-      &:focus-visible {
-        color: $paleBlue;
-      }
-    }
-  }
-
-  .item-detail {
-    &__back,
-    &__name,
-    &__tags h3 {
-      color: $paleBlue;
-    }
-
-    &__grid {
-      dt {
-        color: #a8a8c4;
-      }
-
-      dd {
-        color: #ececf5;
-      }
-    }
-
-    &__tags {
-      p {
-        color: #a8a8c4;
-      }
-
-      li {
-        background: rgba(169, 169, 255, 0.18);
-        color: $paleBlue;
-      }
     }
   }
 }

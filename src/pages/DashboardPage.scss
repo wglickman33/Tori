@@ -35,7 +35,7 @@
     font-size: clamp(1.4rem, 2.8vw, 1.85rem);
     line-height: 1.15;
     font-weight: 700;
-    color: $darkBlue;
+    color: var(--heading);
   }
 
   &__subtitle {
@@ -71,7 +71,7 @@
     padding: $space-4;
     border: $border-subtle;
     border-radius: $radius-md;
-    background: rgba(252, 252, 252, 0.96);
+    background: var(--surface);
     box-shadow: $shadow-card;
   }
 
@@ -101,7 +101,7 @@
     margin: 0;
     font-family: $font-ui;
     font-size: 1.15rem;
-    color: $darkBlue;
+    color: var(--heading);
   }
 
   &__lead {
@@ -128,17 +128,17 @@
       padding: $space-3;
       border: $border-subtle;
       border-radius: $radius-sm;
-      background: rgba(219, 219, 255, 0.28);
+      background: var(--accent-muted);
       color: $text-secondary;
       font-weight: 600;
 
       &.is-done {
-        background: rgba(46, 158, 91, 0.1);
-        border-color: rgba(46, 158, 91, 0.28);
+        background: var(--success-muted);
+        border-color: var(--success-border);
       }
 
       a {
-        color: $darkBlue;
+        color: var(--heading);
         font-weight: 700;
         text-decoration: none;
 
@@ -178,19 +178,19 @@
   padding: $space-3 $space-4;
   border: $border-subtle;
   border-radius: $radius-md;
-  background: rgba(252, 252, 252, 0.96);
+  background: var(--surface);
   box-shadow: $shadow-card;
   text-decoration: none;
   color: inherit;
   transition: $transition-ui;
 
   &:hover {
-    background: rgba(219, 219, 255, 0.55);
-    border-color: $powderBlue;
+    background: var(--accent-muted);
+    border-color: var(--border-hover);
   }
 
   &:focus-visible {
-    outline: 2px solid $powderBlue;
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
 
@@ -198,18 +198,18 @@
     cursor: default;
 
     &:hover {
-      background: rgba(252, 252, 252, 0.96);
-      border-color: rgba(0, 0, 171, 0.12);
+      background: var(--surface);
+      border-color: var(--border);
     }
   }
 
   &--alert {
-    border-color: rgba(210, 45, 45, 0.35);
-    background: rgba(210, 45, 45, 0.06);
+    border-color: var(--error-border);
+    background: var(--error-muted);
 
     &:hover {
-      background: rgba(210, 45, 45, 0.12);
-      border-color: rgba(210, 45, 45, 0.5);
+      background: var(--error-muted-hover);
+      border-color: var(--error);
     }
 
     .dashboard-kpi__label,
@@ -231,7 +231,7 @@
     font-family: $font-ui;
     font-size: clamp(1.4rem, 2.4vw, 1.75rem);
     font-weight: 700;
-    color: $darkBlue;
+    color: var(--heading);
     line-height: 1.1;
 
     &--text {
@@ -256,7 +256,7 @@
   padding: $space-4;
   border: $border-subtle;
   border-radius: $radius-md;
-  background: rgba(252, 252, 252, 0.96);
+  background: var(--surface);
   box-shadow: $shadow-card;
 
   &__header {
@@ -271,19 +271,19 @@
     font-family: $font-ui;
     font-size: 1.05rem;
     font-weight: 700;
-    color: $darkBlue;
+    color: var(--heading);
   }
 
   &__link {
     font-size: 0.8125rem;
     font-weight: 700;
-    color: $darkBlue;
+    color: var(--heading);
     text-decoration: none;
     white-space: nowrap;
     transition: color 0.4s ease;
 
     &:hover {
-      color: #3333c4;
+      color: var(--accent-hover);
     }
   }
 
@@ -313,14 +313,14 @@
     padding: $space-2 $space-3;
     border-radius: $radius-sm;
     border: $border-subtle;
-    background: rgba(219, 219, 255, 0.22);
+    background: var(--accent-muted);
     text-decoration: none;
     color: inherit;
     transition: $transition-ui;
 
     &:hover {
-      background: rgba(219, 219, 255, 0.5);
-      border-color: $powderBlue;
+      background: var(--accent-muted-hover);
+      border-color: var(--border-hover);
     }
   }
 
@@ -333,7 +333,7 @@
 
   &__name {
     font-weight: 700;
-    color: $darkBlue;
+    color: var(--heading);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -348,13 +348,13 @@
     flex-shrink: 0;
     font-size: 0.75rem;
     font-weight: 700;
-    color: $darkBlue;
-    background: $paleBlue;
+    color: var(--heading);
+    background: var(--accent-muted);
     border-radius: $radius-pill;
     padding: $space-1 $space-2;
 
     &--danger {
-      color: #fff;
+      color: var(--on-accent);
       background: $errorRed;
     }
   }
@@ -373,7 +373,7 @@
     justify-content: space-between;
     gap: $space-2;
     font-weight: 700;
-    color: $darkBlue;
+    color: var(--heading);
     font-size: 0.875rem;
   }
 
@@ -386,7 +386,7 @@
     gap: $space-2;
 
     a {
-      color: $darkBlue;
+      color: var(--heading);
       font-size: 0.8125rem;
       font-weight: 600;
       text-decoration: none;
@@ -426,14 +426,14 @@
   &__track {
     height: 8px;
     border-radius: $radius-pill;
-    background: rgba(219, 219, 255, 0.55);
+    background: var(--accent-muted);
     overflow: hidden;
   }
 
   &__fill {
     height: 100%;
     border-radius: inherit;
-    background: $darkBlue;
+    background: var(--accent);
     min-width: 0;
     transition: width 0.4s ease;
   }
@@ -454,8 +454,8 @@
     padding: $space-1 $space-3;
     border-radius: $radius-pill;
     border: $border-subtle;
-    background: rgba(219, 219, 255, 0.35);
-    color: $darkBlue;
+    background: var(--accent-muted);
+    color: var(--heading);
     font-size: 0.8125rem;
     font-weight: 600;
 
@@ -484,7 +484,7 @@
     transition: $transition-ui;
 
     &:hover {
-      background: rgba(219, 219, 255, 0.4);
+      background: var(--surface-hover);
     }
   }
 
@@ -493,7 +493,7 @@
     height: 40px;
     border-radius: $radius-sm;
     border: $border-subtle;
-    background: rgba(219, 219, 255, 0.35);
+    background: var(--accent-muted);
     overflow: hidden;
     flex-shrink: 0;
 
@@ -514,7 +514,7 @@
 
   &__name {
     font-weight: 700;
-    color: $darkBlue;
+    color: var(--heading);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -536,7 +536,7 @@
     font-family: $font-ui;
     font-size: 1.25rem;
     font-weight: 700;
-    color: $darkBlue;
+    color: var(--heading);
   }
 
   &__meta {
@@ -552,228 +552,12 @@
     line-height: 1.45;
 
     a {
-      color: $darkBlue;
+      color: var(--heading);
       font-weight: 700;
       text-decoration: none;
 
       &:hover {
         text-decoration: underline;
-      }
-    }
-  }
-}
-
-html[data-theme="dark"] {
-  .dashboard-page {
-    &__header {
-      border-bottom-color: rgba(169, 169, 255, 0.18);
-    }
-
-    &__title {
-      color: $paleBlue;
-    }
-
-    &__subtitle,
-    &__status {
-      color: #a8a8c4;
-    }
-
-    &__empty {
-      background: rgba(28, 28, 46, 0.92);
-      border-color: rgba(169, 169, 255, 0.22);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
-    }
-  }
-
-  .dashboard-checklist {
-    &__title {
-      color: $paleBlue;
-    }
-
-    &__lead {
-      color: #a8a8c4;
-    }
-
-    &__list li {
-      background: rgba(169, 169, 255, 0.1);
-      border-color: rgba(169, 169, 255, 0.22);
-      color: #c8c8e0;
-
-      &.is-done {
-        background: rgba(46, 158, 91, 0.14);
-        border-color: rgba(60, 188, 114, 0.35);
-      }
-
-      a {
-        color: $powderBlue;
-      }
-    }
-  }
-
-  .dashboard-kpi {
-    background: rgba(28, 28, 46, 0.92);
-    border-color: rgba(169, 169, 255, 0.22);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
-
-    &:hover {
-      background: rgba(169, 169, 255, 0.14);
-      border-color: rgba(169, 169, 255, 0.4);
-    }
-
-    &--static:hover {
-      background: rgba(28, 28, 46, 0.92);
-      border-color: rgba(169, 169, 255, 0.22);
-    }
-
-    &--alert {
-      background: rgba(210, 45, 45, 0.12);
-      border-color: rgba(239, 90, 90, 0.4);
-
-      &:hover {
-        background: rgba(210, 45, 45, 0.18);
-      }
-
-      .dashboard-kpi__label,
-      .dashboard-kpi__value {
-        color: #ff8f8f;
-      }
-    }
-
-    &__label,
-    &__hint {
-      color: #a8a8c4;
-    }
-
-    &__value {
-      color: $paleBlue;
-    }
-  }
-
-  .dashboard-panel {
-    background: rgba(28, 28, 46, 0.92);
-    border-color: rgba(169, 169, 255, 0.22);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
-
-    &__title {
-      color: $paleBlue;
-    }
-
-    &__link {
-      color: $powderBlue;
-
-      &:hover {
-        color: $paleBlue;
-      }
-    }
-
-    &__empty,
-    &__note,
-    &__more {
-      color: #a8a8c4;
-    }
-  }
-
-  .dashboard-list {
-    &__row {
-      background: rgba(169, 169, 255, 0.08);
-      border-color: rgba(169, 169, 255, 0.2);
-
-      &:hover {
-        background: rgba(169, 169, 255, 0.16);
-        border-color: rgba(169, 169, 255, 0.4);
-      }
-    }
-
-    &__name {
-      color: #ececf5;
-    }
-
-    &__meta {
-      color: #a8a8c4;
-    }
-
-    &__badge {
-      background: rgba(169, 169, 255, 0.2);
-      color: $paleBlue;
-
-      &--danger {
-        background: #ef5a5a;
-        color: #12121f;
-      }
-    }
-  }
-
-  .dashboard-gaps {
-    &__head {
-      color: $paleBlue;
-    }
-
-    &__items a {
-      color: $powderBlue;
-    }
-
-    &__ok {
-      color: #3cbc72;
-    }
-  }
-
-  .dashboard-bars {
-    &__meta {
-      color: #c8c8e0;
-    }
-
-    &__track {
-      background: rgba(169, 169, 255, 0.14);
-    }
-
-    &__fill {
-      background: $powderBlue;
-    }
-  }
-
-  .dashboard-chips__chip {
-    background: rgba(169, 169, 255, 0.12);
-    border-color: rgba(169, 169, 255, 0.28);
-    color: $paleBlue;
-
-    strong {
-      color: #a8a8c4;
-    }
-  }
-
-  .dashboard-recent {
-    &__row:hover {
-      background: rgba(169, 169, 255, 0.12);
-    }
-
-    &__thumb {
-      background: rgba(169, 169, 255, 0.14);
-      border-color: rgba(169, 169, 255, 0.28);
-    }
-
-    &__name {
-      color: #ececf5;
-    }
-
-    &__meta {
-      color: #a8a8c4;
-    }
-  }
-
-  .dashboard-household {
-    &__name {
-      color: $paleBlue;
-    }
-
-    &__meta {
-      color: #c8c8e0;
-    }
-
-    &__nudge {
-      color: #a8a8c4;
-
-      a {
-        color: $powderBlue;
       }
     }
   }

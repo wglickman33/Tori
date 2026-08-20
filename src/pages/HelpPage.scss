@@ -42,7 +42,7 @@
 
     h1 {
       margin: 0;
-      color: $darkBlue;
+      color: var(--heading);
       font-family: $font-ui;
       font-size: clamp(1.35rem, 4vw, 1.85rem);
       font-weight: 700;
@@ -74,7 +74,7 @@
       min-height: 40px;
       border-radius: $radius-sm;
       border: $border-subtle;
-      background: $lightCream;
+      background: var(--surface);
       color: $text-secondary;
       padding: 0 2.5rem 0 $space-3;
       font: inherit;
@@ -88,13 +88,13 @@
       }
 
       &:hover {
-        border-color: $powderBlue;
+        border-color: var(--border-hover);
       }
 
       &:focus {
         outline: none;
-        border-color: $darkBlue;
-        box-shadow: 0 0 0 3px rgba(169, 169, 255, 0.45);
+        border-color: var(--heading);
+        box-shadow: var(--focus-ring);
       }
     }
   }
@@ -122,7 +122,7 @@
 
     &:hover,
     &:focus-visible {
-      color: $darkBlue;
+      color: var(--heading);
       background: transparent;
       outline: none;
     }
@@ -144,7 +144,7 @@
     padding: $space-3;
     border: $border-subtle;
     border-radius: $radius-md;
-    background: rgba(252, 252, 252, 0.96);
+    background: var(--surface);
     box-shadow: $shadow-card;
     min-width: 0;
 
@@ -155,7 +155,7 @@
     h2,
     h3 {
       margin: 0 0 $space-2;
-      color: $darkBlue;
+      color: var(--heading);
       font-family: $font-ui;
       font-weight: 700;
       line-height: 1.25;
@@ -210,8 +210,8 @@
     width: 1.75rem;
     height: 1.75rem;
     border-radius: $radius-pill;
-    background: rgba(219, 219, 255, 0.7);
-    color: $darkBlue;
+    background: var(--accent-muted);
+    color: var(--heading);
     font-family: $font-ui;
     font-size: 0.8125rem;
     font-weight: 700;
@@ -269,13 +269,13 @@
     font-family: $font-ui;
     font-size: 0.875rem;
     font-weight: 700;
-    color: $darkBlue;
+    color: var(--heading);
     text-decoration: none;
     transition: color 0.4s ease;
 
     &:hover,
     &:focus-visible {
-      color: #3333c4;
+      color: var(--accent-hover);
       outline: none;
     }
   }
@@ -294,7 +294,7 @@
 
     > h2 {
       margin: 0;
-      color: $darkBlue;
+      color: var(--heading);
       font-family: $font-ui;
       font-size: clamp(1rem, 2.5vw, 1.05rem);
       font-weight: 700;
@@ -330,8 +330,8 @@
 
     &:hover,
     &.is-open {
-      background: rgba(219, 219, 255, 0.35);
-      border-color: $powderBlue;
+      background: var(--accent-muted);
+      border-color: var(--border-hover);
     }
   }
 
@@ -345,7 +345,7 @@
   }
 
   &__faq-question {
-    color: $darkBlue;
+    color: var(--heading);
     font-family: $font-ui;
     font-size: 0.9375rem;
     font-weight: 700;
@@ -383,122 +383,6 @@
       gap: $space-2;
       font-size: 0.9375rem;
       line-height: 1.45;
-    }
-  }
-}
-
-html[data-theme="dark"] {
-  .help-page {
-    &__header {
-      border-bottom-color: rgba(169, 169, 255, 0.18);
-    }
-
-    &__heading {
-      h1 {
-        color: $paleBlue;
-      }
-
-      p {
-        color: #a8a8c4;
-      }
-    }
-
-    &__filter input {
-      background: #161625;
-      border-color: rgba(169, 169, 255, 0.28);
-      color: #ececf5;
-
-      &::placeholder {
-        color: #7e7e9a;
-      }
-
-      &:hover {
-        border-color: rgba(169, 169, 255, 0.45);
-      }
-
-      &:focus {
-        border-color: $powderBlue;
-        box-shadow: 0 0 0 3px rgba(169, 169, 255, 0.28);
-      }
-    }
-
-    &__filter-clear {
-      color: #a8a8c4;
-
-      &:hover,
-      &:focus-visible {
-        color: $paleBlue;
-        background: transparent;
-      }
-    }
-
-    &__card {
-      background: rgba(28, 28, 46, 0.92);
-      border-color: rgba(169, 169, 255, 0.22);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
-
-      h2,
-      h3 {
-        color: $paleBlue;
-      }
-
-      p {
-        color: #c8c8e0;
-      }
-    }
-
-    &__steps li {
-      color: #c8c8e0;
-    }
-
-    &__step-num {
-      background: rgba(169, 169, 255, 0.22);
-      color: $paleBlue;
-    }
-
-    &__group-title {
-      color: #a8a8c4;
-    }
-
-    &__link {
-      color: $powderBlue;
-
-      &:hover,
-      &:focus-visible {
-        color: $paleBlue;
-      }
-    }
-
-    &__empty {
-      color: #a8a8c4;
-    }
-
-    &__faq > h2 {
-      color: $paleBlue;
-    }
-
-    &__faq-item {
-      &:hover,
-      &.is-open {
-        background: rgba(169, 169, 255, 0.1);
-        border-color: rgba(169, 169, 255, 0.4);
-      }
-    }
-
-    &__faq-question {
-      color: #ececf5;
-    }
-
-    &__faq-chevron {
-      color: #a8a8c4;
-    }
-
-    &__faq-answer {
-      color: #c8c8e0;
-    }
-
-    &__notes ul {
-      color: #c8c8e0;
     }
   }
 }

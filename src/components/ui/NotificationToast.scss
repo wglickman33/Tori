@@ -22,10 +22,10 @@
   gap: $space-2;
   padding: $space-3;
   border-radius: $radius-md;
-  background: $lightCream;
+  background: var(--surface);
   border: $border-subtle;
   border-left: 4px solid;
-  box-shadow: $shadow-card;
+  box-shadow: var(--shadow-lg);
   min-width: min(260px, 100%);
   max-width: 100%;
   font-family: $font-ui;
@@ -37,38 +37,38 @@
   }
 
   &--success {
-    border-left-color: $successGreen;
+    border-left-color: var(--success);
 
     .notification-toast__icon {
-      background: $successGreen;
-      color: $lightCream;
+      background: var(--success);
+      color: var(--on-accent);
     }
   }
 
   &--error {
-    border-left-color: $errorRed;
+    border-left-color: var(--error);
 
     .notification-toast__icon {
-      background: $errorRed;
-      color: $lightCream;
+      background: var(--error);
+      color: var(--on-accent);
     }
   }
 
   &--warning {
-    border-left-color: #c9a227;
+    border-left-color: var(--warning);
 
     .notification-toast__icon {
-      background: #c9a227;
-      color: $lightCream;
+      background: var(--warning);
+      color: var(--on-accent);
     }
   }
 
   &--info {
-    border-left-color: $darkBlue;
+    border-left-color: var(--accent);
 
     .notification-toast__icon {
-      background: $darkBlue;
-      color: $lightCream;
+      background: var(--accent);
+      color: var(--on-accent);
     }
   }
 }
@@ -102,7 +102,7 @@
 }
 
 .notification-toast__message {
-  color: $darkBlue;
+  color: var(--heading);
   font-size: 0.875rem;
   font-weight: 600;
   line-height: 1.35;
@@ -112,10 +112,10 @@
 .notification-toast__action {
   font-size: 0.8rem;
   font-weight: 600;
-  color: $darkBlue;
+  color: var(--accent);
 
   &:hover {
-    color: $powderBlue;
+    color: var(--accent-hover);
   }
 }
 
@@ -129,7 +129,7 @@
   background: transparent;
   border: $border-subtle;
   border-radius: $radius-sm;
-  color: $text-muted;
+  color: var(--text-muted);
   cursor: pointer;
   transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
 
@@ -140,13 +140,13 @@
   }
 
   &:hover {
-    background: $paleBlue;
-    color: $darkBlue;
-    border-color: $powderBlue;
+    background: var(--surface-hover);
+    color: var(--heading);
+    border-color: var(--border-hover);
   }
 
   &:focus-visible {
-    outline: 2px solid $powderBlue;
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
 }
@@ -170,76 +170,5 @@
   to {
     transform: translateX(calc(100% + #{$space-4}));
     opacity: 0;
-  }
-}
-
-html[data-theme="dark"] {
-  .notification-toast {
-    background: #1c1c2e;
-    border-color: rgba(169, 169, 255, 0.28);
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
-
-    &--success {
-      border-left-color: #3cbc72;
-
-      .notification-toast__icon {
-        background: #3cbc72;
-        color: #12121f;
-      }
-    }
-
-    &--error {
-      border-left-color: #ef5a5a;
-
-      .notification-toast__icon {
-        background: #ef5a5a;
-        color: #12121f;
-      }
-    }
-
-    &--warning {
-      border-left-color: #e0b84a;
-
-      .notification-toast__icon {
-        background: #e0b84a;
-        color: #12121f;
-      }
-    }
-
-    &--info {
-      border-left-color: $powderBlue;
-
-      .notification-toast__icon {
-        background: $powderBlue;
-        color: #12121f;
-      }
-    }
-  }
-
-  .notification-toast__message {
-    color: $paleBlue;
-  }
-
-  .notification-toast__action {
-    color: $powderBlue;
-
-    &:hover {
-      color: $paleBlue;
-    }
-  }
-
-  .notification-toast__close {
-    border-color: rgba(169, 169, 255, 0.28);
-    color: #a8a8c4;
-
-    &:hover {
-      background: rgba(169, 169, 255, 0.14);
-      color: $paleBlue;
-      border-color: rgba(169, 169, 255, 0.45);
-    }
-
-    &:focus-visible {
-      outline-color: $powderBlue;
-    }
   }
 }

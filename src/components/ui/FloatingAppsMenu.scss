@@ -41,9 +41,9 @@ $whisk-border: #d4c9bb;
     place-items: center;
     border-radius: 50%;
     border: 2px solid transparent;
-    background: $powderBlue;
-    color: $darkBlue;
-    box-shadow: 0 10px 28px rgba(0, 0, 171, 0.22);
+    background: var(--accent);
+    color: var(--on-accent);
+    box-shadow: 0 10px 28px color-mix(in srgb, var(--accent) 32%, transparent);
     cursor: pointer;
     transition:
       background-color 0.4s ease,
@@ -73,22 +73,21 @@ $whisk-border: #d4c9bb;
   }
 
   // Invisible checkbox sits above the label, so hover comes from the toggler.
-  // Light mode: powder blue → dark blue.
   &__toggler:hover + &__fab,
   &__toggler:focus-visible + &__fab,
   &.is-open &__toggler:hover + &__fab,
   &.is-open &__toggler:focus-visible + &__fab {
-    background: $darkBlue;
+    background: var(--accent-hover);
     border-color: transparent;
-    color: $lightCream;
-    box-shadow: 0 10px 26px rgba(0, 0, 171, 0.32);
+    color: var(--on-accent);
+    box-shadow: 0 10px 26px color-mix(in srgb, var(--accent) 40%, transparent);
   }
 
   &.is-open &__fab {
-    background: $darkBlue;
+    background: var(--accent-hover);
     border-color: transparent;
-    color: $lightCream;
-    box-shadow: 0 10px 26px rgba(0, 0, 171, 0.28);
+    color: var(--on-accent);
+    box-shadow: 0 10px 26px color-mix(in srgb, var(--accent) 36%, transparent);
   }
 
   &__list {
@@ -173,7 +172,7 @@ $whisk-border: #d4c9bb;
 
       &:hover,
       &:focus-visible {
-        background: #f2f2fa;
+        background: var(--surface-hover);
         box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16);
       }
     }
@@ -211,8 +210,8 @@ $whisk-border: #d4c9bb;
     height: 100%;
     border-radius: 50%;
     overflow: hidden;
-    background: $darkBlue;
-    box-shadow: 0 0 0 2px rgba(169, 169, 255, 0.55);
+    background: var(--brand-navy);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 55%, transparent);
 
     img {
       width: 100%;
@@ -233,9 +232,9 @@ $whisk-border: #d4c9bb;
     gap: $space-3;
     padding: $space-3;
     border-radius: $radius-md;
-    border: 1px solid rgba(0, 0, 171, 0.14);
-    background: $lightCream;
-    box-shadow: 0 12px 32px rgba(0, 0, 171, 0.16);
+    border: $border-subtle;
+    background: var(--surface);
+    box-shadow: var(--shadow-lg);
   }
 
   &__panel-top {
@@ -263,7 +262,7 @@ $whisk-border: #d4c9bb;
     height: 32px;
     border-radius: 50%;
     overflow: hidden;
-    background: $darkBlue;
+    background: var(--brand-navy);
     flex-shrink: 0;
     clip-path: circle(50%);
 
@@ -290,7 +289,7 @@ $whisk-border: #d4c9bb;
     font-family: $font-ui;
     font-size: 1.125rem;
     font-weight: 700;
-    color: $darkBlue;
+    color: var(--heading);
   }
 
   &__panel-close {
@@ -314,8 +313,9 @@ $whisk-border: #d4c9bb;
     }
 
     &:hover {
-      background: $paleBlue;
-      color: $darkBlue;
+      background: var(--surface-hover);
+      color: var(--heading);
+      border-color: var(--border-hover);
     }
   }
 
@@ -334,14 +334,18 @@ $whisk-border: #d4c9bb;
     padding: 0 $space-3;
     border-radius: $radius-sm;
     border: none;
-    background: $powderBlue;
-    color: $darkBlue;
+    background: var(--accent);
+    color: var(--on-accent);
     text-decoration: none;
     font-family: $font-ui;
     font-weight: 700;
     font-size: 0.875rem;
     cursor: pointer;
     transition: background-color 0.4s ease, color 0.4s ease;
+
+    &:hover:not(:disabled):not(.floating-apps__panel-cta--whisk) {
+      background: var(--accent-hover);
+    }
 
     &:disabled {
       opacity: 0.55;
@@ -359,86 +363,3 @@ $whisk-border: #d4c9bb;
   }
 }
 
-html[data-theme="dark"] {
-  .floating-apps__fab {
-    background: $powderBlue;
-    border-color: transparent;
-    color: #12121f;
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
-  }
-
-  .floating-apps.is-open .floating-apps__fab {
-    background: #3a3a52;
-    border-color: transparent;
-    color: #f2f2fa;
-    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.38);
-  }
-
-  // Dark mode hover: lighter (must beat light-mode dark-blue hover).
-  .floating-apps__toggler:hover + .floating-apps__fab,
-  .floating-apps__toggler:focus-visible + .floating-apps__fab,
-  .floating-apps.is-open .floating-apps__toggler:hover + .floating-apps__fab,
-  .floating-apps.is-open .floating-apps__toggler:focus-visible + .floating-apps__fab {
-    background: #f2f2fa;
-    border-color: transparent;
-    color: #12121f;
-    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.4);
-  }
-
-  .floating-apps__bubble--whisk {
-    background: $whisk-surface;
-    border-color: $whisk-accent;
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
-
-    &:hover,
-    &:focus-visible {
-      background: #f2f2fa;
-      border-color: transparent;
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
-    }
-  }
-
-  .floating-apps__bubble--tori {
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
-
-    &:hover,
-    &:focus-visible {
-      background: #f2f2fa;
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
-    }
-  }
-
-  .floating-apps__bubble-mark {
-    box-shadow: 0 0 0 2px rgba(169, 169, 255, 0.65);
-  }
-
-  .floating-apps__panel {
-    background: #1c1c2e;
-    border-color: rgba(169, 169, 255, 0.28);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
-  }
-
-  .floating-apps__panel-title {
-    color: $paleBlue;
-  }
-
-  .floating-apps__panel-eyebrow,
-  .floating-apps__panel-body {
-    color: #a8a8c4;
-  }
-
-  .floating-apps__panel-close {
-    border-color: rgba(169, 169, 255, 0.28);
-    color: #a8a8c4;
-
-    &:hover {
-      background: rgba(169, 169, 255, 0.14);
-      color: $paleBlue;
-    }
-  }
-
-  .floating-apps__panel-cta:not(.floating-apps__panel-cta--whisk) {
-    background: rgba(169, 169, 255, 0.22);
-    color: $paleBlue;
-  }
-}

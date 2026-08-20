@@ -1,4 +1,5 @@
 @use "./reset";
+@use "./themes";
 @use "./tokens" as *;
 
 .route-loading {
@@ -7,26 +8,6 @@
   place-items: center;
   font-family: $font-ui;
   font-weight: 600;
-  color: $text-muted;
-  background: $lightCream;
-}
-
-html[data-theme="dark"] {
-  color-scheme: dark;
-
-  body {
-    background: #12121f;
-    color: #ececf5;
-  }
-
-  .route-loading {
-    background: #12121f;
-    color: #b8b8d0;
-  }
-
-  .tori-modal {
-    background: #1c1c2e;
-    color: #ececf5;
-    border-color: rgba(169, 169, 255, 0.22);
-  }
+  color: var(--text-muted);
+  background: var(--bg);
 }

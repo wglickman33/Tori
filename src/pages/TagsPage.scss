@@ -24,7 +24,7 @@
 
     h1 {
       margin: 0;
-      color: $darkBlue;
+      color: var(--heading);
       font-family: $font-ui;
       font-size: clamp(1.5rem, 3vw, 1.85rem);
       font-weight: 700;
@@ -65,18 +65,18 @@
     padding: $space-4;
     border: $border-subtle;
     border-radius: $radius-md;
-    background: rgba(219, 219, 255, 0.28);
+    background: var(--accent-muted);
     color: $text-secondary;
     width: 100%;
   }
 
   &__link {
-    color: $darkBlue;
+    color: var(--heading);
     font-weight: 700;
     text-decoration: none;
 
     &:hover {
-      color: #3333c4;
+      color: var(--accent-hover);
     }
   }
 
@@ -97,7 +97,7 @@
       min-height: 40px;
       border-radius: $radius-sm;
       border: $border-subtle;
-      background: $lightCream;
+      background: var(--surface);
       color: $text-secondary;
       padding: 0 $space-3;
       font: inherit;
@@ -105,13 +105,13 @@
       transition: $transition-ui;
 
       &:hover {
-        border-color: $powderBlue;
+        border-color: var(--border-hover);
       }
 
       &:focus {
         outline: none;
-        border-color: $darkBlue;
-        box-shadow: 0 0 0 3px rgba(169, 169, 255, 0.45);
+        border-color: var(--heading);
+        box-shadow: var(--focus-ring);
       }
     }
   }
@@ -138,13 +138,13 @@
       transition: $transition-ui;
 
       &.is-on {
-        background: $powderBlue;
-        color: $darkBlue;
+        background: var(--accent-selected);
+        color: var(--heading);
       }
 
       &:hover:not(.is-on) {
-        color: $darkBlue;
-        background: rgba(169, 169, 255, 0.22);
+        color: var(--heading);
+        background: var(--accent-muted);
       }
     }
   }
@@ -170,7 +170,7 @@
       font-family: $font-ui;
       font-size: 1rem;
       font-weight: 700;
-      color: $darkBlue;
+      color: var(--heading);
     }
 
     p {
@@ -203,7 +203,7 @@
     padding: $space-3;
     border: $border-subtle;
     border-radius: $radius-md;
-    background: rgba(252, 252, 252, 0.96);
+    background: var(--surface);
     min-width: 0;
   }
 
@@ -215,7 +215,7 @@
     font-size: 0.9375rem;
 
     strong {
-      color: $darkBlue;
+      color: var(--heading);
       font-weight: 700;
     }
 
@@ -225,7 +225,7 @@
       font-size: 0.75rem;
       font-weight: 700;
       color: $text-muted;
-      background: rgba(219, 219, 255, 0.55);
+      background: var(--accent-muted);
       border-radius: $radius-pill;
       padding: 2px 8px;
     }
@@ -257,7 +257,7 @@
     border-radius: $radius-pill;
     border: $border-subtle;
     background: rgba(219, 219, 255, 0.3);
-    color: $darkBlue;
+    color: var(--heading);
     font-family: $font-ui;
     font-size: 0.8125rem;
     font-weight: 700;
@@ -265,14 +265,14 @@
     transition: $transition-ui;
 
     &.is-on {
-      background: $darkBlue;
-      border-color: $darkBlue;
-      color: #fff;
+      background: var(--accent);
+      border-color: var(--heading);
+      color: var(--on-accent);
     }
 
     &:hover:not(.is-on) {
-      border-color: $powderBlue;
-      background: rgba(169, 169, 255, 0.4);
+      border-color: var(--border-hover);
+      background: var(--accent-muted-hover);
     }
   }
 
@@ -307,7 +307,7 @@
     max-width: min(100%, 100vw - 3rem);
     border: $border-subtle;
     border-radius: $radius-sm $radius-pill $radius-pill $radius-sm;
-    background: rgba(219, 219, 255, 0.35);
+    background: var(--accent-muted);
     box-shadow: $shadow-card;
     overflow: hidden;
     transition:
@@ -317,9 +317,9 @@
 
     &:hover,
     &:focus-within {
-      background: rgba(169, 169, 255, 0.4);
-      border-color: $powderBlue;
-      box-shadow: 0 10px 24px rgba(0, 0, 171, 0.12);
+      background: var(--accent-muted-hover);
+      border-color: var(--border-hover);
+      box-shadow: 0 10px 24px color-mix(in srgb, var(--text) 12%, transparent);
 
       .tags-page__chip-actions {
         opacity: 1;
@@ -360,7 +360,7 @@
   }
 
   &__chip-hash {
-    color: $powderBlue;
+    color: var(--accent);
     font-weight: 800;
     flex-shrink: 0;
   }
@@ -368,7 +368,7 @@
   &__chip-name {
     font-family: $font-ui;
     font-weight: 700;
-    color: $darkBlue;
+    color: var(--heading);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -378,8 +378,8 @@
     flex-shrink: 0;
     font-size: 0.75rem;
     font-weight: 700;
-    color: $darkBlue;
-    background: rgba(252, 252, 252, 0.85);
+    color: var(--heading);
+    background: var(--bg-elevated);
     border-radius: $radius-pill;
     padding: 2px 8px;
   }
@@ -407,7 +407,7 @@
       border: none;
       border-radius: $radius-pill;
       background: transparent;
-      color: $darkBlue;
+      color: var(--heading);
       font-family: $font-ui;
       font-size: 0.75rem;
       font-weight: 700;
@@ -456,161 +456,6 @@
       @include tablet-up {
         flex: 0 0 auto;
       }
-    }
-  }
-}
-
-html[data-theme="dark"] {
-  .tags-page {
-    &__heading {
-      h1 {
-        color: $paleBlue;
-      }
-
-      p {
-        color: #a8a8c4;
-      }
-    }
-
-    &__muted {
-      color: #a8a8c4;
-    }
-
-    &__empty {
-      background: rgba(28, 28, 46, 0.92);
-      border-color: rgba(169, 169, 255, 0.22);
-      color: #c8c8e0;
-    }
-
-    &__link {
-      color: $paleBlue;
-
-      &:hover {
-        color: #ececf5;
-      }
-    }
-
-    &__filter input {
-      background: #161625;
-      border-color: rgba(169, 169, 255, 0.28);
-      color: #ececf5;
-
-      &:hover {
-        border-color: rgba(169, 169, 255, 0.45);
-      }
-
-      &:focus {
-        border-color: $powderBlue;
-        box-shadow: 0 0 0 3px rgba(169, 169, 255, 0.28);
-      }
-    }
-
-    &__sort {
-      background: rgba(169, 169, 255, 0.1);
-      border-color: rgba(169, 169, 255, 0.28);
-
-      button {
-        color: #a8a8c4;
-
-        &.is-on {
-          background: rgba(169, 169, 255, 0.28);
-          color: #ececf5;
-        }
-
-        &:hover:not(.is-on) {
-          color: #ececf5;
-          background: rgba(169, 169, 255, 0.16);
-        }
-      }
-    }
-
-    &__suggest {
-      background: rgba(235, 235, 57, 0.08);
-      border-color: rgba(235, 235, 57, 0.28);
-    }
-
-    &__suggest-head {
-      h2 {
-        color: #ececf5;
-      }
-
-      p {
-        color: #a8a8c4;
-      }
-    }
-
-    &__suggest-card {
-      background: rgba(28, 28, 46, 0.96);
-      border-color: rgba(169, 169, 255, 0.22);
-    }
-
-    &__suggest-pair {
-      strong {
-        color: #ececf5;
-      }
-
-      em {
-        color: #a8a8c4;
-        background: rgba(169, 169, 255, 0.16);
-      }
-    }
-
-    &__suggest-keep button {
-      color: #ececf5;
-      background: rgba(169, 169, 255, 0.12);
-      border-color: rgba(169, 169, 255, 0.28);
-
-      &.is-on {
-        background: #f2f2fa;
-        border-color: #f2f2fa;
-        color: #12121f;
-      }
-
-      &:hover:not(.is-on) {
-        background: rgba(169, 169, 255, 0.22);
-      }
-    }
-
-    &__chip {
-      background: rgba(169, 169, 255, 0.14);
-      border-color: rgba(169, 169, 255, 0.28);
-      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
-
-      &:hover,
-      &:focus-within {
-        background: rgba(236, 236, 245, 0.12);
-        border-color: rgba(236, 236, 245, 0.35);
-      }
-    }
-
-    &__chip-hash {
-      color: $powderBlue;
-    }
-
-    &__chip-name {
-      color: #ececf5;
-    }
-
-    &__chip-count {
-      color: #12121f;
-      background: rgba(242, 242, 250, 0.9);
-    }
-
-    &__chip-actions button {
-      color: #ececf5;
-
-      &:hover {
-        background: rgba(236, 236, 245, 0.12);
-      }
-
-      &:last-child:hover {
-        color: #ffb4b4;
-        background: rgba(239, 90, 90, 0.18);
-      }
-    }
-
-    &__merge-hint {
-      color: #a8a8c4;
     }
   }
 }

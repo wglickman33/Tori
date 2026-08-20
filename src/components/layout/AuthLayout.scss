@@ -16,7 +16,9 @@
     max(#{$space-4}, env(safe-area-inset-bottom, 0px))
     max(#{$space-4}, env(safe-area-inset-left, 0px));
   background:
-    linear-gradient(160deg, $paleBlue 0%, $lightCream 42%, rgba(169, 169, 255, 0.35) 100%);
+    radial-gradient(ellipse 80% 50% at 8% -8%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 55%),
+    radial-gradient(ellipse 65% 40% at 100% 0%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 50%),
+    var(--bg);
   transition: $transition-ui;
 
   @include tablet-up {
@@ -54,8 +56,8 @@
     height: 112px;
     border-radius: 50%;
     overflow: hidden;
-    background: $darkBlue;
-    box-shadow: 0 0 0 6px rgba(169, 169, 255, 0.45);
+    background: var(--brand-navy);
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 45%, transparent);
 
     @include tablet-up {
       width: 132px;
@@ -65,7 +67,7 @@
     @include desktop {
       width: 148px;
       height: 148px;
-      box-shadow: 0 0 0 8px rgba(169, 169, 255, 0.5);
+      box-shadow: 0 0 0 8px color-mix(in srgb, var(--accent) 50%, transparent);
     }
   }
 
@@ -90,7 +92,7 @@
     font-size: 2.5rem;
     font-weight: 700;
     line-height: 1;
-    color: $darkBlue;
+    color: var(--heading);
     letter-spacing: -0.02em;
 
     @include desktop {
@@ -112,7 +114,7 @@
     padding: $space-5 $space-4;
     border: $border-strong;
     border-radius: $radius-md;
-    background: $lightCream;
+    background: var(--surface);
     box-shadow: $shadow-card;
     flex: 0 0 auto;
     transition: $transition-ui;
@@ -120,56 +122,6 @@
     @include desktop {
       width: min(100%, 440px);
       padding: $space-5;
-    }
-  }
-}
-
-html[data-theme="dark"] {
-  .auth-layout {
-    background:
-      radial-gradient(ellipse 80% 50% at 8% -8%, rgba(0, 0, 171, 0.45), transparent 55%),
-      radial-gradient(ellipse 65% 40% at 100% 0%, rgba(169, 169, 255, 0.18), transparent 50%),
-      linear-gradient(165deg, #12121f 0%, #171728 50%, #1a1a30 100%);
-
-    &__logo-wrap {
-      box-shadow: 0 0 0 6px rgba(169, 169, 255, 0.28);
-    }
-
-    &__name {
-      color: $paleBlue;
-    }
-
-    &__tagline {
-      color: #a8a8c4;
-    }
-
-    &__card {
-      background: rgba(28, 28, 46, 0.94);
-      border-color: rgba(169, 169, 255, 0.32);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
-    }
-  }
-
-  .login-form,
-  .signup-form,
-  .forgot-password-form,
-  .reset-password-form {
-    &__title {
-      color: $paleBlue;
-    }
-
-    &__subtitle,
-    &__footer {
-      color: #a8a8c4;
-    }
-
-    a {
-      color: $powderBlue;
-
-      &:hover {
-        color: $paleBlue;
-        text-decoration-color: $paleBlue;
-      }
     }
   }
 }

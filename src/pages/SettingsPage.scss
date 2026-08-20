@@ -30,7 +30,7 @@
 
     h1 {
       margin: 0;
-      color: $darkBlue;
+      color: var(--heading);
       font-family: $font-ui;
       font-size: clamp(1.35rem, 4vw, 1.85rem);
       font-weight: 700;
@@ -53,7 +53,7 @@
     padding: $space-3;
     border: $border-subtle;
     border-radius: $radius-md;
-    background: rgba(252, 252, 252, 0.96);
+    background: var(--surface);
     box-shadow: $shadow-card;
     min-width: 0;
     width: 100%;
@@ -64,15 +64,15 @@
 
     h2 {
       margin: 0;
-      color: $darkBlue;
+      color: var(--heading);
       font-family: $font-ui;
       font-size: clamp(1rem, 2.5vw, 1.05rem);
       font-weight: 700;
     }
 
     &--danger {
-      background: rgba(210, 45, 45, 0.06);
-      border-color: rgba(210, 45, 45, 0.22);
+      background: var(--error-muted);
+      border-color: var(--error-border);
 
       .tori-button {
         width: 100%;
@@ -118,7 +118,7 @@
     font-family: $font-ui;
     font-size: 0.875rem;
     font-weight: 600;
-    color: $darkBlue;
+    color: var(--heading);
   }
 
   &__segmented {
@@ -128,7 +128,7 @@
     padding: 3px;
     border: $border-subtle;
     border-radius: $radius-sm;
-    background: rgba(219, 219, 255, 0.28);
+    background: var(--accent-muted);
     min-width: 0;
   }
 
@@ -148,13 +148,13 @@
     transition: $transition-ui;
 
     &:hover:not(&--active) {
-      color: $text-secondary;
-      background: rgba(169, 169, 255, 0.18);
+      color: var(--text);
+      background: var(--surface-hover);
     }
 
     &--active {
-      background: $powderBlue;
-      color: $darkBlue;
+      background: var(--accent-selected);
+      color: var(--heading);
     }
   }
 
@@ -162,82 +162,15 @@
     font-family: $font-ui;
     font-weight: 700;
     font-size: 0.875rem;
-    color: $darkBlue;
+    color: var(--accent);
     width: fit-content;
     text-decoration: none;
     transition: color 0.4s ease;
 
     &:hover,
     &:focus-visible {
-      color: #3333c4;
+      color: var(--accent-hover);
       outline: none;
-    }
-  }
-}
-
-html[data-theme="dark"] {
-  .settings-page {
-    &__header {
-      border-bottom-color: rgba(169, 169, 255, 0.18);
-
-      h1 {
-        color: $paleBlue;
-      }
-
-      p {
-        color: #a8a8c4;
-      }
-    }
-
-    &__card {
-      background: rgba(28, 28, 46, 0.92);
-      border-color: rgba(169, 169, 255, 0.22);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
-
-      h2 {
-        color: $paleBlue;
-      }
-
-      &--danger {
-        background: rgba(239, 90, 90, 0.1);
-        border-color: rgba(239, 90, 90, 0.35);
-      }
-    }
-
-    &__hint {
-      color: #a8a8c4;
-    }
-
-    &__label {
-      color: $powderBlue;
-    }
-
-    &__segmented {
-      background: #161625;
-      border-color: rgba(169, 169, 255, 0.28);
-    }
-
-    &__segment {
-      color: #a8a8c4;
-
-      &:hover:not(&--active) {
-        color: #ececf5;
-        background: rgba(169, 169, 255, 0.14);
-      }
-
-      &--active {
-        background: $powderBlue;
-        color: #12121f;
-      }
-    }
-
-    &__link {
-      color: $powderBlue;
-
-      &:hover,
-      &:focus-visible {
-        color: $paleBlue;
-      }
     }
   }
 }

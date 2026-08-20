@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { render, screen, fireEvent, cleanup, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
@@ -35,17 +36,46 @@ function setHousehold() {
   });
 }
 
+function PageChrome({ children }: { children: ReactNode }) {
+  return (
+    <>
+      {children}
+      <NotificationToastContainer />
+      <FloatingAppsMenu />
+      <ToriWidget />
+    </>
+  );
+}
+
 function renderWidget(path = "/inventory") {
   return render(
     <MemoryRouter initialEntries={[path]}>
       <Routes>
-        <Route path="/inventory" element={<p>Inventory page</p>} />
-        <Route path="/ai" element={<p>Full Tori AI page</p>} />
-        <Route path="/onboarding" element={<p>Onboarding page</p>} />
+        <Route
+          path="/inventory"
+          element={
+            <PageChrome>
+              <p>Inventory page</p>
+            </PageChrome>
+          }
+        />
+        <Route
+          path="/ai"
+          element={
+            <PageChrome>
+              <p>Full Tori AI page</p>
+            </PageChrome>
+          }
+        />
+        <Route
+          path="/onboarding"
+          element={
+            <PageChrome>
+              <p>Onboarding page</p>
+            </PageChrome>
+          }
+        />
       </Routes>
-      <NotificationToastContainer />
-      <FloatingAppsMenu />
-      <ToriWidget />
     </MemoryRouter>
   );
 }
@@ -107,7 +137,9 @@ describe("ToriWidget", () => {
     fireEvent.click(screen.getByRole("link", { name: /use widget on inventory/i }));
 
     expect(screen.getByText("Inventory page")).toBeTruthy();
-    expect(screen.getByRole("dialog", { name: /tori ai/i })).toBeTruthy();
+    expect(screen.queryByText(/already in the full tori ai view/i)).toBeNull();
+    expect(useToastStore.getState().items).toHaveLength(0);
+    expect(screen.getAllByRole("dialog", { name: /tori ai/i })).toHaveLength(1);
   });
 
   it("asks users without a household to join one", () => {

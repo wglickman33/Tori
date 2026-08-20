@@ -10,7 +10,7 @@
     font-family: $font-ui;
     font-size: 0.875rem;
     font-weight: 600;
-    color: $darkBlue;
+    color: var(--heading);
   }
 
   &__input {
@@ -18,55 +18,29 @@
     padding: 0 $space-3;
     border-radius: $radius-sm;
     border: $border-subtle;
-    background: $lightCream;
-    color: $text-secondary;
+    background: var(--surface);
+    color: var(--text);
     outline: none;
     transition: $transition-ui;
 
+    &::placeholder {
+      color: var(--placeholder);
+    }
+
     &:hover {
-      border-color: $powderBlue;
-      background: rgba(219, 219, 255, 0.35);
+      border-color: var(--border-hover);
+      background: var(--surface-hover);
     }
 
     &:focus {
-      border-color: $darkBlue;
-      background: $lightCream;
-      box-shadow: 0 0 0 3px rgba(169, 169, 255, 0.45);
+      border-color: var(--accent);
+      background: var(--surface);
+      box-shadow: var(--focus-ring);
     }
   }
 
   &__error {
-    color: $errorRed;
+    color: var(--error);
     font-size: 0.8125rem;
   }
 }
-
-html[data-theme="dark"] {
-  .text-field {
-    &__label {
-      color: $powderBlue;
-    }
-
-    &__input {
-      background: #161625;
-      border-color: rgba(169, 169, 255, 0.28);
-      color: #ececf5;
-
-      &::placeholder {
-        color: #7e7e9a;
-      }
-
-      &:hover {
-        border-color: rgba(169, 169, 255, 0.45);
-        background: #1a1a2c;
-      }
-
-      &:focus {
-        border-color: $powderBlue;
-        background: #161625;
-        box-shadow: 0 0 0 3px rgba(169, 169, 255, 0.28);
-      }
-    }
-  }
-}
-

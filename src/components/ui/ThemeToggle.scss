@@ -6,15 +6,15 @@
   height: 44px;
   border-radius: $radius-sm;
   border: $border-subtle;
-  background: rgba(252, 252, 252, 0.9);
+  background: transparent;
   backdrop-filter: blur(8px);
   cursor: pointer;
   transition: $transition-ui;
   flex-shrink: 0;
 
   &:hover {
-    background: $paleBlue;
-    border-color: $powderBlue;
+    background: var(--surface-hover);
+    border-color: var(--border-hover);
   }
 
   > button {
@@ -47,22 +47,6 @@
 
   &--header {
     position: relative;
-    background: rgba(219, 219, 255, 0.35);
-  }
-}
-
-html[data-theme="dark"] {
-  .theme-toggle {
-    background: rgba(28, 28, 46, 0.92);
-    border-color: rgba(169, 169, 255, 0.28);
-
-    &:hover {
-      background: rgba(169, 169, 255, 0.16);
-      border-color: $powderBlue;
-    }
-
-    &--header {
-      background: rgba(169, 169, 255, 0.12);
-    }
+    background: transparent;
   }
 }

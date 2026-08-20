@@ -31,7 +31,7 @@
 
   h1 {
     margin: 0;
-    color: $darkBlue;
+    color: var(--heading);
     font-family: $font-ui;
     font-size: clamp(1.35rem, 4vw, 1.85rem);
     font-weight: 700;
@@ -40,7 +40,7 @@
 
   p {
     margin: 0;
-    color: $text-muted;
+    color: var(--text-muted);
     font-size: clamp(0.8125rem, 2.6vw, 0.9375rem);
     line-height: 1.45;
   }
@@ -66,7 +66,7 @@
   flex-direction: column;
   border: $border-subtle;
   border-radius: $radius-md;
-  background: rgba(252, 252, 252, 0.96);
+  background: var(--surface);
   box-shadow: $shadow-card;
   overflow: hidden;
 
@@ -83,7 +83,7 @@
   min-height: 0;
   border: $border-subtle;
   border-radius: $radius-md;
-  background: rgba(252, 252, 252, 0.96);
+  background: var(--surface);
   box-shadow: $shadow-card;
   overflow: hidden;
 }
@@ -100,14 +100,14 @@
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: $darkBlue;
+    color: var(--heading);
   }
 
   p {
     margin: $space-1 0 0;
     font-size: 0.8rem;
     line-height: 1.35;
-    color: $text-muted;
+    color: var(--text-muted);
   }
 }
 
@@ -122,7 +122,7 @@
 
 .tori-ai-page__trace-empty {
   margin: 0;
-  color: $text-muted;
+  color: var(--text-muted);
   font-size: 0.9rem;
   line-height: 1.45;
 }
@@ -140,10 +140,10 @@
   padding: $space-2 $space-3;
   border: $border-subtle;
   border-radius: $radius-sm;
-  background: $lightCream;
+  background: var(--bg-elevated);
 
   &--running {
-    border-color: $powderBlue;
+    border-color: var(--accent);
   }
 }
 
@@ -152,7 +152,7 @@
   font-family: $font-ui;
   font-size: 0.85rem;
   font-weight: 600;
-  color: $text-secondary;
+  color: var(--text-secondary);
 }
 
 .tori-ai-page__step-detail,
@@ -160,11 +160,11 @@
   margin: $space-1 0 0;
   font-size: 0.8rem;
   line-height: 1.4;
-  color: $text-muted;
+  color: var(--text-muted);
 }
 
 .tori-ai-page__step-status {
-  color: $darkBlue;
+  color: var(--accent);
   font-weight: 600;
 }
 
@@ -173,60 +173,5 @@
     grid-template-columns: minmax(0, 1.35fr) 20rem;
     grid-template-rows: minmax(0, 1fr);
     grid-template-areas: "chat trace";
-  }
-}
-
-html[data-theme="dark"] {
-  .tori-ai-page__header {
-    border-bottom-color: rgba(169, 169, 255, 0.18);
-
-    h1 {
-      color: $paleBlue;
-    }
-
-    p {
-      color: #a8a8c4;
-    }
-  }
-
-  .tori-ai-page__chat,
-  .tori-ai-page__trace {
-    background: rgba(28, 28, 46, 0.92);
-    border-color: rgba(169, 169, 255, 0.22);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
-  }
-
-  .tori-ai-page__trace-head {
-    border-bottom-color: rgba(169, 169, 255, 0.18);
-
-    h2 {
-      color: $paleBlue;
-    }
-
-    p {
-      color: #a8a8c4;
-    }
-  }
-
-  .tori-ai-page__trace-empty,
-  .tori-ai-page__step-detail {
-    color: #a8a8c4;
-  }
-
-  .tori-ai-page__step {
-    background: #161625;
-    border-color: rgba(169, 169, 255, 0.22);
-
-    &--running {
-      border-color: $powderBlue;
-    }
-  }
-
-  .tori-ai-page__step-label {
-    color: #ececf5;
-  }
-
-  .tori-ai-page__step-status {
-    color: $powderBlue;
   }
 }

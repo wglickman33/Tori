@@ -3,7 +3,7 @@
 .app-shell {
   height: 100vh;
   height: 100dvh;
-  background: $lightCream;
+  background: var(--bg);
   overflow: hidden;
 
   &__backdrop {
@@ -12,7 +12,7 @@
     z-index: 200;
     border: 0;
     padding: 0;
-    background: rgba(18, 18, 31, 0.45);
+    background: var(--overlay);
     cursor: pointer;
   }
 
@@ -46,11 +46,5 @@
     @include tablet-up {
       padding: $space-4;
     }
-  }
-}
-
-html[data-theme="dark"] {
-  .app-shell {
-    background: #12121f;
   }
 }
