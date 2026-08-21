@@ -33,6 +33,12 @@ const OFF_TOPIC_PATTERNS: RegExp[] = [
   /\b(mercado de valores|criptomonedas?)\b/i,
   /\bescr[ií]b\w*.{0,32}\b(python|javascript|typescript|java|c[oó]digo|sql|script)\b/i,
   /\b(qui[eé]n gan[oó]).{0,32}\b(partido|juego|mundial|super bowl|elecciones)\b/i,
+  /\b(do my|help with|solve|finish).{0,24}\b(homework|assignment|essay|math problem)\b/i,
+  /\b(hazme|haz|resuelve|termina).{0,24}\b(tarea|ensayo|deberes|problema de matem[aá]ticas)\b/i,
+  /\b(diagnos\w*|symptom|what (?:drug|medicine) should i take)\b/i,
+  /\b(diagn[oó]stic\w*|s[ií]ntoma|qu[eé] medicina (?:debo|tomar))\b/i,
+  /\b(celebrity|gossip|tabloid|breaking news|headlines?|news today)\b/i,
+  /\b(chisme|famosos|noticias de hoy|titulares)\b/i,
 ];
 
 const HOUSEHOLD_OVERRIDE =

@@ -8,7 +8,7 @@ export type GroqToolCall = {
 };
 
 export type GroqChatMessage = {
-  role: "system" | "user" | "assistant" | "tool";
+  role: "system" | "developer" | "user" | "assistant" | "tool";
   content?: string | null;
   name?: string;
   tool_call_id?: string;
@@ -114,7 +114,14 @@ export async function fetchGroqChat(
         model: options.model ?? GROQ_CHAT_MODEL,
         messages,
         ...(options.tools && options.tools.length > 0
-          ? { tools: options.tools, tool_choice: "auto" }
+          ? {
+              tools: options.tools,
+              tool_choice: "auto",
+              reasoning_effort: "low",
+              reasoning_format: "hidden",
+              max_completion_tokens: 512,
+              temperature: 0.4,
+            }
           : {}),
       }),
       signal: controller.signal,

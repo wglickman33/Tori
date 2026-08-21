@@ -59,4 +59,34 @@ describe("inventorySearch", () => {
     expect(ids).toHaveLength(2);
     expect(ids).toEqual(expect.arrayContaining(["2", "3"]));
   });
+
+  it("finds English items from Spanish queries", () => {
+    const index = buildInventorySearchIndex(docs);
+    expect(searchInventoryDocIds(index, "botella de agua")).toEqual(["1"]);
+    expect(searchInventoryDocIds(index, "cargador")).toEqual(expect.arrayContaining(["2"]));
+  });
+
+  it("matches chargers but not unrelated items when searching cargadores", () => {
+    const index = buildInventorySearchIndex([
+      {
+        id: "hub",
+        name: "Anker Hub",
+        tags: "",
+        folderName: "Tech Stuff",
+        category: "",
+        location: "Desk",
+        price: "",
+      },
+      {
+        id: "charger",
+        name: "iPhone Charger",
+        tags: "",
+        folderName: "Tech Stuff",
+        category: "",
+        location: "Desk",
+        price: "",
+      },
+    ]);
+    expect(searchInventoryDocIds(index, "cargadores")).toEqual(["charger"]);
+  });
 });

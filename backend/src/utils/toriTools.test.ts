@@ -137,6 +137,16 @@ describe("toriTools", () => {
     ]);
   });
 
+  it("search_items matches Spanish queries against English item names", async () => {
+    const water = JSON.parse(await searchItems(userId, householdId, "botella de agua"));
+    expect(water.count).toBeGreaterThanOrEqual(1);
+    expect(water.items.some((item: { name: string }) => item.name === "Water Bottle")).toBe(true);
+
+    const charger = JSON.parse(await searchItems(userId, householdId, "cargador"));
+    expect(charger.count).toBeGreaterThanOrEqual(1);
+    expect(charger.items.some((item: { name: string }) => item.name.includes("Charger"))).toBe(true);
+  });
+
   it("search_items returns an empty list when nothing matches", async () => {
     const result = JSON.parse(await searchItems(userId, householdId, "saffron"));
     expect(result).toEqual({ query: "saffron", count: 0, items: [] });

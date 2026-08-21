@@ -93,6 +93,10 @@ describe("fetchGroqChat", () => {
     const body = JSON.parse(String(fetchFn.mock.calls[0][1].body));
     expect(body.tools).toEqual(tools);
     expect(body.tool_choice).toBe("auto");
+    expect(body.reasoning_effort).toBe("low");
+    expect(body.reasoning_format).toBe("hidden");
+    expect(body.max_completion_tokens).toBe(512);
+    expect(body.temperature).toBe(0.4);
   });
 
   it("maps 429 to a clear busy message", async () => {

@@ -7,9 +7,14 @@ describe("isToriOffTopic", () => {
     expect(isToriOffTopic("How do I file my taxes?")).toBe(true);
     expect(isToriOffTopic("What is the current US president?")).toBe(true);
     expect(isToriOffTopic("Write me a python script")).toBe(true);
+    expect(isToriOffTopic("Do my math homework")).toBe(true);
+    expect(isToriOffTopic("What's the breaking news today?")).toBe(true);
+    expect(isToriOffTopic("Diagnose my symptoms")).toBe(true);
     expect(isToriOffTopic("¿Quién fue el último presidente?")).toBe(true);
     expect(isToriOffTopic("¿Cómo presento mis impuestos?")).toBe(true);
     expect(isToriOffTopic("Escríbeme un script en python")).toBe(true);
+    expect(isToriOffTopic("Hazme la tarea de matemáticas")).toBe(true);
+    expect(isToriOffTopic("¿Qué medicina debo tomar?")).toBe(true);
   });
 
   it("allows inventory, expiry, locations, and storage questions", () => {

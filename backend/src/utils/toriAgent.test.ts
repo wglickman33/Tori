@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { runToriAgent, MAX_TORI_TOOL_ROUNDS, TORI_SYSTEM_PROMPT, TORI_SYSTEM_PROMPT_ES } from "./toriAgent.js";
+import { TORI_HARMONY_SYSTEM } from "./toriPrompts.js";
 import type { GroqChatMessage, GroqChatResult } from "./groqChat.js";
 
 const USER_ID = "11111111-1111-1111-1111-111111111111";
@@ -8,12 +9,13 @@ const HOUSEHOLD_ID = "22222222-2222-4222-8222-222222222222";
 describe("runToriAgent", () => {
   it("sends a system prompt that stays with household inventory", () => {
     expect(TORI_SYSTEM_PROMPT).toMatch(/follow the user's latest request/i);
-    expect(TORI_SYSTEM_PROMPT).toMatch(/never invent facts about THEIR Tori data/i);
+    expect(TORI_SYSTEM_PROMPT).toMatch(/never invent whether an item exists/i);
     expect(TORI_SYSTEM_PROMPT).toMatch(/politics, presidents, news, taxes/i);
     expect(TORI_SYSTEM_PROMPT).toMatch(/search_items/i);
     expect(TORI_SYSTEM_PROMPT).toMatch(/get_expiring/i);
     expect(TORI_SYSTEM_PROMPT).toMatch(/propose_add_item/i);
     expect(TORI_SYSTEM_PROMPT).toMatch(/Confirm \/ Not now/);
+    expect(TORI_SYSTEM_PROMPT).toMatch(/Spanish↔English/i);
     expect(TORI_SYSTEM_PROMPT).toMatch(/do not list items in markdown tables/i);
     expect(TORI_SYSTEM_PROMPT_ES).toMatch(/no listes artículos en tablas markdown/i);
     expect(MAX_TORI_TOOL_ROUNDS).toBe(6);
@@ -24,6 +26,8 @@ describe("runToriAgent", () => {
     expect(TORI_SYSTEM_PROMPT_ES).toMatch(/nunca inventes/i);
     expect(TORI_SYSTEM_PROMPT_ES).toMatch(/Confirmar \/ Ahora no/);
     expect(TORI_SYSTEM_PROMPT_ES).toMatch(/search_items/i);
+    expect(TORI_SYSTEM_PROMPT_ES).toMatch(/español↔inglés/i);
+    expect(TORI_SYSTEM_PROMPT_ES).toMatch(/cargadores → charger/i);
   });
 
   it("refuses Spanish off-topic questions in Spanish without calling Groq", async () => {
@@ -41,7 +45,7 @@ describe("runToriAgent", () => {
     expect(executeTool).not.toHaveBeenCalled();
   });
 
-  it("sends the Spanish system prompt to Groq when locale is es", async () => {
+  it("sends Harmony system + developer prompts to Groq when locale is es", async () => {
     const fetchGroqChat = vi.fn().mockResolvedValue({
       ok: true,
       kind: "reply",
@@ -57,7 +61,9 @@ describe("runToriAgent", () => {
 
     expect(fetchGroqChat).toHaveBeenCalledTimes(1);
     const [messages] = fetchGroqChat.mock.calls[0] as [GroqChatMessage[]];
-    expect(messages[0]?.content).toBe(TORI_SYSTEM_PROMPT_ES);
+    expect(messages[0]).toEqual({ role: "system", content: TORI_HARMONY_SYSTEM });
+    expect(messages[1]?.role).toBe("developer");
+    expect(messages[1]?.content).toBe(TORI_SYSTEM_PROMPT_ES);
   });
 
   it("refuses off-topic questions without calling Groq or tools", async () => {

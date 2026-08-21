@@ -159,7 +159,8 @@ describe("POST /api/tori/chat", () => {
     expect(options.apiKey).toBe("test-key");
     expect(options.tools).toHaveLength(12);
     expect(messages[0].role).toBe("system");
-    expect(messages[1]).toEqual({
+    expect(messages[1].role).toBe("developer");
+    expect(messages[2]).toEqual({
       role: "user",
       content: "How should I store milk?",
     });

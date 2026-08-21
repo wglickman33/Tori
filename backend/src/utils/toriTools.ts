@@ -87,11 +87,14 @@ export const TORI_TOOLS: GroqToolDefinition[] = [
     function: {
       name: "search_items",
       description:
-        "Search the current household inventory by item name, tags, location, or folder name. Use this when they ask whether they have something or where it is.",
+        "Search the current household inventory by item name, tags, location, or folder name. Use short keywords when they ask whether they have something or where it is. Spanish and English both work — the server expands bilingual terms and plurals (e.g. cargadores matches iPhone Charger).",
       parameters: {
         type: "object",
         properties: {
-          query: { type: "string", description: "Search text, e.g. milk, paper towels, fridge, or a tag." },
+          query: {
+            type: "string",
+            description: "Short search keywords, e.g. milk, charger, cargadores, pantry, or a tag — not a full sentence.",
+          },
         },
         required: ["query"],
       },

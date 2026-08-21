@@ -1,4 +1,5 @@
 import MiniSearch from "minisearch";
+import { expandBilingualQuery } from "./inventorySearchBilingual.js";
 
 export type InventorySearchDoc = {
   id: string;
@@ -40,17 +41,20 @@ function singularizeToken(token: string): string {
   return lower;
 }
 
-/** Try original query plus a singularized variant so "water bottles" matches "Water Bottle". */
+/** Plural + bilingual variants so "botella de agua" matches "Water Bottle". */
 export function searchQueryVariants(query: string): string[] {
   const trimmed = query.trim();
   if (!trimmed) return [];
 
-  const variants = new Set<string>([trimmed]);
-  const tokens = trimmed.toLowerCase().split(/\s+/).filter(Boolean);
-  if (tokens.length > 0) {
-    variants.add(tokens.map(singularizeToken).join(" "));
-    if (tokens.length === 1) {
-      variants.add(singularizeToken(tokens[0]!));
+  const variants = new Set<string>();
+  for (const base of expandBilingualQuery(trimmed)) {
+    variants.add(base);
+    const tokens = base.toLowerCase().split(/\s+/).filter(Boolean);
+    if (tokens.length > 0) {
+      variants.add(tokens.map(singularizeToken).join(" "));
+      if (tokens.length === 1) {
+        variants.add(singularizeToken(tokens[0]!));
+      }
     }
   }
   return [...variants];
