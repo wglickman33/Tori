@@ -11,7 +11,13 @@ import { MobileHeader } from "./MobileHeader";
 import { Sidebar } from "./Sidebar";
 import "./AppShell.scss";
 
-export function AppShell({ children }: { children: ReactNode }) {
+export function AppShell({
+  children,
+  lockContentScroll = false,
+}: {
+  children: ReactNode;
+  lockContentScroll?: boolean;
+}) {
   const { t } = useTranslation();
   const width = useWindowWidth();
   const expanded = useSidebarStore((s) => s.expanded);
@@ -51,7 +57,11 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       <div className={`app-shell__main ${mainMod}`}>
         {isMobile ? <MobileHeader /> : null}
-        <div className="app-shell__content">{children}</div>
+        <div
+          className={`app-shell__content${lockContentScroll ? " app-shell__content--lock-scroll" : ""}`}
+        >
+          {children}
+        </div>
       </div>
 
       <FloatingAppsMenu />

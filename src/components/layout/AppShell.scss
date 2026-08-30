@@ -46,5 +46,11 @@
     @include tablet-up {
       padding: $space-4;
     }
+
+    &--lock-scroll {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
   }
 }

@@ -157,7 +157,7 @@ export default function InventoryPage() {
   };
 
   return (
-    <AppShell>
+    <AppShell lockContentScroll>
       <div className={`inventory-page ${showDetailSheet ? "inventory-page--detail" : ""}`}>
         <section className="inventory-page__list">
           <div className="inventory-page__toolbar">

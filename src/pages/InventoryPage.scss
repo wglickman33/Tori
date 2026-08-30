@@ -3,10 +3,12 @@
 .inventory-page {
   display: grid;
   grid-template-columns: 1fr;
+  grid-template-rows: minmax(0, 1fr);
   gap: $space-3;
-  height: 100%;
+  flex: 1;
   min-height: 0;
   width: 100%;
+  overflow: hidden;
 
   // Only split once there's room for a usable list + detail pane.
   @media (min-width: 960px) {
@@ -140,6 +142,7 @@
 
   &__status {
     color: $text-muted;
+    flex-shrink: 0;
   }
 
   &__empty,
@@ -190,7 +193,10 @@
     min-width: 0;
     flex: 1;
     min-height: 0;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
@@ -199,7 +205,15 @@
   border-radius: $radius-md;
   background: transparent;
   min-width: 0;
+  flex-shrink: 0;
   overflow: hidden;
+
+  &.is-open,
+  &--independent {
+    display: flex;
+    flex-direction: column;
+    max-height: min(28rem, 55vh);
+  }
 
   &--independent {
     background: transparent;
@@ -213,6 +227,7 @@
     gap: $space-2;
     padding: $space-2 $space-3;
     background: var(--surface-hover);
+    flex-shrink: 0;
   }
 
   &__toggle {
@@ -303,6 +318,16 @@
       }
     }
   }
+}
+
+.inventory-folder.is-open .inventory-item-list,
+.inventory-folder--independent .inventory-item-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .inventory-item-list {
